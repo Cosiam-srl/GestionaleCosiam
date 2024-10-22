@@ -1,0 +1,374 @@
+<div class="row" (resized)="onResized($event)">
+
+    <!-- prima colonna della prima riga -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12" id='cards'>
+        <div class="card" style="align-items: center;">
+            <button type="button" style="float: right;" class="btn btn-primary btn-sm mb-2"
+                (click)=" openLg(modify)">Modifica</button>
+            <!-- <img src="https://cdnwp.dealerk.com/eed49ed7/uploads/sites/553/2019/04/iveco-daily-furgone-2019.png" alt="immagine mezzo"
+                class="users-avatar-shadow avatar mt-3 rounded-circle" height="64" width="64"> -->
+            <div class="card-body">
+                <h5 class="card-title text-center mb-2">{{mezzo.description != null ? mezzo.description : "///" }}
+                </h5>
+                <p class="card-text"><strong>Targa/Matricola</strong>: {{mezzo.licensePlate != null ? mezzo.licensePlate
+                    : "///"}}</p>
+                <p class="card-text"><strong>Modello</strong>: {{mezzo.model != null ? mezzo.model: "///"}}
+                </p>
+                <!-- <p class="card-text"><strong>Matricola</strong>: 514800542</p> -->
+                <p class="card-text"><strong>Immatricolazione</strong>: {{mezzo.matriculationDate | dataleggibile}}
+                </p>
+                <p class="card-text"><strong>Costo d'acquisto</strong>: € {{mezzo.originalPrice != null ?
+                    mezzo.originalPrice : "///"}}</p>
+                <!-- <p class="card-text"><strong>KM al 31/12/2020</strong>: 286.500 KM</p> -->
+                <p class="card-text"><strong>Valore stimato</strong>: € {{mezzo.extimatedValue != null ?
+                    mezzo.extimatedValue : "///"}}</p>
+                <p class="card-text"><strong>Proprietà</strong>: {{mezzo.contoProprioContoTerzi != null &&
+                    mezzo.contoProprioContoTerzi==true ? "Mezzo di proprietà" : "NON di proprietà"}}</p>
+            </div>
+        </div>
+    </div>
+    <!-- fine prima colonna della prima riga -->
+
+    <!-- inizio seconda colonna della prima riga -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100 col-md-12 col-xl-12 col-lg-12">
+                                <h4 style="max-width: 100%;">Cantieri attivi in cui lavora attualmente(località)</h4>
+                                <div class="card-text">
+                                    <p *ngIf="cantieriMezzo.length==0">Nessuno</p>
+                                    <p *ngFor="let i of cantieriMezzo" style="margin-bottom: 0px;">
+                                        {{i.address}}
+                                    </p>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-briefcase font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-lighten-3 w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>In forza</h4>
+                                <p *ngIf="this.mezzo.inStrenght!=undefined" style="font-size:20px"
+                                    [ngStyle]="{'color': this.mezzo.inStrenght.toLowerCase()=='si' ? 'green' : 'red' }"
+                                    class="card-text"><strong>{{this.mezzo.inStrenght?
+                                        this.mezzo.inStrenght : "Non definito"}}</strong></p>
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col mt-3">
+            <button type="button" class="btn btn-primary" (click)="openLg(dettagliMezzi)">Estrai
+                Dettagli</button>
+        </div>
+    </div>
+    <!-- fine seconda colonna della prima riga -->
+
+    <!-- inizio terza colonna della prima riga -->
+    <!-- <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Ore lavorate</h4>
+                                <app-datepicker style="padding-left: 25px;" [numeroMesi]="2"></app-datepicker>
+                                <h2 class="mt-4">24</h2>
+                            </div>
+                        </div> -->
+    <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+    <!-- </div>
+                </div>
+            </div>
+        </div> -->
+    <!-- <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Consegna DPI</h4>
+                                <h2 class="mt-4">SI</h2>
+                            </div>
+                        </div>
+                        <div class="media-right text-right">
+                            <i class="ft-shield font-large-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    <!-- </div> -->
+    <!-- fine terza colonna della prima riga -->
+
+    <!-- inizio quarta colonna della prima riga -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100" [ngStyle]="{'background-color': scadenzeMezzi.length==0? 'white' : 'red' }">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4>Scadenze imminenti(30gg) </h4>
+                                <p *ngIf="scadenzeMezzi.length==0">Nessuna scadenza imminente</p>
+                                <ul *ngFor="let s of scadenzeMezzi; index as i ">
+
+                                    <!-- solo le prime 5 -->
+                                    <li *ngIf="i<4">
+                                        <strong>{{s.nota.nota.name}}</strong>
+                                        <p>Scade il {{s.nota.nota.dueDate | dataleggibile}}</p>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fine quarta colonna della prima riga -->
+</div>
+<!-- inizio prima tabs -->
+<!-- <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <li [ngbNavItem]="1">
+        <a ngbNavLink>Scadenze</a>
+        <ng-template ngbNavContent> -->
+<!-- prima tabella -->
+<section id="striped-light">
+    <div class="row">
+        <div class="col-12">
+            <app-mezzi-generic-table [titolo]="'Documenti Correlati'" [idMezzo]="idMezzo"></app-mezzi-generic-table>
+        </div>
+    </div>
+</section>
+
+
+<!-- inizio popup modifica mezzo -->
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica Mezzo</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #mezzoForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Furgone"
+                        [(ngModel)]="nuovomezzo.description" title="" name="descrizione" #descrizione="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)" required>
+                    <small class="form-text text-muted danger" *ngIf="descrizione.errors?.required">Campo
+                        obbligatorio</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Brand</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Fiat"
+                        [(ngModel)]="nuovomezzo.brand" title="" name="brand" #brand="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="brand.errors?.required">Campo obbligatorio</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Modello</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 500X"
+                        [(ngModel)]="nuovomezzo.model" name="modello" #modello="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="modello.errors?.required">Campo
+                        obbligatorio</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Targa/Matricola</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CV504KL"
+                        [(ngModel)]="nuovomezzo.licensePlate" title="" name="targa" #targa="ngModel"
+                        (ngModelChange)="nuovomezzo.licensePlate=nuovomezzo.licensePlate.toUpperCase();validationForm(mezzoForm)"
+                        title="" required>
+                    <small class="form-text text-muted danger" *ngIf="targa.errors?.required">Campo obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label *ngIf="mezzo.tachograph!=null" for="exampleFormControlInput1" class="form-label">Tachigrafo
+                        (attuale:
+                        {{mezzo.tachograph | dataleggibile}})</label>
+                    <label *ngIf="mezzo.tachograph==null" for="exampleFormControlInput1" class="form-label">Tachigrafo
+                    </label>
+                    <app-datepicker-single [ph]="'Tachigrafo'" [pos]="''" (cambiadata)="cambia($event, 'tachigrafo')"
+                        id="tachigrafo">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">KM attuali</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="km"
+                            [(ngModel)]="nuovomezzo.lastKMCheck" title="" name="kmattuali" #kmattuali="ngModel"
+                            (ngModelChange)="validationForm(mezzoForm)">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">Km</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">In forza</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovomezzo.inStrenght" name="inforza" #inforza="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)">
+                        <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+                        <option value="Si">Si</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costo giornaliero</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" min=0 id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovomezzo.dailyCost" title="" name="costogiornaliero"
+                            #costogiornaliero="ngModel" (ngModelChange)="validationForm(mezzoForm)">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€/giorno</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Conto proprio/Conto Terzi</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="contoproprioterzi" title="" name="contopt" #contopt="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)" id="co">
+                        <option value='true'>Conto proprio</option>
+                        <option value='false'>Conto Terzi</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label *ngIf="mezzo.matriculationDate!=null" for="exampleFormControlInput1" class="form-label">Data
+                        di
+                        Immatricolazione <br />(attuale: {{mezzo.matriculationDate | dataleggibile}})</label>
+                    <label *ngIf="mezzo.matriculationDate == null" for="exampleFormControlInput1"
+                        class="form-label">Data di
+                        Immatricolazione</label>
+                    <app-datepicker-single [ph]="'Data di Immatricolazione'" [pos]="''"
+                        (cambiadata)="cambia($event, 'dataImmatricolazione')" id="dataImmatricolazione">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costo d'acquisto storico</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1"
+                            placeholder="Prezzo Originale" [(ngModel)]="nuovomezzo.originalPrice"
+                            aria-describedby="basic-addon2" title="" name="costostorico" #costostorico="ngModel"
+                            (ngModelChange)="validationForm(mezzoForm)">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Valore Stimato</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1"
+                            placeholder="Valore Stimato" [(ngModel)]="nuovomezzo.extimatedValue"
+                            aria-describedby="basic-addon2" name="valorestimato" #valorestimato="ngModel"
+                            (ngModelChange)="validationForm(mezzoForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="valorestimato.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+            </div>
+
+            <br>
+            <br>
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+            Modifica</button>
+        <button *ngIf="fff" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="updateMezzo()" (click)="modal.close('Close click')">Conferma Modifica</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="cleanNuovoMezzo()">Chiudi</button>
+    </div>
+
+
+</ng-template>
+
+<ng-template #dettagliMezzi let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Estrai Dettaglio</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" style="padding-bottom: 75px">
+        <div class="row">
+            <p>Estrai nel formato scelto i dettagli del mezzo per poter controllare in quali cantieri ha lavorato e
+                qual è stato il suo costo</p>
+        </div>
+        <div class="row mb-5">
+            <div class="row">
+                <div class="col-md-6 col-12 pb-4">
+                    <input type="date" class="form-control" name="estraiDateFrom" id=""
+                        [(ngModel)]="estraiDatiModel.dateFrom">
+                </div>
+                <div class="col-md-6 col-12">
+                    <input type="date" class="form-control" name="estraiDateTo" id=""
+                        [(ngModel)]="estraiDatiModel.dateTo">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('xlsx')"
+            (click)="modal.close('Close click')">Estrai XLSX</button>
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('pdf')"
+            (click)="modal.close('Close click')">Estrai PDF</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+
+</ng-template>

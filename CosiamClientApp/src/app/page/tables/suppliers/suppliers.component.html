@@ -1,0 +1,247 @@
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<!-- Basic Datatables -->
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<section id="ngx-datatable-suppliers">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Fornitori</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <!-- Campo di ricerca -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="ngx-filter-ref">Cerca:</label>
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Ragione sociale..."
+                                        (keyup)="filterUpdate($event)" />
+                                </div>
+                            </div>
+
+                            <!-- Selettore numero di righe (Mostra) -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="row-selector">Mostra:</label>
+                                    <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                                        <option value="10">10 elementi</option>
+                                        <option value="25">25 elementi</option>
+                                        <option value="50">50 elementi</option>
+                                        <option value="100">100 elementi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tasto "Aggiungi Fornitore" -->
+                            <div class="col mt-3">
+                                <button type="button" class="btn btn-primary" (click)="openLg(content)">Aggiungi
+                                    Fornitore</button>
+                            </div>
+                        </div>
+
+
+
+                        <!-- ngx-datatable Basic -->
+                        <ngx-datatable [rows]="fornitori" [rowHeight]="50" class="bootstrap core-bootstrap"
+                            [limit]="limit" [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50"
+                            [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+                            <!-- <ngx-datatable-column name="Id" prop="id" [width]="50" style="text-align: center;">
+              </ngx-datatable-column> -->
+
+                            <ngx-datatable-column name="Ragione sociale" prop="name" [width]="220"
+                                style="text-align: center;">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Email" prop="email" [width]="200" [draggable]="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="P.IVA" prop="piva" [width]="100" [draggable]="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Indirizzo" prop="address" [width]="130" minwidth="130"
+                                [draggable]="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo" prop="type" [width]="160"
+                                resizable="false"></ngx-datatable-column>
+                            <ngx-datatable-column name="Status" prop="status" [width]="80"
+                                resizable="false"></ngx-datatable-column>
+                            <ngx-datatable-column name="Telefono" prop="telephone" [width]="80" resizable="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Azioni" [width]="45">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onEdit(row)"></i>
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;"
+                                        (click)="deleteFornitore(row)"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <!-- <ng-template let-status="value" ngx-datatable-cell-template>
+                  <div class="badge badge-pill"
+                    [ngClass]="{'bg-light-success': status == 'capo', 'bg-light-primary':status == '1', 'bg-light-danger':status == '2' , 'bg-light-warning':status == '4' , 'bg-light-info':status == '5'}">
+                    {{ status == 'capo' ? "Capo" : "Non Disponibile" }}
+                  </div>
+                </ng-template> -->
+
+                        </ngx-datatable>
+                        <!--/ ngx-datatable Basic -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--/ Basic Datatables -->
+
+<!-- inizio popup aggiungi personale -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Fornitore</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <form #userForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Ragione sociale</label>
+                    <input type="text" name="fname" class="form-control" #fname="ngModel" id="exampleFormControlInput1"
+                        placeholder="Ragione sociale" required [(ngModel)]="nuovofornitore.name" title=""
+                        (ngModelChange)="validationForm(userForm)">
+                    <small class="form-text text-muted danger" *ngIf="fname.errors?.required">Campo obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">PIVA</label>
+                    <input type="text" name="piva" class="form-control" #piva="ngModel" id="exampleFormControlInput1"
+                        placeholder="Partita IVA" [(ngModel)]="nuovofornitore.piva" title=""
+                        (ngModelChange)="validationForm(userForm)" pattern="[0-9]{0,}">
+                    <small class="form-text text-muted danger" *ngIf="piva.errors?.pattern">la PIVA è composta di soli
+                        numeri.Ricontrolla</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">CF</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
+                        [(ngModel)]="nuovofornitore.cf" name="cf" #cf="ngModel"
+                        (ngModelChange)="validationForm(userForm)">
+
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Telefono</label>
+                    <input type="text" class="form-control" name="telefono" #telefono="ngModel"
+                        id="exampleFormControlInput1" placeholder="Telefono" [(ngModel)]="nuovofornitore.telephone"
+                        (ngModelChange)="validationForm(userForm)">
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">CAP</label>
+                    <input type="text" class="form-control" name="cap" #cap="ngModel" id="exampleFormControlInput1"
+                        placeholder="CAP" [(ngModel)]="nuovofornitore.CAP" (ngModelChange)="validationForm(userForm)"
+                        pattern="[0-9]{5}">
+                    <small class="form-text text-muted danger" *ngIf="cap.errors?.pattern">Il CAP è di 5
+                        cifre.Ricontrolla</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Disponibilità</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovofornitore.status" name="status" #status="ngModel"
+                        (ngModelChange)="validationForm(userForm)">
+                        <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+                        <option value="Disponibile">Disponibile</option>
+                        <option value="Non Disponibile">Non Disponibile</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Indirizzo</label>
+                    <input type="text" class="form-control" name="indirizzo" #indirizzo="ngModel"
+                        id="exampleFormControlInput1" placeholder="Indirizzo" title=""
+                        [(ngModel)]="nuovofornitore.address" (ngModelChange)="validationForm(userForm)">
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Email</label>
+                    <input type="text" class="form-control" name="email" #email="ngModel" id="exampleFormControlInput1"
+                        placeholder="Email" [(ngModel)]="nuovofornitore.email"
+                        (ngModelChange)="validationForm(userForm)" title="" email>
+                    <small class="form-text text-muted danger" *ngIf="email.errors?.email">Ricontrolla la mail
+                        inserita</small>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-6 col-xl-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" name="tipologia" #tipologia="ngModel"
+                        id="exampleFormControlInput1" placeholder="Mansione" [(ngModel)]="nuovofornitore.type"
+                        (ngModelChange)="validationForm(userForm)" required>
+                    <small class="form-text text-muted danger" *ngIf="tipologia.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+
+            </div>
+            <div class="row">
+                <fieldset class="form-group col-md-11 col-11 mt-2">
+                    <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne uno
+                        (dimensioni
+                        consigliate: 200 x 200)</label>
+
+                    <div class="custom-file ">
+                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                            (change)="addImageToFornitore($event)">
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ?
+                            fileName.substring(0,110) + '...' : fileName || "Seleziona un file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+                    (click)="deleteImageFornitore()"></i>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label class="form-label" *ngIf="nuovofornitore.file!=null">Logo cliente attuale:</label>
+                    <label class="form-label" *ngIf="nuovofornitore.file==null">Nessun logo per questo fornitore</label>
+                    <br />
+                    <img *ngIf="nuovofornitore.file!=null" [src]="imageSource"
+                        alt="appena caricato. Conferma le modifiche per aggiungerlo e vederlo" style="cursor: default;"
+                        height="100" width="100">
+                    <i *ngIf="nuovofornitore.file!=null" style="padding-top: 14px;"
+                        class="ft-x-circle text-primary cursor-pointer ml-2 mt-4" (click)="removeLogoFornitore()"
+                        title="Rimuovi il logo esistente o quello"></i>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+
+
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+            disabled>Conferma</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="creaFornitore()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+    </div>
+
+
+</ng-template>

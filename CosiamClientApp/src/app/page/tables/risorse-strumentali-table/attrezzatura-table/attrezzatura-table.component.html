@@ -1,0 +1,640 @@
+<!-- necessario per lo spinner quando si aggiunge una nuova scadenza(amministrazione, hse, ...) -->
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<!-- Filter Datatables -->
+<section id="ngx-datatable-attrezzatura">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Attrezzature</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Campo di ricerca -->
+                            <div class="col mb-2">
+                                <div class="form-group">
+                                    <label for="ngx-filter-ref">Cerca:</label>
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Tipo/Descrizione..."
+                                        (keyup)="filterUpdate($event)" />
+                                </div>
+                            </div>
+
+                            <!-- Selector for number of rows to show -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="row-selector" class="mr-1">Mostra:</label>
+                                    <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                                        <option value="10">10 elementi</option>
+                                        <option value="25">25 elementi</option>
+                                        <option value="50">50 elementi</option>
+                                        <option value="100">100 elementi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tasto "Aggiungi un'attrezzatura" -->
+                            <div class="col mt-3">
+                                <button class="btn btn-primary" (click)="openLg(content)">Aggiungi
+                                    un'attrezzatura</button>
+                            </div>
+                        </div>
+
+
+                        <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+                        <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force"
+                            [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="limit" [rows]="attrezzatura"
+                            [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+
+                            <!-- <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="id"
+                                prop="id" [width]="50"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Tipo" prop="type" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Descrizione" prop="description" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Modello" prop="model" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Costruttore" prop="builder" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Proprietà" prop="propertyOf" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Azioni" [width]="50">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+
+                                    <!-- <i class="ft-edit text-primary cursor-pointer" (click)="goToDashboard(row)"></i> -->
+                                    <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onEdit(row,modify)"
+                                        title="Modifica"></i>
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;" (click)="deleteAttrezzo(row)"
+                                        title="Elimina"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+
+                        </ngx-datatable>
+                        <!-- ngx-datatable-filter -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- popup di creazione -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Attrezzatura</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #attrezzaturaForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                        placeholder="Es.Accessori mezzi" [(ngModel)]="nuovaAttrezzatura.type" name="tipologia"
+                        #tipologia="ngModel" (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="tipologia.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Benna"
+                        [(ngModel)]="nuovaAttrezzatura.description" name="descrizione" #descrizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="descrizione.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costruttore</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Benfra"
+                        [(ngModel)]="nuovaAttrezzatura.builder" name="costruttore" #costruttore="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="costruttore.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Targa/Matricola</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CV504KL"
+                        [(ngModel)]="nuovaAttrezzatura.licensePlate" name="targa" #targa="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="targa.errors?.required">Campo obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Modello</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                        placeholder="Es. 50cm/1000kg/..." [(ngModel)]="nuovaAttrezzatura.model" name="modello"
+                        #modello="ngModel" (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anno di produzione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 2010"
+                        [(ngModel)]="nuovaAttrezzatura.productionDate" name="annoproduzione" #annoproduzione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" pattern="[0-9]{4}">
+                    <small class="form-text text-muted danger" *ngIf="annoproduzione.errors?.pattern">Inserisci un
+                        anno (4 cifre)</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Proprietà</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Cosiam S.r.l"
+                        [(ngModel)]="nuovaAttrezzatura.propertyOf" name="proprieta" #proprieta="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="proprieta.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Conformità/Idoneità</label>
+                    <div class="form-group">
+                        <ng-select [items]="conformita" name="confIdon" #confIdon="ngModel" title=""
+                            (ngModelChange)="validationForm(cantiereForm)" bindLabel="name" bindValue="name"
+                            [multiple]="false" [closeOnSelect]="false" placeholder=""
+                            [(ngModel)]="nuovaAttrezzatura.idoneity">
+                        </ng-select>
+
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Stato</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovaAttrezzatura.status" name="status" #status="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                        <option value='ok'>OK</option>
+                        <option value='Dismesso'>Dismesso</option>
+                        <option value='NF'>N.F.</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Scheda tecnica</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovaAttrezzatura.technicalSpecs" name="technicalSpecs" #technicalSpecs="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                        <option value='-'>-</option>
+                        <option value='ok'>OK</option>
+                    </select>
+                </div>
+
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Valore Stimato</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 20000€"
+                            [(ngModel)]="nuovaAttrezzatura.estimatedValue" name="valorestimato" #modello="ngModel"
+                            (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Posizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Magazzino"
+                        [(ngModel)]="nuovaAttrezzatura.position" name="posizione" #posizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Mezzi/Attrezzatura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. BobcatE10/16"
+                        [(ngModel)]="nuovaAttrezzatura.compatibility" name="compatibilita" #compatibilita="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div>
+
+            </div>
+
+            <div class="row">
+                <fieldset class="form-group col-md-10 mt-2">
+                    <label class="form-label">Carica uno o più File</label>
+
+                    <div class="custom-file ">
+                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                            (change)="addFileToAttrezzatura($event);validationForm(attrezzaturaForm)" multiple>
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileName || "Seleziona un
+                            file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+                    (click)="deleteAttachmentNote()"></i>
+            </div>
+
+            <div class="row">
+                <!-- <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Note</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. BobcatE10/16"
+                        [(ngModel)]="nuovaAttrezzatura. notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div> -->
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"
+                        placeholder="Es. BobcatE10/16" [(ngModel)]="nuovaAttrezzatura.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title=""></textarea>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+            disabled>Conferma</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="creaAttrezzatura()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Close</button>
+    </div>
+
+
+</ng-template>
+<!-- fine popup di creazione -->
+<!-- inizio popup di view -->
+<ng-template #view let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Attrezzatura</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #attrezzaturaForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="/"
+                        [(ngModel)]="nuovaAttrezzatura.type" name="tipologia" #tipologia="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="/"
+                        [(ngModel)]="nuovaAttrezzatura.description" name="descrizione" #descrizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costruttore</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Benfra"
+                        [(ngModel)]="nuovaAttrezzatura.builder" name="costruttore" #costruttore="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Targa/Matricola</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="/"
+                        [(ngModel)]="nuovaAttrezzatura.licensePlate" name="targa" #targa="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Modello</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                        placeholder="Es. 50cm/1000kg/..." [(ngModel)]="nuovaAttrezzatura.model" name="modello"
+                        #modello="ngModel" (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anno di produzione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="/"
+                        [(ngModel)]="nuovaAttrezzatura.productionDate" name="annoproduzione" #annoproduzione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" pattern="[0-9]{4}" disabled>
+
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Proprietà</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="/"
+                        [(ngModel)]="nuovaAttrezzatura.propertyOf" name="proprieta" #proprieta="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Conformità/Idoneità</label>
+                    <div class="form-group">
+                        <ng-select [items]="conformita" name="confIdon" #confIdon="ngModel" title=""
+                            (ngModelChange)="validationForm(cantiereForm)" bindLabel="name" bindValue="name"
+                            [multiple]="false" [closeOnSelect]="false" placeholder="/"
+                            [(ngModel)]="nuovaAttrezzatura.idoneity" [disabled]="true">
+                        </ng-select>
+
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label"><strong>Stato</strong></label>
+                    <!-- <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovaAttrezzatura.status" name="status" #status="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+                        <option value='ok'>OK</option>
+                        <option value='Dismesso'>Dismesso</option>
+                        <option value='NF'>N.F.</option>
+                    </select> -->
+                    <p style="color:green" *ngIf="nuovaAttrezzatura.status=='ok'">OK</p>
+                    <p style="color:red" *ngIf="nuovaAttrezzatura.status=='Dismesso'">DISMESSO</p>
+                    <p *ngIf="nuovaAttrezzatura.status=='NF'">NF</p>
+                    <p *ngIf="nuovaAttrezzatura.status==null">Stato non definito</p>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Scheda tecnica</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovaAttrezzatura.technicalSpecs" name="technicalSpecs" #technicalSpecs="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+                        <option value='-'>-</option>
+                        <option value='ok'>OK</option>
+                    </select>
+                </div>
+
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Valore Stimato</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="/"
+                            [(ngModel)]="nuovaAttrezzatura.estimatedValue" name="valorestimato" #modello="ngModel"
+                            (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Posizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="/"
+                        [(ngModel)]="nuovaAttrezzatura.position" name="posizione" #posizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Mezzi/Attrezzatura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="/"
+                        [(ngModel)]="nuovaAttrezzatura. compatibility" name="compatibilita" #compatibilita="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label"><strong>Allegati</strong></label>
+                    <p *ngIf="nuovaAttrezzatura.listFile.length == 0 ">Nessun allegato
+                    </p>
+                    <div *ngIf="nuovaAttrezzatura.listFile.length != 0 ">
+                        <div *ngFor="let file of nuovaAttrezzatura.listFile; index as i ">
+                            {{nuovaAttrezzatura.listFile[i].fileName }}
+                            <i title="Scarica allegato" class="ft-download text-primary cursor-pointer ml-1"
+                                (click)="downloadAttachment(file)"></i>
+                            <i title="Elimina allegato" class="ft-trash text-primary cursor-pointer ml-1"
+                                (click)="deleteAttachment(nuovaAttrezzatura,i)"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <!-- <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Note</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. BobcatE10/16"
+                        [(ngModel)]="nuovaAttrezzatura. notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div> -->
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"
+                        placeholder="Es. BobcatE10/16" [(ngModel)]="nuovaAttrezzatura.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" disabled></textarea>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+
+
+</ng-template>
+<!-- fine popup view -->
+<!-- inizio popup di modifica -->
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica Attrezzatura</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #attrezzaturaForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                        placeholder="Es.Accessori mezzi" [(ngModel)]="nuovaAttrezzatura.type" name="tipologia"
+                        #tipologia="ngModel" (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="tipologia.errors?.required">Campo
+                        obbligatorio</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Benna"
+                        [(ngModel)]="nuovaAttrezzatura.description" name="descrizione" #descrizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="descrizione.errors?.required">Campo
+                        obbligatorio</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costruttore</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Benfra"
+                        [(ngModel)]="nuovaAttrezzatura.builder" name="costruttore" #costruttore="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="costruttore.errors?.required">Campo
+                        obbligatorio</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Targa/Matricola</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovaAttrezzatura.licensePlate" name="targa" #targa="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="targa.errors?.required">Campo
+                        obbligatorio</small>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Modello</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                        placeholder="Es. 50cm/1000kg/..." [(ngModel)]="nuovaAttrezzatura.model" name="modello"
+                        #modello="ngModel" (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anno di produzione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 2010"
+                        [(ngModel)]="nuovaAttrezzatura.productionDate" name="annoproduzione" #annoproduzione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" pattern="[0-9]{4}">
+                    <small class="form-text text-muted danger" *ngIf="annoproduzione.errors?.pattern">Inserisci un
+                        anno (4 cifre)</small>
+
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Proprietà</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Cosiam S.r.l"
+                        [(ngModel)]="nuovaAttrezzatura.propertyOf" name="proprieta" #proprieta="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="proprieta.errors?.required">Campo
+                        obbligatorio</small>
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Conformità/Idoneità</label>
+                    <div class="form-group">
+                        <ng-select [items]="conformita" name="confIdon" #confIdon="ngModel" title=""
+                            (ngModelChange)="validationForm(cantiereForm)" bindLabel="name" bindValue="name"
+                            [multiple]="false" [closeOnSelect]="false" placeholder=""
+                            [(ngModel)]="nuovaAttrezzatura.idoneity">
+                        </ng-select>
+
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Stato</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovaAttrezzatura.status" name="status" #status="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                        <option value='ok'>OK</option>
+                        <option value='Dismesso'>Dismesso</option>
+                        <option value='NF'>N.F.</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Scheda tecnica</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovaAttrezzatura.technicalSpecs" name="technicalSpecs" #technicalSpecs="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                        <option value='-'>-</option>
+                        <option value='ok'>OK</option>
+                    </select>
+                </div>
+
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Valore Stimato</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 20000€"
+                            [(ngModel)]="nuovaAttrezzatura.estimatedValue" name="valorestimato" #modello="ngModel"
+                            (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Posizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Magazzino"
+                        [(ngModel)]="nuovaAttrezzatura.position" name="posizione" #posizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Mezzi/Attrezzatura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. BobcatE10/16"
+                        [(ngModel)]="nuovaAttrezzatura. compatibility" name="compatibilita" #compatibilita="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div>
+
+            </div>
+            <div class="row">
+                <fieldset class="form-group col-md-10 mt-2">
+                    <label class="form-label">Carica uno o più File</label>
+
+                    <div class="custom-file ">
+                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                            (change)="addFileToAttrezzatura($event);validationForm(attrezzaturaForm)" multiple>
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileName || "Seleziona un
+                            file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+                    (click)="deleteAttachmentNote()"></i>
+            </div>
+
+            <div class="row">
+                <!-- <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Note</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. BobcatE10/16"
+                        [(ngModel)]="nuovaAttrezzatura. notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div> -->
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"
+                        placeholder="Es. BobcatE10/16" [(ngModel)]="nuovaAttrezzatura.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title=""></textarea>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+            Modifica</button>
+
+        <button *ngIf="fff" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="modal.close('Close click')" (click)="updateAttrezzatura()">Conferma modifica</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+
+
+</ng-template>

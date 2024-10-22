@@ -1,0 +1,534 @@
+<!-- Filter Datatables -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">Note di Cantiere</h4>
+      </div>
+      <div class="card-content">
+        <div class="card-body">
+          <div class="row mb-2">
+            <!-- Filtro numero di righe -->
+            <div class="col-auto">
+              <label>Mostra
+                <select name="users-list-select" class="form-control form-control-sm mx-1"
+                  (click)="updateLimit($event)">
+                  <option value="3">3 note</option>
+                  <option selected value="5">5 note</option>
+                  <option value="10">10 note</option>
+                  <option value="10000">Tutte</option>
+                </select>
+              </label>
+            </div>
+
+            <!-- Campo di ricerca -->
+            <div class="col-auto">
+              <fieldset class="form-group">
+                <label for="ngx-filter-ref">Cerca:
+                  <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                    placeholder="Filtra Nome e Descrizione..." (keyup)="filterUpdate($event)" />
+                </label>
+              </fieldset>
+            </div>
+
+            <!-- Selettore stato -->
+            <div class="col">
+              <fieldset class="form-group">
+                <label for="users-list-role">Stato:
+                  <select id="users-list-role" class="form-control form-control-sm" (change)="filtro()"
+                    [(ngModel)]="filtroStato" name="filtroLivello">
+                    <option value="">Tutti</option>
+                    <option value="Nuova">Nuova</option>
+                    <option value="In corso">In corso</option>
+                    <option value="Terminata">Terminata</option>
+                  </select>
+                </label>
+              </fieldset>
+            </div>
+
+            <!-- Tasti Crea ed Elimina Nota -->
+            <div class="col-auto">
+              <button class="btn btn-primary mt-3" style="margin-right: 8px;" (click)="openLg(content)">Crea nota</button>
+              <button type="button" class="btn bg-light-warning confirm-text mt-3" (click)="ConfirmText()">Elimina note
+                selezionate</button>
+            </div>
+          </div>
+
+          <!-- fine tasti crea e rimuovi nota -->
+
+
+
+
+
+
+          <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+
+          <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+          <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force" [headerHeight]="60"
+            [footerHeight]="50" rowHeight="50" [limit]="limitRef" [rows]="note" [scrollbarH]="true"
+            [sorts]="[{prop: 'nota.id', dir: 'desc'}]" (select)="onSelect($event)" [selected]="selected"
+            [selectionType]="SelectionType.checkbox"
+            [messages]="{emptyMessage: 'Nessun dato da mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}"
+            (activate)="viewNota($event, view)">
+            <!-- <ngx-datatable-column name="Id" prop="id" [width]="250"></ngx-datatable-column> -->
+            <!-- <ngx-datatable-column name="" prop="nota.id" [width]="30" [sortable]="false">
+                <ng-template ngx-datatable-cell-template let-value="value">
+                  <div class="datatable-checkbox">
+                    <input type="checkbox" (change)="onChange(value,$event)">
+                  </div>
+                </ng-template>
+              </ngx-datatable-column> -->
+
+            <!-- <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="Id" prop="nota.id"
+              [width]="50"></ngx-datatable-column> -->
+
+            <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="" [minWidth]="30"
+              [maxWidth]="30" [width]="30" [sortable]="false" [resizeable]="false">
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Azioni" [width]="70" [sortable]="false">
+              <ng-template ngx-datatable-cell-template let-row="row">
+                <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row, modify)"></i>
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="Nome" prop="nota.name"
+              [width]="200">
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Stato" prop="nota.state" [width]="100" [sortable]="false">
+              <ng-template let-status="value" ngx-datatable-cell-template>
+                <div class="badge" [ngClass]="{
+                      'bg-light-success': status == 'Nuova',
+                      'bg-light-danger': status == 'Terminata'
+                    }">
+                  {{ status }}
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Descrizione" prop="nota.description" [width]="250" [sortable]="false">
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Personale taggato" prop="personaleTagged" [width]="250" [sortable]="false">
+              <ng-template ngx-datatable-cell-template let-value="value">
+                <div>{{value | taggedPersonale }}</div>
+                <!-- <ul>
+                    <li *ngFor="let record of value">
+                      {{record.name}}
+                    </li>
+                  </ul> -->
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Data creazione" [width]="170">
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{ row.nota.creationDate | date:'mediumDate':'+0100':'it' }}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Data scadenza" [width]="170">
+              <ng-template ngx-datatable-cell-template let-row="row">
+                {{ row.nota.dueDate | date:'mediumDate':'+0100':'it' }}
+              </ng-template>
+            </ngx-datatable-column>
+
+          </ngx-datatable>
+          <!-- ngx-datatable-filter -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--/ Filter Datatables -->
+
+<!-- INIZIO POPUP CREA NOTA -->
+<!-- RICORDA CHE IL TESTO INSERITO NELLE LABEL È LEGATO AI PLACEHOLDER(guarda funzione addDatiNota)!!! -->
+<!-- codice del popup che viene aperto quando si clicc su creaNota -->
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Crea Nota</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Nome</label>
+        <input type="text" maxlength="50" class="form-control" id="exampleFormControlInput1" placeholder="Nome"
+          [(ngModel)]="nuovanota.name" (keyup)="addDatiNota($event)">
+        <small style="color: green;">max 50 caratteri</small>
+      </div>
+      <div class="form-group col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="selectStato" class="form-label">Stato</label>
+        <select class="form-control" onfocus='this.size=4;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" [(ngModel)]="nuovanota.state" (change)="stato()">
+          <option value="Nuova" selected>Nuova</option>
+          <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+          <option value="In corso">Già in corso</option>
+          <option value="Terminata">Terminata</option>
+
+        </select>
+        <!-- <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="stato"
+                      (keyup)="createNota($event)"> -->
+      </div>
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Destinatario</label>
+        <div class="form-group">
+          <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+          <!-- multiple abilita la scelta multipla -->
+          <ng-select [items]="personaleget" bindLabel="fullName" bindValue="id" [multiple]="true"
+            [closeOnSelect]="false" placeholder="Seleziona destinatari" [(ngModel)]="destinatari">
+          </ng-select>
+          <!-- <p class="text-italic font-small-2 mt-1">
+                        Selected cities: {{selectedCityIds}}
+                      </p> -->
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-floating col-md-12">
+        <label for="floatingTextarea">Descrizione</label>
+        <textarea maxlength="5000" class="form-control" placeholder="Descrizione" id="floatingTextarea"
+          (keyup)="addDatiNota($event)"></textarea>
+        <small style="color: green;">max 5000 caratteri</small>
+      </div>
+    </div>
+
+    <div class="row">
+      <fieldset class="form-group col-md-10 col-11 mt-2">
+        <label class="form-label">Carica un File</label>
+
+        <div class="custom-file ">
+          <input type="file" class="custom-file-input" id="inputGroupFile01" (change)="addFileToNota($event)" multiple>
+          <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ? fileName.substring(0,110) +
+            '...' : fileName || "Seleziona un file"}}</label>
+        </div>
+      </fieldset>
+      <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+        (click)="deleteAttachmentNote()"></i>
+    </div>
+
+    <div class="row">
+
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label class="form-label">Data di scadenza</label>
+        <app-datepicker-single [ph]="'Scadenza'" [pos]="''" (cambiadata)="cambia($event, 'dataScadenza')"
+          id="dataScadenza">
+        </app-datepicker-single>
+        <!-- <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" [footerTemplate]="footerTemplate" placeholder="Inizio" name="dp1"
+                [(ngModel)]="nuovanota.dueDate" ngbDatepicker #d1="ngbDatepicker" placement="top"
+                (dateSelect)="getData($event)" (keyup)="addDatiNota($event)" readonly>
+              <div class="input-group-append">
+                <div class="input-group-text" (click)="d1.toggle()">
+                  <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form> -->
+        <!-- <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" placeholder="Scadenza" name="dp2" [(ngModel)]="nuovanota.dueDate"
+                ngbDatepicker #d2="ngbDatepicker" placement="" (dateSelect)="getData($event)"
+                (keyup)="addDatiNota($event)" readonly>
+              <div class="input-group-append">
+                <div class="input-group-text" (click)="d2.toggle()">
+                  <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form> -->
+      </div>
+      <!-- <p class="mt-4">Model: {{ popupModel | json }}</p> -->
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="selectStato" class="form-label">Priorità</label>
+        <select class="form-control" onfocus='this.size=4;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" id="selectStato" name="selectStato" [(ngModel)]="nuovanota.priority"
+          (change)="priorita()">
+          <option selected style="color: greenyellow;">Normale</option>
+          <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+          <option value="Bassa" style="color: aqua;">Bassa</option>
+          <option value="Alta" style="color: red;">Alta</option>
+
+        </select>
+      </div>
+
+    </div>
+
+    <!-- parte in basso -->
+  </div>
+  <div class="modal-footer">
+
+    <!-- bottone crea nota -->
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="creaNota()"
+      (click)="modal.close('Close click')">Conferma</button>
+
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+      (click)="clearData()">Chiudi</button>
+  </div>
+</ng-template>
+
+<!-- fine popup -->
+
+<!-- ------------------------------------------------------------------------------------------------------------ -->
+
+<!-- popup di modifica -->
+<ng-template #modify let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica Nota</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Nome</label>
+        <input type="text" maxlength="50" class="form-control" id="exampleFormControlInput1" placeholder="Nome"
+          [(ngModel)]="nuovanota.name" (keyup)="addDatiNota($event)">
+        <small style="color: green;">max 50 caratteri</small>
+      </div>
+      <div class="form-group col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="selectStato" class="form-label">Stato</label>
+        <select class="form-control" onfocus='this.size=4;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" [(ngModel)]="nuovanota.state" (change)="stato()">
+          <option value="Nuova" selected>Nuova</option>
+          <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+          <option value="In corso">Già in corso</option>
+          <option value="Terminata">Terminata</option>
+
+        </select>
+        <!-- <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="stato"
+                      (keyup)="createNota($event)"> -->
+      </div>
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Destinatario</label>
+        <div class="form-group">
+          <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+          <!-- multiple abilita la scelta multipla -->
+          <ng-select [items]="personaleget" bindLabel="fullName" bindValue="id" [multiple]="true"
+            [closeOnSelect]="false" placeholder="Seleziona destinatari" [(ngModel)]="destinatari">
+          </ng-select>
+          <!-- <p class="text-italic font-small-2 mt-1">
+                        Selected cities: {{selectedCityIds}}
+                      </p> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="form-floating">
+      <label for="floatingTextarea">Descrizione</label>
+      <textarea maxlength="5000" class="form-control" placeholder="Descrizione" id="floatingTextarea"
+        [(ngModel)]="nuovanota.description" (keyup)="addDatiNota($event)"></textarea>
+      <small style="color: green;">max 5000 caratteri</small>
+    </div>
+
+    <fieldset class="form-group">
+      <label class="form-label">Carica un File(non sovrascriverà gli allegati esistenti)</label>
+      <div class="custom-file">
+        <input type="file" class="custom-file-input" id="inputGroupFile01" (change)="addFileToNota($event)">
+        <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ? fileName.substring(0,110) +
+          '...' : fileName || "Seleziona un file"}}</label>
+      </div>
+    </fieldset>
+
+    <div class="row">
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label class="form-label">Data di scadenza </label>
+        <div>
+          <label *ngIf="this.nuovanota.dueDate" class="form-label">(Data precedente: {{this.nuovanota.dueDate |
+            datastringa}}) </label>
+          <label *ngIf="!this.nuovanota.dueDate" class="form-label">(Data precedente: /) </label>
+
+        </div>
+        <app-datepicker-single [ph]="'Scadenza'" [pos]="''" (cambiadata)="cambia($event, 'dataScadenza')"
+          id="dataScadenza">
+        </app-datepicker-single>
+        <!-- <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" [footerTemplate]="footerTemplate" placeholder="" name="dp1"
+                [(ngModel)]="nuovanota.dueDate" ngbDatepicker #d1="ngbDatepicker" placement="top"
+                (dateSelect)="getData($event)" (keyup)="addDatiNota($event)" readonly>
+              <div class="input-group-append">
+                <div class="input-group-text" (click)="d1.toggle()">
+                  <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form> -->
+      </div>
+      <!-- <p class="mt-4">Model: {{ popupModel | json }}</p> -->
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <br>
+        <label for="selectStato" class="form-label">Priorità</label>
+        <select class="form-control" onfocus='this.size=4;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" id="selectStato" name="selectStato" [(ngModel)]="nuovanota.priority"
+          (change)="priorita()">
+          <option selected style="color: greenyellow;">Normale</option>
+          <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+          <option value="Bassa" style="color: aqua;">Bassa</option>
+          <option value="Alta" style="color: red;">Alta</option>
+
+        </select>
+      </div>
+
+    </div>
+
+    <!-- parte in basso -->
+  </div>
+  <div class="modal-footer">
+
+    <!-- bottone crea nota -->
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="updateNota()"
+      (click)="modal.close('Close click')">Salva modifiche</button>
+
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+      (click)="clearData()">Chiudi</button>
+  </div>
+</ng-template>
+
+<!-- fine popup -->
+
+<!------------------------------ inizio popup view ---------------------------->
+<ng-template #view let-modal>
+  <div class="modal-header" style="background-color:darkcyan">
+    <h4 class="modal-title">Visualizza Nota</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Nome</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nome"
+          [(ngModel)]="nuovanota.name" readonly>
+      </div>
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Stato</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nessuno stato impostato"
+          [(ngModel)]="nuovanota.state" readonly>
+      </div>
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Priorità</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Priorità"
+          [(ngModel)]="nuovanota.priority" readonly [ngClass]>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label class="form-label">Data di scadenza</label>
+        <div style="height: 36px;border: 1px solid #e3e3e3;background-color: #f7f7f8;border-radius: 5px;">
+          <p *ngIf="this.nuovanota.dueDate"
+            style="margin-top:6px;padding-left: 10px; color: #8c8f93;vertical-align: middle;">{{this.nuovanota.dueDate
+            | datastringa}}</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <!-- <label for="exampleFormControlInput1" class="form-label">Destinatari</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nessuna destinario"
+          [(ngModel)]="destinatari" readonly> -->
+
+
+        <label for="exampleFormControlInput1" class="form-label">Destinatario</label>
+        <div class="form-group">
+
+          <!-- aggiunta classe ng-arrow-disable nel css per nascondere la freccia che apre la tendina -->
+          <ng-select class="ng-arrow-disable" [disabled]="true" [searchable]="false" [items]="personaleget"
+            bindLabel="fullName" bindValue="id" [multiple]="true" [closeOnSelect]="false"
+            placeholder="Nessun destinario" [(ngModel)]="destinatari">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Autore</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Autore"
+          [(ngModel)]="nuovanota.author" readonly>
+      </div>
+
+      <div *ngIf="fileAttachment.length == 0" class="col-md-6 mb-3"><strong>File allegati:</strong><br />Nessun file
+        allegato a questa nota</div>
+
+      <div *ngIf="fileAttachment.length != 0" class="col-md-8 mb-3"><strong>File allegati:</strong>
+        <div *ngFor="let file of fileAttachment">
+          <label for="exampleFormControlInput1" class="form-label"> {{file.fileName}}</label>
+          <i class="ft-download text-primary cursor-pointer ml-2" (click)="downloadAttachment(file)"></i>
+          <i class="ft-trash text-primary cursor-pointer ml-2" (click)="removeAttachment(file)"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-floating">
+      <label for="floatingTextarea">Descrizione</label>
+      <textarea class="form-control" rows="5" placeholder="Descrizione" id="floatingTextarea"
+        [(ngModel)]="nuovanota.description" readonly></textarea>
+    </div>
+
+    <label class="pb-1" for="floatingTextarea" *ngIf="risposteNota.length != 0">Risposte (ordinate dalla più recente in
+      alto alla meno recente)</label>
+    <label class="pb-1" for="floatingTextarea" *ngIf="risposteNota.length == 0">Nessuna risposta per questa nota</label>
+
+    <div *ngFor="let risposta of risposteNota">
+      <div class="row pb-2">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <p>
+            <span style="color: #1898d6;">{{risposta.author}}</span> il: {{risposta.creationDate | dataleggibile}}
+          </p>
+        </div>
+        <span class="pl-1 col-11 col-md-11 col-lg-7 col-xl-7 mb-3">
+          {{risposta.description}}
+        </span>
+        <span class="pl-1 col-1 col-md-1 col-lg-1 col-xl-1 mb-3">
+          <i class="ft-trash text-primary cursor-pointer ml-2" (click)="deleteRisposta(risposta.id)"
+            (click)="modal.close('Close click')" (click)="openLg(view)" title="Elimina questa risposta"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class=" modal-footer">
+
+    <button class="btn btn-success mr-2" (click)="clearData()" (click)="openLg(reply)"
+      (click)="modal.close('Close click')">Rispondi</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')" (click)="clearData()"
+      (click)="clearRisposte()">Chiudi</button>
+  </div>
+</ng-template>
+<!------------------------------- fine popup view ----------------------------->
+<!-- inizio template di risposta ad una nota -->
+
+<ng-template #reply let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Rispondi alla Nota {{notavisualizzata.row.nota.id}}</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+
+      <div class="form-floating col-md-12">
+        <label for="floatingTextarea">Risposta</label>
+        <textarea class="form-control" placeholder="Descrizione" id="floatingTextarea"
+          (keyup)="addDatiNota($event)"></textarea>
+      </div>
+
+    </div>
+
+    <!-- parte in basso -->
+  </div>
+  <div class="modal-footer">
+
+    <!-- bottone crea nota -->
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="replyNota()"
+      (click)="modal.close('Close click')" (click)="openLg">Conferma</button>
+
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')" (click)="clearData()"
+      (click)="viewNota(notavisualizzata,view)">Chiudi</button>
+  </div>
+</ng-template>
+<!-- fine template di risposta ad una nota -->
+
+
+<!-- template usato per i datepicker -->
+<ng-template #footerTemplate>
+  <hr class="my-0">
+  <button class="btn btn-primary btn-sm m-2" (click)="clearDate()">Cancella</button>
+</ng-template>

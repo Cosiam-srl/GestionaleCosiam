@@ -1,0 +1,305 @@
+<!-- spinner per la creazione di un nuovo personale -->
+<ngx-spinner>
+    <p style="color: white; font-size: 22px;"> Attendi il caricamento del prezzario... </p>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<!-- Filter Datatables -->
+<section id="ngx-datatable-prezziario">
+    <div class="row">
+        <div class="col-12">
+            <button type="button" class="btn btn-info" (click)="navigateToPrezziariGenerali()">Torna ai Prezzari
+                Generali</button>
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title" *ngIf="this.prezziarioGenerale">{{this.prezziarioGenerale.name}}</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <!-- ngx-datatable-filter -->
+                        <fieldset class="form-group">
+                            <label for="ngx-filter-ref">Cerca:
+                                <input id="ngx-filter-ref" class="form-control form-control-sm d-inline-block width-200"
+                                    type="text" placeholder="Filtra Descrizione/Categoria..."
+                                    (keyup)="filterUpdate($event)" />
+                            </label>
+                        </fieldset>
+                        <!-- Selector for number of rows to show -->
+                        <div class="d-flex align-items-center mb-2">
+                            <label class="mr-1">Mostra:</label>
+                            <select class="form-control form-control-sm d-inline-block width-100" [(ngModel)]="limit">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <label class="ml-1">righe</label>
+                        </div>
+
+                        <!-- tasto Aggiungi personale al cantiere -->
+
+                        <button class="btn btn-success mb-2 mr-2" (click)="openLg(content)">Aggiungi un
+                            prezzo</button>
+                        <button type="button" class="btn bg-light-warning confirm-text mb-2 mr-2"
+                            (click)="ConfirmText()">Elimina prezzi</button>
+                        <button type="button" class="btn bg-light-info confirm-text mb-2 mr-2"
+                            (click)="applyDiscountToSelected()">Applica Sconto</button>
+                        <!-- <button type="file" class="btn bg-light-danger mb-2 mr-2"
+                            >Importa un file xlsx</button> -->
+                        <input type="file" accept=".xlsx, .xls" #file style="display: none;" (change)="addFile($event)">
+                        <button class="btn bg-light-danger mb-2 mr-2" (click)="file.click()"
+                            ngbTooltip="File in formato .xlsx 1° col. - cod. tariffa, 2° col. - descrizione art., 3° col. - unità di misura, 4° colonna - prezzo. La prima riga verrà saltata, in quanto considerata come intestazione.">Upload
+                            file</button>
+
+                        <!-- fine  Aggiungi personale al cantiere -->
+
+                        <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+                        <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force"
+                            [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="limit"
+                            [rows]="servizicliente" [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
+                            (select)="onSelect($event)" [selected]="selected" [selectionType]="SelectionType.checkbox"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+
+                            <ngx-datatable-column name="Modifica" [width]="70" [sortable]="false">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row, modify)"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name=""
+                                [minWidth]="30" [maxWidth]="30" [width]="30" [sortable]="false" [resizeable]="false">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false"
+                                name="Codice Tariffa" prop="rateCode" [width]="100">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Descrizione Articolo" prop="description" [width]="150">
+                            </ngx-datatable-column>
+
+                            <!-- <ngx-datatable-column name="id" prop="id" [width]="30"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Categoria" prop="category" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="UM" prop="um" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Prezzo unitario" prop="pricePerUm" [width]="150">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    € {{row.pricePerUm}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Prezzo scontato" [width]="150">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    {{calculateDiscountPrice(row)}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <!-- <ngx-datatable-column name="IVA" prop="iva" [width]="150"></ngx-datatable-column> -->
+
+
+
+                        </ngx-datatable>
+                        <!-- ngx-datatable-filter -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- RICORDA CHE IL TESTO INSERITO NELLE LABEL È LEGATO AI PLACEHOLDER(guarda funzione addDatiNota)!!! -->
+<!-- codice del popup che viene aperto quando si clicc su creaNota -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Prezzo</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #prezzarioForm="ngForm">
+            <div class="row pb-4">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione Articolo</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Piastrelle"
+                        name="descrizionearticolo" #descrizionearticolo="ngModel"
+                        (ngModelChange)="validationForm(prezzarioForm)" [(ngModel)]="nuovoservizio.description"
+                        required>
+                    <small class="form-text text-muted danger" *ngIf="descrizionearticolo.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Categoria</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Legname"
+                        [(ngModel)]="nuovoservizio.category" (ngModelChange)="validationForm(prezzarioForm)"
+                        name="categoria" #categoria="ngModel">
+                    <!-- <small class="form-text text-muted danger" *ngIf="categoria.errors?.required">Campo
+                        obbligatorio</small> -->
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                    <div class="form-group">
+                        <ng-select [items]="ums" bindLabel="name" bindValue="name" [multiple]="false"
+                            [closeOnSelect]="false" placeholder="Seleziona o aggiungi" [addTag]="addCustomUms"
+                            addTagText="Aggiungi l'unità" [(ngModel)]="nuovoservizio.um"
+                            (ngModelChange)="validationForm(prezzarioForm)" name="unitadimisura"
+                            #unitadimisura="ngModel">
+                        </ng-select>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Prezzo unitario</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="exampleFormControlInput1" placeholder="Es. 5"
+                            [(ngModel)]="nuovoservizio.pricePerUm" (ngModelChange)="validationForm(prezzarioForm)"
+                            name="prezzoperum" #prezzoperum="ngModel">
+                        <!-- pattern="^[0-9]\d*(\.\d+)?$" -->
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                        <!-- <small class="form-text text-muted danger" *ngIf="prezzoperum.errors?.pattern">Inserisci una
+                            cifra numerica col punto decimale</small> -->
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Codice Tariffa</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                        [(ngModel)]="nuovoservizio.rateCode" (ngModelChange)="validationForm(prezzarioForm)"
+                        placeholder="Es. 5758 27.02.02.00 1" name="codicetariffa" #codicetariffa="ngModel">
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="discountLabel"
+                    [(ngModel)]="nuovoservizio.applyDiscount" (ngModelChange)="validationForm(prezzarioForm)"
+                    placeholder="Es. 5758 27.02.02.00 1" name="applyDiscount" #applyDiscount="ngModel">
+                    <label for="discountLabel" class="form-label">Applica sconto</label>
+                </div>
+                <!-- <div class="col-md-2 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">iva</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 10"
+                        [(ngModel)]="nuovoservizio.iva">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">%</span>
+                    </div>
+                </div>
+            </div> -->
+            </div>
+
+            <!-- parte in basso -->
+        </form>
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+            disabled>Conferma</button>
+        <button *ngIf="fff" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="aggiungiServizioCliente()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+</ng-template>
+
+<!-- fine popup creazione-->
+
+<!-- inizio popup modifica-->
+
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica il Prezzo</h4>
+
+    </div>
+    <div class="modal-body">
+        <form #prezzarioForm="ngForm">
+            <div class="row pb-4">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione Articolo</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Piastrelle"
+                        name="descrizionearticolo" #descrizionearticolo="ngModel"
+                        (ngModelChange)="validationForm(prezzarioForm)" [(ngModel)]="nuovoservizio.description"
+                        required>
+                    <small class="form-text text-muted danger" *ngIf="descrizionearticolo.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Categoria</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Legname"
+                        [(ngModel)]="nuovoservizio.category" (ngModelChange)="validationForm(prezzarioForm)"
+                        name="categoria" #categoria="ngModel">
+                    <!-- <small class="form-text text-muted danger" *ngIf="categoria.errors?.required">Campo
+                        obbligatorio</small> -->
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                    <div class="form-group">
+                        <ng-select [items]="ums" bindLabel="name" bindValue="name" [multiple]="false"
+                            [closeOnSelect]="false" placeholder="Seleziona o aggiungi" [addTag]="addCustomUms"
+                            addTagText="Aggiungi l'unità" [(ngModel)]="nuovoservizio.um"
+                            (ngModelChange)="validationForm(prezzarioForm)" name="unitadimisura"
+                            #unitadimisura="ngModel">
+                        </ng-select>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Prezzo unitario</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="exampleFormControlInput1" placeholder="Es. 5"
+                            [(ngModel)]="nuovoservizio.pricePerUm" (ngModelChange)="validationForm(prezzarioForm)"
+                            name="prezzoperum" #prezzoperum="ngModel">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Codice Tariffa</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                        [(ngModel)]="nuovoservizio.rateCode" (ngModelChange)="validationForm(prezzarioForm)"
+                        placeholder="Es. 5758 27.02.02.00 1" name="codicetariffa" #codicetariffa="ngModel">
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3 text-center">
+                    <label for="exampleFormControlInput1" class="form-label">Applica sconto</label>
+                    <input type="checkbox" class="checkbox form-control" id="exampleFormControlInput1"
+                        [(ngModel)]="nuovoservizio.applyDiscount" (ngModelChange)="validationForm(prezzarioForm)"
+                        placeholder="Es. 5758 27.02.02.00 1" name="applyDiscount" #applyDiscount="ngModel">
+                </div>
+                <!-- <div class="col-md-2 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">iva</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 10"
+                        [(ngModel)]="nuovoservizio.iva">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">%</span>
+                    </div>
+                </div>
+            </div> -->
+            </div>
+
+            <!-- parte in basso -->
+        </form>
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+            modifica</button>
+        <button *ngIf="fff" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="updateServizio()" (click)="modal.close('Close click')">Conferma modifica </button>
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+</ng-template>
+
+<!-- fine popup modifica-->

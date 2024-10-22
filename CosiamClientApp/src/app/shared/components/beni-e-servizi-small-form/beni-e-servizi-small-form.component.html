@@ -1,0 +1,59 @@
+<ngx-spinner name="spinnerFornitoreQuick">
+    <p style="color: white; font-size: 22px;">Attendi... </p>
+</ngx-spinner>
+<div #content>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Servizio</h4>
+
+    </div>
+    <div class="modal-body mb-5">
+        <div class="row pb-4">
+            <div class="col-md-4 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Descrizione Articolo</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Descrizione"
+                    [(ngModel)]="nuovoServizio.description">
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Categoria</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Piastrelle"
+                    [(ngModel)]="nuovoServizio.category">
+            </div>
+            <!-- <div class="col-md-4 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. mq"
+                    [(ngModel)]="nuovoservizio.um">
+            </div> -->
+            <div class="col-md-4 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                <div class="form-group">
+                    <ng-select [items]="ums" bindLabel="name" bindValue="name" [multiple]="false"
+                        [closeOnSelect]="false" placeholder="Seleziona unità di misura" [(ngModel)]="nuovoServizio.um">
+                    </ng-select>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Prezzo per um</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 5"
+                        [(ngModel)]="nuovoServizio.pricePerUM">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">€</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- parte in basso -->
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="creaServizio()">Conferma</button>
+        <button type="button" class="btn btn-light" (click)="this.servizioFornitoreAdded.emit(false);">Chiudi</button>
+    </div>
+</div>

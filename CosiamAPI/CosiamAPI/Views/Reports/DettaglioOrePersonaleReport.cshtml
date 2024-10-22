@@ -1,0 +1,351 @@
+﻿@using CosiamAPI.Models
+@using System.Globalization
+
+@model List<(string cantiere, DateTime date, string dayOfWeek, double ordinaryHours, double ordinaryCost, double extraordinaryHours, double extraordinaryCost, double travelHours, double travelCost, double totalCost, double absenceHours, string? absenceReasons, Personale personale)>
+
+@{
+    Layout = null;
+}
+
+@{
+    CultureInfo ci = new CultureInfo("it-IT");
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href='https://fonts.googleapis.com/css2?family=Exo+2' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Noto+Sans&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html * {
+            font-family: "Exo 2";
+        }
+
+        figure {
+            float: left;
+            width: 50%;
+            border: 1px solid black;
+            background: #ffffff;
+            margin: auto;
+            padding: 10px 10px 0px 10px;
+        }
+
+        figcaption {
+            padding: 5px;
+            background-color: #d0cece;
+            color: black;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            font-size:12px;
+        }
+        tr {
+            page-break-inside: avoid;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font: 12pt;
+        }
+
+        * {
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+
+        /* .page {
+                                                                           width: 210mm;
+                                                                           min-height: 297mm;
+                                                                           padding: 20mm;
+                                                                           margin: 10mm auto;
+                                                                           border: 1px #D3D3D3 solid;
+                                                                           border-radius: 5px;
+                                                                           background: white;
+                                                                           box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+                                                                       } */
+
+        .col-1-container {
+            display: table;
+            width: 100%;
+            border: 2px solid rgb(0, 0, 0);
+        }
+
+        .col-3-container {
+            display: table;
+            width: 100%;
+            border: 1px solid rgb(0, 0, 0);
+            margin-top: 10px;
+        }
+
+        .col-container {
+            display: table;
+            width: 100%;
+            border: 1px solid rgb(0, 0, 0);
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+            table-layout: fixed;
+        }
+
+        .truncate-text {
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-left: 5px;
+            padding-right: 10px;
+        }
+
+
+        .row {
+            display: flex;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+
+        .column {
+            flex: 50%;
+        }
+
+        .col-1-1 {
+            display: table-cell;
+            border-right: 2px solid rgb(0, 0, 0);
+            text-align: center;
+            width: 30%;
+        }
+
+        .col-1-2 {
+            display: table-cell;
+            border-right: 2px solid rgb(0, 0, 0);
+            text-align: center;
+            width: 40%;
+            vertical-align: top;
+        }
+
+        .col-1-3 {
+            display: table-cell;
+            text-align: center;
+            width: 30%;
+        }
+
+        .col-2-1 {
+            display: table-cell;
+            border-right: 1px solid rgb(0, 0, 0);
+            text-align: center;
+            width: 40%;
+            padding-left: 10px;
+        }
+
+        .col-2-2 {
+            display: table-cell;
+            border-right: 1px solid rgb(0, 0, 0);
+            text-align: center;
+            width: 30%;
+            padding-left: 10px;
+        }
+
+        .col-2-3 {
+            display: table-cell;
+            text-align: center;
+            width: 30%;
+        }
+
+        .col-3-1 {
+            display: table-cell;
+            text-align: left;
+            padding-left: 10px;
+            width: 50%;
+            border-right: 1px solid rgb(0, 0, 0);
+        }
+
+        .col-3-2 {
+            display: table-cell;
+            text-align: left;
+            padding-left: 10px;
+            width: 50%;
+        }
+
+        .col {
+            display: table-cell;
+            text-align: center;
+        }
+
+        .table-title {
+            font-size: 14pt;
+            font-weight: 600;
+        }
+
+        .report-title {
+            font-size: 18pt;
+            font-weight: 600;
+            vertical-align: middle;
+            margin-bottom: 6px;
+            margin-top: 6px;
+            line-height: 1.2;
+        }
+
+        .firma {
+            font-family: 'Caveat', cursive;
+            font-size: 30pt
+        }
+
+        .capo-cantiere {
+            font-size: 14pt;
+            font-weight: 600;
+        }
+
+        @@page {
+            size: A4;
+            margin: 0;
+        }
+
+        @@media print {
+
+            html,
+            body {
+                width: 210mm;
+                height: 297mm;
+            }
+
+            .page {
+                margin: 0;
+                border: initial;
+                border-radius: initial;
+                width: initial;
+                min-height: initial;
+                box-shadow: initial;
+                background: initial;
+                page-break-after: always;
+            }
+        }
+
+        .breakhere {
+            page-break-after: always
+        }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="report">
+        <div class="page">
+            <div class="col-1-container">
+                <div class="col-1-1">
+                    <img style="object-fit: contain; width:auto; max-height:60px; vertical-align: bottom; margin-top:8px; margin-bottom:8px"
+                         src=https://gestionale.cosiam.it/assets/img/logos/Logo-Cosiam-WOB.png>
+                </div>
+
+
+                <div class="col-1-2">
+                        <div class="report-title">Dettagli Personale<br></div>
+                </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+ <!-- Tabella Dettaglio Personale -->
+
+    <div class="row">
+        <div class="column">
+         @foreach (var group in Model.GroupBy(x => x.personale))
+         {
+            <!-- TABELLA RIEPILOGO DATI PERSONALE-->
+            <div class="table-title" style="text-align:center; background-color: #ffbfaa">Dettaglio Personale</div>
+            <table>
+                <tr style="background-color:#d0cece">
+                    <th style="width:30%; text-align: left; padding-left: 5px"><strong> @group.Key.Name @group.Key.Surname</strong></th>
+                    <th style="width:5%; text-align: left; padding-left: 5px"></th>
+                    <th style="width:25%">Inquadramento</th>
+                    <th style="width:40%"></th>
+                </tr>
+                <tr>
+                    <th style="width:30%"></th>
+                    <th style="width:5%"></th>
+                    <th style="width:25%">Qualifica</th>
+                    <th style="width:40%"></th><!-- TODO inserire qualifica   -->
+                </tr>  
+              
+                <tr>
+                    <th style="width:30%"></th>
+                    <th style="width:5%"></th>
+                    <th style="width:25%">Livello</th>
+                    <th style="width:40%"></th><!-- TODO inserire livello-->
+                </tr>  
+              
+                <tr>
+                    <th style="width:30%"></th>
+                    <th style="width:5%"></th>
+                    <th style="width:25%">Tariffa Straordinaria</th>
+                    <th style="width:40%">@($"{group.Key.extraordinaryPrice:#0.00}€/h ") </th>
+                </tr>  
+                <tr>
+                    <th style="width:30%"></th>
+                    <th style="width:5%"></th>
+                    <th style="width:25%">Caposquadra</th>
+                    <th style="width:40%"> @( !string.IsNullOrWhiteSpace(group.Key.job) && group.Key.job.Contains("PM", StringComparison.CurrentCultureIgnoreCase) ? "Sì" : "No" )</th>
+                </tr>  
+
+              </table>
+                <!-- FINE RIEPILOGO DATI PERSONALE-->
+               <br style="margin-bottom:20px">
+
+               <!-- Ore personale-->
+              <table>
+                   <tr style="background-color:#79a8f2">
+                        <th style="width:8%;">Data</th>
+                        <th style="width:7%;">Giorno</th>
+                        <th style="width:20%;">Cantiere</th>
+                        <th style="width:7%;">Ore Ordin.</th>
+                        <th  style="width:7%;">Ore Straord.</th>
+                        <th  style="width:7%;">Ore Spost.</th>
+                        <th  style="width:13%;">Costi Parziali</th>
+                        <th  style="width:10%;">Costo Totale</th>
+                        <th  style="width:8%;">Ore Assenza</th>
+                        <th  style="width:15%;">Motivazione</th>
+
+                   </tr>
+
+                    @foreach (var el in group)
+                    {
+                        <tr>
+                            <td style="width:8%; text-align: left;">@el.date.ToString("dd/MM/yyyy")</td>
+                            <td style="width:7%;text-align: center;">@el.dayOfWeek</td>
+                            <td style="width:20%; text-align: left; padding-left: 5px;word-break: break-all;word-wrap: break-word;">@el.cantiere</td>
+                            <td style="width:7%;text-align: center;">@el.ordinaryHours</td>
+                            <td style="width:7%;text-align: center;">@el.extraordinaryHours</td>
+                            <td style="width:7%;text-align: center;">@el.travelHours</td>
+                            <td style="width:13%;text-align: center;">@($"{el.ordinaryCost:#0.00}€ + {el.extraordinaryCost:#0.00}€ + {el.travelCost:#0.00}€")</td>
+                            <td style="width:10%;text-align: center;">@($"{el.totalCost:#0.00}€ ") </td>
+                            <td style="width:8%;text-align: center;">@el.absenceHours</td>
+                            <td style="width:15%;text-align: center; break-all;word-wrap: break-word;">@(el.absenceHours!=0? @el.absenceReasons:"/")</td>
+                        </tr>
+
+                    }
+
+              </table>
+                    
+               <div style="page-break-before: always;"></div>
+            }
+
+        </div>
+    </div>
+
+
+</body>
+</html>

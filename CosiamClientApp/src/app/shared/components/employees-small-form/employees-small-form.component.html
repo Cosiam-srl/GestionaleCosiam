@@ -1,0 +1,91 @@
+<ngx-spinner name="spinnerPersonaleQuick">
+  <p style="color: white; font-size: 22px;">Attendi... </p>
+</ngx-spinner>
+<div #content>
+  <div class="modal-header">
+    <h4 class="modal-title">Aggiungi Personale</h4>
+    <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button> -->
+  </div>
+  <div class="modal-body">
+    <form #datiFinanziariForm="ngForm">
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Nome</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nome" name="nome"
+                 #nome="ngModel" [(ngModel)]="nuovopersonale.name" required>
+          <small class="text-danger" *ngIf="nome.errors?.required">Campo Obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Cognome</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Cognome"
+                 name="cognome" #cognome="ngModel" [(ngModel)]="nuovopersonale.surname" required>
+          <small class="text-danger" *ngIf="cognome.errors?.required">Campo Obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CF</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
+                 name="cf" #cf="ngModel" [(ngModel)]="nuovopersonale.cf">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Costo Orario</label>
+          <div class="input-group">
+            <input type="number" min="0" class="form-control" placeholder="Es. 20" name="cOrario"
+                   #cOrario="ngModel" aria-describedby="basic-addon2"
+                   [(ngModel)]="nuovopersonale.ordinaryPrice">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€/h</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Costo Straordinario</label>
+          <div class="input-group">
+            <input type="number" min="0" class="form-control" placeholder="Es. 25" name="cStraordinario"
+                   #cStraordinario="ngModel" aria-describedby="basic-addon2"
+                   [(ngModel)]="nuovopersonale.extraordinaryPrice">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€/h</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Costo Spostamenti</label>
+          <div class="input-group">
+            <input type="number" min="0" class="form-control" placeholder="Es. 25" name="cSpost"
+                   #cSpost="ngModel" aria-describedby="basic-addon2" [(ngModel)]="nuovopersonale.travelPrice">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€/h</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Email</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email"
+                 name="email" #email="ngModel" [(ngModel)]="nuovopersonale.email">
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label class="form-label">Data di nascita</label>
+          <div>
+            <app-datepicker-single [ph]="'Data di nascita'" [pos]="''"
+                                   (cambiadata)="cambia($event, 'datanascita')" id="datanascita">
+            </app-datepicker-single>
+          </div>
+        </div>
+      </div>
+      <!-- parte in basso -->
+      <div class="modal-footer">
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+                (click)="creaPersonale()" [disabled]="!datiFinanziariForm.valid">Conferma
+        </button>
+        <button type="button" class="btn btn-light" (click)="this.personaleAdded.emit(false);">Chiudi</button>
+      </div>
+    </form>
+  </div>
+</div>

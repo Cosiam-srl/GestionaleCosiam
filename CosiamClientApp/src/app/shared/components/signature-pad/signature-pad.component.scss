@@ -1,0 +1,19 @@
+canvas {
+    display: block;
+    border: 1px solid rgb(187, 178, 178);
+    background-color: var(--ion-color-success);
+}
+button {
+    margin: 10px;
+    margin-left: 10px;
+}
+.esterno{
+    margin: auto; 
+    width: 56%;
+}
+@media(max-width:366px) {
+    .esterno{
+        margin: 0%;
+        width: 100%;
+    }
+} 

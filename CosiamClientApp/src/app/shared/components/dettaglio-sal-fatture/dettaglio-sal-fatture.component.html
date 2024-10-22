@@ -1,0 +1,987 @@
+<!-- Filter Datatables -->
+<section id="ngx-datatable-filter">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Dettaglio SAL/Fatture</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <!-- ngx-datatable-filter -->
+                        <div class="row">
+                            <!-- Campo di ricerca -->
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="ngx-filter-ref">Cerca:</label>
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Nome..." (keyup)="filterUpdate($event)" />
+                                </div>
+                            </div>
+
+                            <!-- Tasto "Aggiungi SAL/Fattura al cantiere" -->
+                            <div class="col-auto"> <!-- 'col-auto' per far sì che la colonna si adatti al contenuto -->
+                                <button class="btn btn-primary mt-3" (click)="openLg(content)">Aggiungi SAL/Fattura al
+                                    cantiere</button>
+                            </div>
+                        </div>
+
+                        <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force"
+                            [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="4"
+                            [rows]="salFattureCantiere" [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
+                            (select)="onSelect($event)" [selected]="selected" [selectionType]="SelectionType.checkbox"
+                            (activate)="viewSalFattura($event, view)"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+                            <!-- ----------------------------checkbox--------------------------- -->
+                            <!-- <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false"
+                  [resizeable]="false">
+                  <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected"
+                    let-selectFn="selectFn">
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)" />
+                    </div>
+                  </ng-template>
+                  <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected"
+                    let-onCheckboxChangeFn="onCheckboxChangeFn">
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)" />
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column> -->
+
+                            <!-- ------------------------------fine checkbox------------------------- -->
+                            <!-- <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="Id" prop="id"
+                [width]="50"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Azioni" [width]="70">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <i class="ft-edit text-primary cursor-pointer" (click)="onModify(modify, row)"></i>
+                                    <i class="ft-trash text-primary cursor-pointer ml-1" (click)="ConfirmText(row)"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Data Fattura" prop="dataEmissioneFattura" [width]="150">
+                                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+                                    <div *ngIf="value=='0001-01-01T00:00:00'">/</div>
+                                    <div *ngIf="value!='0001-01-01T00:00:00'">{{value | dataleggibile}}</div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Numero Fattura" prop="descriptionNumberFattura" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Stato Fattura" prop="fatturaState"
+                                [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Giorni di ritardo" prop="delayDaysFattura" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Totale" prop="ivaAmountFattura"
+                                [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Scadenza Fattura" prop="dataScadenzaFattura" [width]="150">
+                                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+                                    <div *ngIf="value=='0001-01-01T00:00:00'">/</div>
+                                    <div *ngIf="value!='0001-01-01T00:00:00'">{{value | dataleggibile}}</div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Data Incasso" prop="dataIncassoFattura" [width]="150">
+                                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+                                    <div *ngIf="value=='0001-01-01T00:00:00'">/</div>
+                                    <div *ngIf="value!='0001-01-01T00:00:00'">{{value | dataleggibile}}</div>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+
+                        </ngx-datatable>
+                        <!-- ngx-datatable-filter -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--/ Filter Datatables -->
+
+
+<!-- inizio popup di creazione -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi SAL/Fattura</h4>
+    </div>
+    <div class="modal-body">
+        <form #formSalFattura="ngForm">
+
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descrizione SAL</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberSal" name="numeroDescrizioneSal"
+                        #numeroDescrizioneSal="ngModel" (ngModelChange)="validationForm(formSalFattura)">
+                    <small class="form-text text-muted danger" *ngIf="numeroDescrizioneSal.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma SAL</label>
+                    <app-datepicker-single [ph]="'Inizio'" [pos]="'top'"
+                        (cambiadata)="cambia($event, 'dataEmissioneSal')">
+                    </app-datepicker-single>
+
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto SAL</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountSAL" name="importoNettoSAL" #importoNettoSAL="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoSAL.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato SAL</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.salState" name="statoSAL" #statoSAL="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)">
+                        <option value="Firmato">Firmato</option>
+                        <option value="Da firmare">Da firmare</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descrizione C.P.</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberCP" name="numeroDescrizioneCP"
+                        #numeroDescrizioneCP="ngModel" (ngModelChange)="validationForm(formSalFattura)">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma C.P.</label>
+                    <app-datepicker-single [ph]="'Inizio'" [pos]="'top'"
+                        (cambiadata)="cambia($event, 'dataEmissioneCP')">
+                    </app-datepicker-single>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto C.P.</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountCP" name="importoNettoCP" #importoNettoCP="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoCP.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato C.P.</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.cpState" name="statoCP" #statoCP="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)">
+                        <option value="Firmato">Firmato</option>
+                        <option value="Da firmare">Da firmare</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descriz. Fattura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberFattura" name="numeroDescrizioneFattura"
+                        #numeroDescrizioneFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma Fattura</label>
+                    <app-datepicker-single [ph]="'Inizio'" [pos]="'top'"
+                        (cambiadata)="cambia($event, 'dataEmissioneFattura')">
+                    </app-datepicker-single>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto Fattura</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountFattura" name="importoNettoFattura"
+                            #importoNettoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)"
+                            pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoFattura.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Importo Ivato Fattura</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.ivaAmountFattura" name="importoIvatoFattura"
+                            #importoIvatoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Scadenza Fattura</label>
+                    <app-datepicker-single [ph]="'Inizio'" [pos]="'top'"
+                        (cambiadata)="cambia($event, 'dataScadenzaFattura')">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Incasso Fattura</label>
+                    <app-datepicker-single [ph]="'Inizio'" [pos]="'top'"
+                        (cambiadata)="cambia($event, 'dataIncassoFattura')">
+                    </app-datepicker-single>
+                </div>
+
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato Fattura</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.fatturaState" name="statoFattura" #statoFattura="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)">
+                        <option value="Incassata" style="color:green">Incassata</option>
+                        <option value="Da incassare" style="color:red">Da incassare</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Giorni di ritardo</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.delayDaysFattura" name="giorniritardoFattura"
+                            #giorniritardoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">Giorni</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anticipazione Contrattuale</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.contractualAdvance" name="anticipazioneContrattuale"
+                            #anticipazioneContrattuale="ngModel" (ngModelChange)="validationForm(formSalFattura)"
+                            title="" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="anticipazioneContrattuale.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Ritenuta Infortuni</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.accidentsWithholding" name="ritenutaInfortuni"
+                            #ritenutaInfortuni="ngModel" (ngModelChange)="validationForm(formSalFattura)" title=""
+                            pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="ritenutaInfortuni.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">IVA</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.iva" name="iva" #iva="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="iva.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-5 col-xl-35 mb-3">
+                    <label class="form-label">Inizio Periodo di Riferimento</label>
+                    <app-datepicker-single (cambiadata)="cambia($event, 'dataInizioPeriodoRiferimento')">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-5 col-xl-5 mb-3">
+                    <label class="form-label">Fine Periodo di Riferimento</label>
+                    <app-datepicker-single (cambiadata)="cambia($event, 'dataFinePeriodoRiferimento')">
+                    </app-datepicker-single>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <fieldset class="form-group col-md-10 col-lg-10 col-xl-10 col-10">
+                    <label class="form-label">Allegato SAL</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                            (change)="addFileToNota($event,'sal')">
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileNameSal || "Seleziona un
+                            file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 35px;" class="ft-trash text-primary cursor-pointer "
+                    (click)="deleteAttachmentNote('sal')"></i>
+            </div>
+            <div class="row">
+                <fieldset class="form-group col-md-10 col-lg-10 col-xl-10 col-10">
+                    <label class="form-label">Allegato Certificato di Pagamento</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile02"
+                            (change)="addFileToNota($event, 'certificato')">
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileNameCertificato || "Seleziona un
+                            file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 35px;" class="ft-trash text-primary cursor-pointer "
+                    (click)="deleteAttachmentNote('certificato')"></i>
+            </div>
+            <div class="row">
+                <fieldset class="form-group col-md-10 col-lg-10 col-xl-10 col-10">
+                    <label class="form-label">Allegato Fattura</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile03"
+                            (change)="addFileToNota($event,'fattura')">
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileNameFattura || "Seleziona un
+                            file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 35px;" class="ft-trash text-primary cursor-pointer"
+                    (click)="deleteAttachmentNote('fattura')"></i>
+            </div>
+
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+            disabled>Conferma</button>
+        <button *ngIf="fff" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="aggiungiSalFattura()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+</ng-template>
+<!-- fine popup di creazione -->
+
+<!-- inizio popup di modifica -->
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica SAL/Fattura</h4>
+    </div>
+    <div class="modal-body">
+        <form #formSalFattura="ngForm">
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descrizione SAL</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberSal" name="numeroDescrizioneSal"
+                        #numeroDescrizioneSal="ngModel" (ngModelChange)="validationForm(formSalFattura)">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma SAL</label>
+                    <app-datepicker-single
+                        [value]="nuovafattura.dataEmissioneSAL? nuovafattura.dataEmissioneSAL.toString().substring(0,10) : null"
+                        [ph]="'Inizio'" [pos]="'top'" (cambiadata)="cambia($event, 'dataEmissioneSal')">
+                    </app-datepicker-single>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto SAL</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountSAL" name="importoNettoSAL" #importoNettoSAL="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoSAL.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato SAL</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.salState" name="statoSAL" #statoSAL="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)">
+                        <option value="Firmato">Firmato</option>
+                        <option value="Da firmare">Da firmare</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descrizione C.P.</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberCP" name="numeroDescrizioneCP"
+                        #numeroDescrizioneCP="ngModel" (ngModelChange)="validationForm(formSalFattura)">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma C.P.</label>
+                    <app-datepicker-single
+                        [value]="nuovafattura.dataEmissioneCP? nuovafattura.dataEmissioneCP.toString().substring(0,10) : null"
+                        [ph]="'Inizio'" [pos]="'top'" (cambiadata)="cambia($event, 'dataEmissioneCP')">
+                    </app-datepicker-single>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto C.P.</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountCP" name="importoNettoCP" #importoNettoCP="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoCP.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato C.P.</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.cpState" name="statoCP" #statoCP="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)">
+                        <option value="Firmato">Firmato</option>
+                        <option value="Da firmare">Da firmare</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descriz. Fattura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberFattura" name="numeroDescrizioneFattura"
+                        #numeroDescrizioneFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma Fattura</label>
+                    <app-datepicker-single
+                        [value]="nuovafattura.dataEmissioneFattura? nuovafattura.dataEmissioneFattura.toString().substring(0,10) : null"
+                        [ph]="'Inizio'" [pos]="'top'" (cambiadata)="cambia($event, 'dataEmissioneFattura')">
+                    </app-datepicker-single>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto Fattura</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountFattura" name="importoNettoFattura"
+                            #importoNettoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)"
+                            pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoFattura.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Importo Ivato Fattura</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.ivaAmountFattura" name="importoIvatoFattura"
+                            #importoIvatoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Scadenza Fattura</label>
+                    <app-datepicker-single
+                        [value]="nuovafattura.dataScadenzaFattura? nuovafattura.dataScadenzaFattura.toString().substring(0,10) : null"
+                        [ph]="'Inizio'" [pos]="'top'" (cambiadata)="cambia($event, 'dataScadenzaFattura')">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Data Incasso Fattura</label>
+                    <app-datepicker-single
+                        [value]="nuovafattura.dataIncassoFattura? nuovafattura.dataIncassoFattura.toString().substring(0,10) : null"
+                        [ph]="'Inizio'" [pos]="'top'" (cambiadata)="cambia($event, 'dataIncassoFattura')">
+                    </app-datepicker-single>
+                </div>
+
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato Fattura</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.fatturaState" name="statoFattura" #statoFattura="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)">
+                        <option value="Incassata" style="color:green">Incassata</option>
+                        <option value="Da incassare" style="color:red">Da incassare</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Giorni di ritardo</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.delayDaysFattura" name="giorniritardoFattura"
+                            #giorniritardoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">Giorni</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anticipazione Contrattuale</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.contractualAdvance" name="anticipazioneContrattuale"
+                            #anticipazioneContrattuale="ngModel" (ngModelChange)="validationForm(formSalFattura)"
+                            title="" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="anticipazioneContrattuale.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Ritenuta Infortuni</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.accidentsWithholding" name="ritenutaInfortuni"
+                            #ritenutaInfortuni="ngModel" (ngModelChange)="validationForm(formSalFattura)" title=""
+                            pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="ritenutaInfortuni.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">IVA</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.iva" name="iva" #iva="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="iva.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-5 col-xl-35 mb-3">
+                    <label class="form-label">Inizio Periodo di Riferimento</label>
+                    <app-datepicker-single
+                        [value]="nuovafattura.startingReferralPeriodDate? nuovafattura.startingReferralPeriodDate.toString().substring(0,10) : null"
+                        (cambiadata)="cambia($event, 'dataInizioPeriodoRiferimento')">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-5 col-xl-5 mb-3">
+                    <label class="form-label">Fine Periodo di Riferimento</label>
+                    <app-datepicker-single
+                        [value]="nuovafattura.endingReferralPeriodDate? nuovafattura.endingReferralPeriodDate.toString().substring(0,10) : null"
+                        (cambiadata)="cambia($event, 'dataFinePeriodoRiferimento')">
+                    </app-datepicker-single>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <fieldset class="form-group col-md-10 col-lg-10 col-xl-10 col-10">
+                    <label class="form-label">Allegato SAL</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                            (change)="addFileToNota($event,'sal')">
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileNameSal || "Seleziona un
+                            file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 35px;" class="ft-trash text-primary cursor-pointer "
+                    (click)="deleteAttachmentNote('sal')"></i>
+            </div>
+            <div class="row">
+                <fieldset class="form-group col-md-10 col-lg-10 col-xl-10 col-10">
+                    <label class="form-label">Allegato Certificato di Pagamento</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile02"
+                            (change)="addFileToNota($event, 'certificato')">
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileNameCertificato || "Seleziona un
+                            file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 35px;" class="ft-trash text-primary cursor-pointer "
+                    (click)="deleteAttachmentNote('certificato')"></i>
+            </div>
+            <div class="row">
+                <fieldset class="form-group col-md-10 col-lg-10 col-xl-10 col-10">
+                    <label class="form-label">Allegato Fattura</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile03"
+                            (change)="addFileToNota($event,'fattura')">
+                        <label class="custom-file-label" for="inputGroupFile01">{{fileNameFattura || "Seleziona un
+                            file"}}</label>
+                    </div>
+                </fieldset>
+                <i style="padding-top: 35px;" class="ft-trash text-primary cursor-pointer"
+                    (click)="deleteAttachmentNote('fattura')"></i>
+            </div>
+
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <!-- bottone conferma modifica nota -->
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+            Modifica</button>
+        <button *ngIf="fff" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="updateSalFatture()" (click)="TypeSuccess()" (click)="modal.close('Close click')">Conferma
+            Modifica</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+
+</ng-template>
+<!-- inizio popup di view -->
+<ng-template #view let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Visualizza SAL/Fattura</h4>
+    </div>
+    <div class="modal-body">
+        <form #formSalFattura="ngForm">
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descrizione SAL</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberSal" name="numeroDescrizioneSal"
+                        #numeroDescrizioneSal="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma SAL</label>
+                    <div style="height: 36px;border: 1px solid #e3e3e3;background-color: #f7f7f8;border-radius: 5px;">
+                        <p *ngIf="this.nuovafattura.dataEmissioneSAL"
+                            style="margin-top:6px;padding-left: 10px; color: #8c8f93;vertical-align: middle;">
+                            {{this.nuovafattura.dataEmissioneSAL | dataleggibile}}</p>
+                    </div>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto SAL</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountSAL" name="importoNettoSAL" #importoNettoSAL="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoSAL.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato SAL</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.salState" name="statoSAL" #statoSAL="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <option value="Firmato">Firmato</option>
+                        <option value="Da firmare">Da firmare</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descrizione C.P.</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberCP" name="numeroDescrizioneCP"
+                        #numeroDescrizioneCP="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma C.P.</label>
+                    <div style="height: 36px;border: 1px solid #e3e3e3;background-color: #f7f7f8;border-radius: 5px;">
+                        <p *ngIf="this.nuovafattura.dataEmissioneCP"
+                            style="margin-top:6px;padding-left: 10px; color: #8c8f93;vertical-align: middle;">
+                            {{this.nuovafattura.dataEmissioneCP | dataleggibile}}</p>
+                    </div>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto C.P.</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountCP" name="importoNettoCP" #importoNettoCP="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoCP.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato C.P.</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.cpState" name="statoCP" #statoCP="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <option value="Firmato">Firmato</option>
+                        <option value="Da firmare">Da firmare</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Num. Descriz. Fattura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovafattura.descriptionNumberFattura" name="numeroDescrizioneFattura"
+                        #numeroDescrizioneFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Emissione/Firma Fattura</label>
+                    <div style="height: 36px;border: 1px solid #e3e3e3;background-color: #f7f7f8;border-radius: 5px;">
+                        <p *ngIf="this.nuovafattura.dataEmissioneFattura"
+                            style="margin-top:6px;padding-left: 10px; color: #8c8f93;vertical-align: middle;">
+                            {{this.nuovafattura.dataEmissioneFattura | dataleggibile}}</p>
+                    </div>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Importo Netto Fattura</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.netAmountFattura" name="importoNettoFattura"
+                            #importoNettoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)"
+                            pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="importoNettoFattura.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <br />
+                    <label for="exampleFormControlInput1" class="form-label">Importo Ivato Fattura</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.ivaAmountFattura" name="importoIvatoFattura"
+                            #importoIvatoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Scadenza Fattura</label>
+                    <div style="height: 36px;border: 1px solid #e3e3e3;background-color: #f7f7f8;border-radius: 5px;">
+                        <p *ngIf="this.nuovafattura.dataScadenzaFattura"
+                            style="margin-top:6px;padding-left: 10px; color: #8c8f93;vertical-align: middle;">
+                            {{this.nuovafattura.dataScadenzaFattura | dataleggibile}}</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label class="form-label">Data Incasso Fattura</label>
+                    <div style="height: 36px;border: 1px solid #e3e3e3;background-color: #f7f7f8;border-radius: 5px;">
+                        <p *ngIf="this.nuovafattura.dataIncassoFattura"
+                            style="margin-top:6px;padding-left: 10px; color: #8c8f93;vertical-align: middle;">
+                            {{this.nuovafattura.dataIncassoFattura | dataleggibile}}</p>
+                    </div>
+                </div>
+
+
+                <div class="form-group mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="selectStato" class="form-label">Stato Fattura</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovafattura.fatturaState" name="statoFattura" #statoFattura="ngModel"
+                        (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <option value="Incassata" style="color:green">Incassata</option>
+                        <option value="Da incassare" style="color:red">Da incassare</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 col-12 col-md-12 col-lg-3 col-xl-3">
+                    <label for="exampleFormControlInput1" class="form-label">Giorni di ritardo</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovafattura.delayDaysFattura" name="giorniritardoFattura"
+                            #giorniritardoFattura="ngModel" (ngModelChange)="validationForm(formSalFattura)" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">Giorni</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anticipazione Contrattuale</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.contractualAdvance" name="anticipazioneContrattuale"
+                            #anticipazioneContrattuale="ngModel" (ngModelChange)="validationForm(formSalFattura)"
+                            title="" pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="anticipazioneContrattuale.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Ritenuta Infortuni</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.accidentsWithholding" name="ritenutaInfortuni"
+                            #ritenutaInfortuni="ngModel" (ngModelChange)="validationForm(formSalFattura)" title=""
+                            pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="ritenutaInfortuni.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">IVA</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita un valore da 0 a 99"
+                            [(ngModel)]="nuovafattura.iva" name="iva" #iva="ngModel"
+                            (ngModelChange)="validationForm(formSalFattura)" title="" pattern="^[0-9]\d*(\.\d+)?$"
+                            disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="iva.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-5 col-xl-35 mb-3">
+                    <label class="form-label">Inizio Periodo di Riferimento</label>
+                    <app-datepicker-single [disabled]="true"
+                        [value]="nuovafattura.startingReferralPeriodDate? nuovafattura.startingReferralPeriodDate.toString().substring(0,10) : null"
+                        (cambiadata)="cambia($event, 'dataInizioPeriodoRiferimento')">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-5 col-xl-5 mb-3">
+                    <label class="form-label">Fine Periodo di Riferimento</label>
+                    <app-datepicker-single [disabled]="true"
+                        [value]="nuovafattura.endingReferralPeriodDate? nuovafattura.endingReferralPeriodDate.toString().substring(0,10) : null"
+                        (cambiadata)="cambia($event, 'dataFinePeriodoRiferimento')">
+                    </app-datepicker-single>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div *ngIf="!nuovafattura.listFile || nuovafattura.listFile.length == 0" class="col-md-6 mb-3">
+                    <strong>File
+                        allegati:</strong><br />Nessun file allegato a questa SAL/Fattura
+                </div>
+
+                <div *ngIf="nuovafattura.listFile && nuovafattura.listFile.length != 0" class="col-md-8 mb-3">
+                    <strong>File
+                        allegati:</strong>
+                    <div *ngFor="let file of nuovafattura.listFile">
+                        <label for="exampleFormControlInput1" class="form-label"> {{file.fileName}}</label>
+                        <i class="ft-download text-primary cursor-pointer ml-2" (click)="downloadAttachment(file)"></i>
+                        <i class="ft-trash text-primary cursor-pointer ml-2" (click)="removeAttachment(file)"></i>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+
+
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+
+</ng-template>

@@ -1,0 +1,460 @@
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<!-- Filter Datatables -->
+<section id="ngx-datatable-DPI">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">DPI</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <!-- Campo di ricerca -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="ngx-filter-ref">Cerca:</label>
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text" placeholder="Filtra la colonna Descrizione..." (keyup)="filterUpdate($event)" />
+                                </div>
+                            </div>
+
+                            <!-- Selector for number of rows to show -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="row-selector" class="mr-1">Mostra:</label>
+                                    <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                                        <option value="10">10 elementi</option>
+                                        <option value="25">25 elementi</option>
+                                        <option value="50">50 elementi</option>
+                                        <option value="100">100 elementi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tasto "Aggiungi DPI" -->
+                            <div class="col mt-3">
+                                <button class="btn btn-primary" (click)="openLg(content)">Aggiungi DPI</button>
+                            </div>
+                        </div>
+
+                        <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+                        <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force"
+                            [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="limit" [rows]="dpi"
+                            [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+
+                            <!-- <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="id" prop="id"
+                                [width]="50"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Posizione" prop="position" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Descrizione" prop="description" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Unità di misura" prop="um" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Quantità" prop="quantity" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Costo" prop="cost" [width]="100">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    {{row.cost? row.cost + " €" : "/"}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Scadenza" prop="maintenanceExpiration" [width]="100"
+                                [sortable]="false">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    {{row.maintenanceExpiration | dataleggibile}}
+                                </ng-template>
+
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Azioni" [width]="50">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <!-- <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row)"></i> -->
+                                    <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="modifyDPI(row, modify)"></i>
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;" (click)="deleteDPI(row)"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+
+
+                        </ngx-datatable>
+                        <!-- ngx-datatable-filter -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi DPI</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #dpiForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Posizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Archivio"
+                        [(ngModel)]="nuovoDpi.position" name="posizione" #posizione="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="posizione.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Elmetto"
+                        [(ngModel)]="nuovoDpi.description" name="descrizione" #descrizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="descrizione.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. pz"
+                        [(ngModel)]="nuovoDpi.um" name="um" #um="ngModel" (ngModelChange)="validationForm(dpiForm)"
+                        title="" required>
+                    <small class="form-text text-muted danger" *ngIf="um.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Quantità</label>
+                    <input type="number" min="0" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoDpi.quantity" name="quantita" #quantita="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="quantita.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costo</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 20€"
+                            [(ngModel)]="nuovoDpi.cost" name="costo" #costo="ngModel"
+                            (ngModelChange)="validationForm(dpiForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" *ngIf="costo.errors?.pattern">Inserisci una
+                        cifra</small>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza manutenzione</label>
+                    <app-datepicker-single [ph]="'Data scad. manutenzione'" [pos]="''"
+                        (cambiadata)="cambia($event, 'scadenzaManutenzione')" id="scadenzaManutenzione">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="selectStato" class="form-label">Utilizzabile</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example" [(ngModel)]="usable"
+                        name="Utilizzabile" #Utilizzabile="ngModel" (ngModelChange)="validationForm(mezzoForm)"
+                        title="">
+                        <option value='true'>Si</option>
+                        <option value='false'>No</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+
+
+            </div>
+
+            <div class="row">
+                <!-- <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Note</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. BobcatE10/16"
+                        [(ngModel)]="nuovaAttrezzatura. notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div> -->
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"
+                        placeholder="Es. BobcatE10/16" [(ngModel)]="nuovoDpi.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title=""></textarea>
+                </div>
+
+            </div>
+
+
+            <br>
+            <br>
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+            disabled>Conferma</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="creaDpi()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+
+
+</ng-template>
+<!-- inizio popup di view -->
+<ng-template #view let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Visualizza DPI</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #dpiForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Posizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Archivio"
+                        [(ngModel)]="nuovoDpi.position" name="posizione" #posizione="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title="" required disabled>
+                    <small class="form-text text-muted danger" *ngIf="posizione.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Elmetto"
+                        [(ngModel)]="nuovoDpi.description" name="descrizione" #descrizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required disabled>
+                    <small class="form-text text-muted danger" *ngIf="descrizione.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. pz"
+                        [(ngModel)]="nuovoDpi.um" name="um" #um="ngModel" (ngModelChange)="validationForm(dpiForm)"
+                        title="" required disabled>
+                    <small class="form-text text-muted danger" *ngIf="um.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Quantità</label>
+                    <input type="number" min="0" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [ngModel]="nuovoDpi.quantity | number:'1.0-2':'it-IT'" name="quantita" #quantita="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title="" required disabled>
+                    <small class="form-text text-muted danger" *ngIf="quantita.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costo</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 20€"
+                            [ngModel]="nuovoDpi.cost | number:'1.0-2':'it-IT'" name="costo" #costo="ngModel"
+                            (ngModelChange)="validationForm(dpiForm)" title="" pattern="^[0-9]\d*(\.\d+)?$" disabled>
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" *ngIf="costo.errors?.pattern">Inserisci una
+                        cifra</small>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza manutenzione</label>
+                    <app-datepicker-single [disabled]="true"
+                        [value]="nuovoDpi.maintenanceExpiration? nuovoDpi.maintenanceExpiration.toString().substring(0,10) : null"
+                        (cambiadata)="cambia($event, 'scadenzaManutenzione')" id="scadenzaManutenzione">
+                    </app-datepicker-single>
+                    <div></div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="selectStato" class="form-label">Utilizzabile</label>
+
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example" [(ngModel)]="usable"
+                        name="Utilizzabile" #Utilizzabile="ngModel" (ngModelChange)="validationForm(mezzoForm)" title=""
+                        disabled>
+                        <option value='true'>Si</option>
+                        <option value='false'>No</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+
+
+            </div>
+
+            <div class="row">
+                <!-- <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Note</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. BobcatE10/16"
+                        [(ngModel)]="nuovaAttrezzatura. notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div> -->
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"
+                        placeholder="Es. BobcatE10/16" [(ngModel)]="nuovoDpi.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title="" disabled></textarea>
+                </div>
+
+            </div>
+
+
+            <br>
+            <br>
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+</ng-template>
+<!-- fine popup di view -->
+<!-- inizio popup di modifica -->
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica DPI</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #dpiForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Posizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Archivio"
+                        [(ngModel)]="nuovoDpi.position" name="posizione" #posizione="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="posizione.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Elmetto"
+                        [(ngModel)]="nuovoDpi.description" name="descrizione" #descrizione="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="descrizione.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. pz"
+                        [(ngModel)]="nuovoDpi.um" name="um" #um="ngModel" (ngModelChange)="validationForm(dpiForm)"
+                        title="" required>
+                    <small class="form-text text-muted danger" *ngIf="um.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Quantità</label>
+                    <input type="number" min="0" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoDpi.quantity" name="quantita" #quantita="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="quantita.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costo</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 20€"
+                            [(ngModel)]="nuovoDpi.cost" name="costo" #costo="ngModel"
+                            (ngModelChange)="validationForm(dpiForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" *ngIf="costo.errors?.pattern">Inserisci una
+                        cifra</small>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza manutenzione</label>
+                    <app-datepicker-single [disabled]="false"
+                        [value]="nuovoDpi.maintenanceExpiration? nuovoDpi.maintenanceExpiration.toString().substring(0,10) : null"
+                        (cambiadata)="cambia($event, 'scadenzaManutenzione');validationForm(dpiForm)"
+                        id="scadenzaManutenzione">
+                    </app-datepicker-single>
+                    <div></div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="selectStato" class="form-label">Utilizzabile</label>
+
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example" [(ngModel)]="usable"
+                        name="Utilizzabile" #Utilizzabile="ngModel" (ngModelChange)="validationForm(dpiForm)" title="">
+                        <option value='true'>Si</option>
+                        <option value='false'>No</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+
+
+            </div>
+
+            <div class="row">
+                <!-- <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Note</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. BobcatE10/16"
+                        [(ngModel)]="nuovaAttrezzatura. notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(attrezzaturaForm)" title="">
+                </div> -->
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2"
+                        placeholder="Es. BobcatE10/16" [(ngModel)]="nuovoDpi.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(dpiForm)" title=""></textarea>
+                </div>
+
+            </div>
+
+
+            <br>
+            <br>
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+            Modifica</button>
+        <!-- bottone modifica nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="updateDpi()" (click)="modal.close('Close click')">Conferma Modifica</button>
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+</ng-template>
+
+<!-- fine popup di modifica -->

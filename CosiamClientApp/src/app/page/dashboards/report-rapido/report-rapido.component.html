@@ -1,0 +1,13 @@
+<!-- tabella cantieri -->
+<div class="row">
+    <div class="col-md-12">
+        <app-cantieri [shortcut]="true" (report)="cantiereSelected=$event"></app-cantieri>
+    </div>
+</div>
+
+<!-- tabella reoprt che compare solo quando si seleziona un cantiere nella tabella dei cantieri -->
+<div *ngIf="cantiereSelected" class="row">
+    <div class="col-md-12">
+        <app-report [targetCantiereId]="cantiereSelected? cantiereSelected.id : null"  [targetDataInizioCantiere]="cantiereSelected? cantiereSelected.id : null"></app-report>
+    </div>
+</div>

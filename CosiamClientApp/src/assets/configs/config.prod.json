@@ -1,0 +1,12 @@
+{
+    "env": {
+        "name": "prod"
+    },
+    "logging": {
+        "console": true,
+        "minLevel": "log"
+    },
+    "apiServer": {
+        "baseUrl": "https://api.cosiam.it"
+    }
+}

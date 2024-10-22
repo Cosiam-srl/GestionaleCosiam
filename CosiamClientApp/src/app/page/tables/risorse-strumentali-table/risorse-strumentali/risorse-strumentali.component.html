@@ -1,0 +1,39 @@
+<h4>Risorse strumentali</h4>
+
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <li [ngbNavItem]="1">
+        <a ngbNavLink>Mezzi</a>
+        <ng-template ngbNavContent>
+            <app-vehicles></app-vehicles>
+
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="2">
+        <a ngbNavLink>Attrezzature</a>
+        <ng-template ngbNavContent>
+
+            <app-attrezzatura-table></app-attrezzatura-table>
+
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="3">
+        <a ngbNavLink>DPI</a>
+        <ng-template ngbNavContent>
+            <app-dpi-table></app-dpi-table>
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="4">
+        <a ngbNavLink>Strumenti di misura</a>
+        <ng-template ngbNavContent>
+            <app-strumenti-di-misura-table></app-strumenti-di-misura-table>
+        </ng-template>
+    </li>
+    <li [ngbNavItem]="5">
+        <a ngbNavLink>Inventario generale</a>
+        <ng-template ngbNavContent>
+            <app-inventario-generale-table></app-inventario-generale-table>
+        </ng-template>
+    </li>
+
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>

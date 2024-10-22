@@ -1,0 +1,410 @@
+<!-- spinner per la creazione di un nuovo personale -->
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<!-- Basic Datatables -->
+<section id="ngx-datatable-personale">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Personale</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <!-- Campo di ricerca -->
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="ngx-filter-ref">Cerca:</label>
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Nome..." (keyup)="filterUpdate($event)" />
+                                </div>
+                            </div>
+
+                            <!-- Selector for number of rows to show -->
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="row-selector" class="mr-1">Mostra:</label>
+                                    <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                                        <option value="10">10 elementi</option>
+                                        <option value="25">25 elementi</option>
+                                        <option value="50">50 elementi</option>
+                                        <option value="100">100 elementi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tasto "Aggiungi personale" -->
+                            <div class="col-2 mt-3">
+                                <button type="button" class="btn btn-primary" (click)="openLg(content)">Aggiungi
+                                    personale</button>
+                            </div>
+                            <div class="col-2 mt-3">
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div ngbDropdown class="d-inline-block">
+                                            <button type="button" class="btn btn-primary"
+                                                id="dropdownExportDettagli" (click)="openLg(dettagliPersonale)">
+                                                Estrai Dettagli
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <button type="button" class="btn btn-primary" (click)="openLg(dettagliPersonale)">Estrai
+                                    Dettagli</button> -->
+                            </div>
+                        </div>
+
+                        <!-- ngx-datatable Basic -->
+                        <ngx-datatable [rows]="personale" [rowHeight]="50" class="bootstrap core-bootstrap"
+                            [limit]="limit" [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50"
+                            [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]" selectionType="single"
+                            (activate)="rowClick($event)"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+                            <!-- <ngx-datatable-column name="Id" prop="id" [width]="50" style="text-align: center;">
+              </ngx-datatable-column> -->
+                            <ngx-datatable-column name="Nome" prop="fullName" [width]="200" style="text-align: center;">
+                                <!-- <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="d-flex align-items-center">
+                    <div *ngIf="row.avatar.length > 0; else customAvatar">
+                      <img class="rounded-circle mr-1" src="assets/img/portrait/small/{{row.avatar}}" height="32"
+                        width="32" alt="datatable-avatar">
+                    </div>
+                    <ng-template #customAvatar>
+                      <div class="avatar mr-1 ml-0"
+                        [ngClass]="{'bg-primary': row.status == '1', 'bg-success':row.status == '2', 'bg-danger':row.status == '3' , 'bg-warning':row.status == '4', 'bg-info':row.status == '5'}  ">
+                        <div class="avatar-content">{{ name | shortName }}</div>
+                      </div>
+                    </ng-template>
+                    <div class="cell-line-height">
+                      <p class="font-medium-1 line-height-1 mb-0">{{ name }}</p>
+                      <span class="text-muted font-small-2">
+                        {{ row.ruolo }}</span>
+                    </div>
+                  </div>
+                </ng-template> -->
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Email" prop="email" [width]="220" minwidth="200"
+                                [draggable]="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Telefono" prop="telephone" [width]="120" minwidth="200"
+                                [draggable]="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="DataNascita" [width]="120">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    {{row.birthday | dataleggibile}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="CF" prop="cf" [width]="160"
+                                resizable="false"></ngx-datatable-column>
+                            <ngx-datatable-column name="Ruolo" prop="job" [width]="120"></ngx-datatable-column>
+                            <ngx-datatable-column name="Costo orario" [width]="120">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    {{row.ordinaryPrice!=null ? row.ordinaryPrice + " €/h" : "/"}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Costo orario straordinari" [width]="120">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    {{row.extraordinaryPrice!=null ? row.extraordinaryPrice + " €/h" : "/"}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Costo orario spostamenti" [width]="180">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    {{row.travelPrice!=null ? row.travelPrice + " €/h" : "/" }}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Elimina" [width]="50">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <!-- <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onEdit(row)"></i> -->
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer ml-2"
+                                        (click)="deletePersonale(row)" *ngIf="authService.isAdmin()"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <!-- <ng-template let-status="value" ngx-datatable-cell-template>
+                  <div class="badge badge-pill"
+                    [ngClass]="{'bg-light-success': status == 'capo', 'bg-light-primary':status == '1', 'bg-light-danger':status == '2' , 'bg-light-warning':status == '4' , 'bg-light-info':status == '5'}">
+                    {{ status == 'capo' ? "Capo" : "Non Disponibile" }}
+                  </div>
+                </ng-template> -->
+
+
+                        </ngx-datatable>
+                        <!--/ ngx-datatable Basic -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--/ Basic Datatables -->
+
+<!-- inizio popup aggiungi personale -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Personale</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Titolo</label>
+                <div class="form-group">
+                    <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                    <!-- multiple abilita la scelta multipla -->
+                    <ng-select [items]="titoli" bindLabel="name" bindValue="name" [multiple]="false"
+                        [closeOnSelect]="false" placeholder="Seleziona titolo" [(ngModel)]="nuovopersonale.title">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nome"
+                    [(ngModel)]="nuovopersonale.name">
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Cognome</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Cognome"
+                    [(ngModel)]="nuovopersonale.surname">
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">CF</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
+                    [(ngModel)]="nuovopersonale.cf">
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Tipologia di contratto</label>
+                <div class="form-group">
+                    <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                    <!-- multiple abilita la scelta multipla -->
+                    <ng-select [items]="contratti" bindLabel="name" bindValue="name" [multiple]="false"
+                        [closeOnSelect]="false" placeholder="Seleziona contratto" [(ngModel)]="nuovopersonale.contract">
+                    </ng-select>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Ruolo Organigramma</label>
+                <div class="form-group">
+                    <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                    <!-- multiple abilita la scelta multipla -->
+                    <ng-select [items]="ruoliOrganigramma" bindLabel="name" bindValue="name" [multiple]="false"
+                        [closeOnSelect]="false" placeholder="Seleziona ruolo"
+                        [(ngModel)]="nuovopersonale.organizationRole">
+                    </ng-select>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Telefono</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Telefono"
+                    [(ngModel)]="nuovopersonale.telephone">
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label class="form-label">Data di nascita</label>
+                <div>
+                    <app-datepicker-single [ph]="'Data di nascita'" [pos]="''"
+                        (cambiadata)="cambia($event, 'datanascita')" id="datanascita">
+                    </app-datepicker-single>
+                </div>
+                <!-- <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" [footerTemplate]="footerTemplate" placeholder="Data di nascita" name="dp1"
+                [(ngModel)]="data" ngbDatepicker #d1="ngbDatepicker" placement="" (dateSelect)="getData($event)"
+                readonly>
+              <div class="input-group-append">
+                <div class="input-group-text" (click)="d1.toggle()">
+                  <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form> -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Livello</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Livello"
+                    [(ngModel)]="nuovopersonale.level">
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Luogo di nascita</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Luogo di nascita"
+                    [(ngModel)]="nuovopersonale.birthPlace">
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Domicilio</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1"
+                    placeholder="Indirizzo di Domicilio" [(ngModel)]="nuovopersonale.address">
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Email</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email"
+                    [(ngModel)]="nuovopersonale.email">
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Mansione</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Mansione"
+                    [(ngModel)]="nuovopersonale.job">
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Costo Orario</label>
+                <div class="input-group">
+                    <input type="number" min="0" class="form-control" placeholder="Es. 20"
+                        aria-describedby="basic-addon2" [(ngModel)]="nuovopersonale.ordinaryPrice">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">€/h</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Costo Straordinario</label>
+                <div class="input-group">
+                    <input type="number" min="0" class="form-control" placeholder="Es. 25"
+                        aria-describedby="basic-addon2" [(ngModel)]="nuovopersonale.extraordinaryPrice">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">€/h</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Costo Spostamenti</label>
+                <div class="input-group">
+                    <input type="number" min="0" class="form-control" placeholder="Es. 25"
+                        aria-describedby="basic-addon2" [(ngModel)]="nuovopersonale.travelPrice">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">€/h</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <!--
+      <div class="col-md-6 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Skills</label>
+        <textarea class="form-control" for="exampleFormControlInput1" id="exampleFormControlTextarea1" rows="2"
+          placeholder="" [(ngModel)]="nuovopersonale.skills"></textarea>
+      </div> -->
+
+            <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Skills</label>
+                <div class="form-group">
+                    <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                    <!-- multiple abilita la scelta multipla -->
+                    <ng-select [items]="skills" bindLabel="name" bindValue="name" [multiple]="true"
+                        [addTag]="addCustomUser" [closeOnSelect]="false" placeholder="Seleziona o aggiungi una skill"
+                        [(ngModel)]="skills" dropdownPosition="top">
+                    </ng-select>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <fieldset class="form-group col-md-11 col-11 mt-2">
+                <label class="form-label">Carica un'immagine</label>
+
+                <div class="custom-file ">
+                    <input type="file" class="custom-file-input" id="inputGroupFile01"
+                        (change)="addImageToPersonale($event)">
+                    <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ?
+                        fileName.substring(0,110) + '...' : fileName || "Seleziona un file"}}</label>
+                </div>
+            </fieldset>
+            <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+                (click)="deleteImagePersonale()"></i>
+        </div>
+
+
+
+    </div>
+
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="creaPersonale()"
+            (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+
+
+</ng-template>
+
+<!-- template usato nel datepicker -->
+<ng-template #footerTemplate>
+    <hr class="my-0">
+    <button class="btn btn-primary btn-sm m-2" (click)="clearDate()">Cancella</button>
+</ng-template>
+
+
+<ng-template #dettagliPersonale let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Estrai Dettaglio</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" style="padding-bottom: 75px">
+        <div class="row">
+            <p>Estrai nel formato scelto i dettagli del personale per poter controllare in quali cantieri hanno lavorato e
+                qual è stato il loro costo</p>
+        </div>
+        <div class="row mb-5">
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Seleziona il personale"
+                        [(ngModel)]="estraiDatiModel.ids" [clearSearchOnAdd]="true">
+                        <ng-option *ngFor="let p of personale" [value]="p.id">
+                            <div>{{p.name}} {{p.surname}} </div>
+                        </ng-option>
+                    </ng-select>
+                    <small class="text-danger" *ngIf="estraiDatiModel?.ids?.length==0">Campo obbligatorio</small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-12 pb-4">
+                    <input type="date" class="form-control" name="estraiDateFrom" id=""
+                        [(ngModel)]="estraiDatiModel.dateFrom">
+                </div>
+                <div class="col-md-6 col-12">
+                    <input type="date" class="form-control" name="estraiDateTo" id=""
+                        [(ngModel)]="estraiDatiModel.dateTo">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('xlsx')"
+            (click)="modal.close('Close click')" [disabled]="estraiDatiModel?.ids?.length==0">Estrai XLSX</button>
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('pdf')"
+            (click)="modal.close('Close click')" [disabled]="estraiDatiModel?.ids?.length==0">Estrai Pdf</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+
+</ng-template>

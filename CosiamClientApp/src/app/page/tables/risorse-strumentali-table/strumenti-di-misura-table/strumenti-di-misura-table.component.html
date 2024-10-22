@@ -1,0 +1,476 @@
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<!-- Filter Datatables -->
+<section id="ngx-datatable-sdm">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Strumenti di misura</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <!-- Campo di ricerca -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="ngx-filter-ref">Cerca:</label>
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Tipo..." (keyup)="filterUpdate($event)" />
+                                </div>
+                            </div>
+
+                            <!-- Selector for number of rows to show -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="row-selector" class="mr-1">Mostra:</label>
+                                    <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                                        <option value="10">10 elementi</option>
+                                        <option value="25">25 elementi</option>
+                                        <option value="50">50 elementi</option>
+                                        <option value="100">100 elementi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tasto "Aggiungi uno strumento di misura" -->
+                            <div class="col mt-3">
+                                <button class="btn btn-primary" (click)="openLg(content)">Aggiungi uno strumento di
+                                    misura</button>
+                            </div>
+                        </div>
+
+                        <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+                        <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force"
+                            [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="limit" [rows]="strumenti"
+                            [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+
+                            <!-- <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="id" prop="id"
+                                [width]="50"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Tipo" prop="type" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Marca" prop="brand" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Modello" prop="model" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Stato" prop="status" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Idoneità" prop="idoneity" [width]="150"></ngx-datatable-column>
+
+                            <ngx-datatable-column name="Scadenza" prop="calibrationExpiration" [width]="100"
+                                [sortable]="false">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    {{row.calibrationExpiration | dataleggibile}}
+                                </ng-template>
+
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Azioni" [width]="50">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <!-- <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row)"></i> -->
+                                    <i class="ft-edit fs-6 text-primary cursor-pointer"
+                                        (click)="modifyStrumento(row, modify)"></i>
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;"
+                                        (click)="deleteStrumentoDiMisura(row)"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+
+                        </ngx-datatable>
+                        <!-- ngx-datatable-filter -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- inizio popup di creazione -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Strumento di misura</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #SDMForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Termocamera"
+                        [(ngModel)]="nuovoStrumentoDiMisura.type" name="tipologia" #tipologia="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="tipologia.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Marca</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Flir"
+                        [(ngModel)]="nuovoStrumentoDiMisura.brand" name="marca" #marca="ngModel"
+                        (ngModelChange)="validationForm(SDMdForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="marca.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Modello</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Aspimax 16"
+                        [(ngModel)]="nuovoStrumentoDiMisura.model" name="modello" #modello="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="modello.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Matricola</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.serialNumber" name="matricola" #matricola="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="matricola.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Libretto</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.registration" name="libretto" #libretto="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Stato</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.status" name="status" #status="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                        <option value='ok'>OK</option>
+                        <option value='Dismesso'>Dismesso</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Fattura d'acquisto</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.invoice" name="fattura" #fattura="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Conformità</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.idoneity" name="conformita" #conformita="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                        <option value='Idoneo'>Idoneo</option>
+                        <option value='Non idoneo'>Non idoneo</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Scheda tecnica</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.tecSpecs" name="schedatecnica" #schedatecnica="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                        <option value='-'>-</option>
+                        <option value='ok'>OK</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza taratura</label>
+                    <app-datepicker-single [ph]="'Data scad. manutenzione'" [pos]="''"
+                        (cambiadata)="cambia($event, 'scadenzaTaratura')" id="scadenzaTaratura">
+                    </app-datepicker-single>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title=""></textarea>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+            disabled>Conferma</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="creaStrumentoDiMisura()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+
+
+</ng-template>
+<!-- inizio popup di view -->
+<ng-template #view let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Visualizza Strumento di misura</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #SDMForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Termocamera"
+                        [(ngModel)]="nuovoStrumentoDiMisura.type" name="tipologia" #tipologia="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required disabled>
+                    <small class="form-text text-muted danger" *ngIf="tipologia.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Marca</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Flir"
+                        [(ngModel)]="nuovoStrumentoDiMisura.brand" name="marca" #marca="ngModel"
+                        (ngModelChange)="validationForm(SDMdForm)" title="" required disabled>
+                    <small class="form-text text-muted danger" *ngIf="marca.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Modello</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Aspimax 16"
+                        [(ngModel)]="nuovoStrumentoDiMisura.model" name="modello" #modello="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required disabled>
+                    <small class="form-text text-muted danger" *ngIf="modello.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Matricola</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.serialNumber" name="matricola" #matricola="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required disabled>
+                    <small class="form-text text-muted danger" *ngIf="matricola.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Libretto</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.registration" name="libretto" #libretto="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" disabled>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Stato</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.status" name="status" #status="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" disabled>
+                        <option value='ok'>OK</option>
+                        <option value='Dismesso'>Dismesso</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Fattura d'acquisto</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.invoice" name="fattura" #fattura="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" disabled>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Conformità</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.idoneity" name="conformita" #conformita="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" disabled>
+                        <option value='Idoneo'>Idoneo</option>
+                        <option value='Non idoneo'>Non idoneo</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Scheda tecnica</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.tecSpecs" name="schedatecnica" #schedatecnica="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" disabled>
+                        <option value='-'>-</option>
+                        <option value='ok'>OK</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza taratura</label>
+                    <app-datepicker-single [ph]="'Data scad. manutenzione'" [pos]="''"
+                        (cambiadata)="cambia($event, 'scadenzaTaratura')" id="scadenzaTaratura" [disabled]="true"
+                        [value]="nuovoStrumentoDiMisura.calibrationExpiration? nuovoStrumentoDiMisura.calibrationExpiration.toString().substring(0,10) : null">
+                    </app-datepicker-single>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" disabled></textarea>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+
+
+</ng-template>
+
+
+<!-- inizio popup di modifica -->
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica Strumento di misura</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #SDMForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Termocamera"
+                        [(ngModel)]="nuovoStrumentoDiMisura.type" name="tipologia" #tipologia="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="tipologia.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Marca</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Flir"
+                        [(ngModel)]="nuovoStrumentoDiMisura.brand" name="marca" #marca="ngModel"
+                        (ngModelChange)="validationForm(SDMdForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="marca.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Modello</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Aspimax 16"
+                        [(ngModel)]="nuovoStrumentoDiMisura.model" name="modello" #modello="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="modello.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Matricola</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.serialNumber" name="matricola" #matricola="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="matricola.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Libretto</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.registration" name="libretto" #libretto="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Stato</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.status" name="status" #status="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                        <option value='ok'>OK</option>
+                        <option value='Dismesso'>Dismesso</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Fattura d'acquisto</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.invoice" name="fattura" #fattura="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Conformità</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.idoneity" name="conformita" #conformita="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                        <option value='Idoneo'>Idoneo</option>
+                        <option value='Non idoneo'>Non idoneo</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Scheda tecnica</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovoStrumentoDiMisura.tecSpecs" name="schedatecnica" #schedatecnica="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title="">
+                        <option value='-'>-</option>
+                        <option value='ok'>OK</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza taratura</label>
+                    <app-datepicker-single [ph]="'Data scad. manutenzione'" [pos]="''"
+                        (cambiadata)="cambia($event, 'scadenzaTaratura');validationForm(SDMForm)" id="scadenzaTaratura"
+                        [value]="nuovoStrumentoDiMisura.calibrationExpiration? nuovoStrumentoDiMisura.calibrationExpiration.toString().substring(0,10) : null">
+                    </app-datepicker-single>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Note</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="2" placeholder=""
+                        [(ngModel)]="nuovoStrumentoDiMisura.notes" name="note" #note="ngModel"
+                        (ngModelChange)="validationForm(SDMForm)" title=""></textarea>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+            Modifica</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="updateStrumento()" (click)="modal.close('Close click')">Conferma Modifica</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Chiudi</button>
+    </div>
+
+
+</ng-template>

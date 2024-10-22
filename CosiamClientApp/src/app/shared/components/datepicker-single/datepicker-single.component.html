@@ -1,0 +1,55 @@
+<!--
+<div class="input-group">
+    <input class="form-control" [footerTemplate]="footerTemplate" placeholder="Termine" name="dp2" [(ngModel)]="date"
+        ngbDatepicker #d2="ngbDatepicker" placement="top" (dateSelect)="getData($event)" readonly>
+    <div class="input-group-append">
+        <div class="input-group-text" (click)="d2.toggle()">
+            <i class="fa fa-calendar" style="cursor: pointer;"></i>
+        </div>
+    </div>
+</div>
+
+<ng-template #footerTemplate>
+    <hr class="my-0">
+    <button class="btn btn-primary btn-sm m-2" (click)="clearDate()">Cancella</button>
+</ng-template> -->
+<!-- <form class="form-inline">
+    <div class="form-group hidden">
+        <div class="input-group">
+            <input name="datepicker" class="form-control" ngbDatepicker [footerTemplate]="footerTemplate"
+                #datepicker="ngbDatepicker" [autoClose]="'outside'" (dateSelect)="getData($event)" [displayMonths]=1
+                outsideDays="hidden" tabindex="-1">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+            <input #dpFromDate readonly class="form-control" style="width: 160px;" placeholder="yyyy-mm-dd"
+                name="dpFromDate" [value]="fromDate" (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary calendar fa fa-calendar" (click)="datepicker.toggle()"
+                    type="button"></button>
+            </div>
+        </div>
+    </div>
+</form> -->
+<!-- <ng-template #footerTemplate>
+    <hr class="my-0">
+    <button class="btn btn-primary m-2" (click)="clearDate()">Cancella</button>
+</ng-template>
+
+<form class="form-inline">
+    <div class="form-group">
+        <div class="input-group">
+            <input class="form-control" [footerTemplate]="footerTemplate" [placeholder]="ph" name="dp1" ngbDatepicker
+                #d1="ngbDatepicker" [placement]="pos" (dateSelect)="getData($event)" [(ngModel)]="fromDate" readonly
+                (ngModelChange)="onChange($event)" >
+            <div class="input-group-append">
+                <div class="input-group-text" (click)="d1.toggle()">
+                    <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</form> -->
+<input type="date" class="ps-2" name="datapicker" (change)="getData($event)" [disabled]="disabled" [value]="value">
+<!-- (input)="fromDate" -->

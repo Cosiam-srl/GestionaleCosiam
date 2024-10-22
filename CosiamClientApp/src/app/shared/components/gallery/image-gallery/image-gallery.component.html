@@ -1,0 +1,15 @@
+<div class="row">
+    <div class="col-md-3 col-7 mb-2" *ngFor="let img of pagedImages">
+        <!-- cliccando si apre la foto in una nuova pagina -->
+        <a href={{img}} target="_blank">
+            <img [src]="img" style="width: 200px; height: 150px;" class="image-element" alt=""
+                (click)="onImageSelection(img)">
+        </a>
+    </div>
+    <div *ngIf="images.length==0" class="col-md-12 col-12 mb-2">
+        <p>Nessuna immagine presente nel cantiere</p>
+    </div>
+</div>
+<!-- paginazione -->
+<ngb-pagination *ngIf="images.length!=0" [collectionSize]="images.length" [(page)]="page" [pageSize]="pageSize"
+    [boundaryLinks]="true" (pageChange)="onPageChange($event)"></ngb-pagination>

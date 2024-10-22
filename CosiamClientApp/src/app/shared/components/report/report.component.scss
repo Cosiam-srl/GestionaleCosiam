@@ -1,0 +1,165 @@
+// @import '~angular-archwizard/styles/archwizard.css';
+.ricarica {
+  transform: rotate(170deg);
+  transition: transform 1s ease-in-out;
+}
+
+.p-menuitem-link {
+  text-decoration: none !important;
+}
+
+.datatable-body-cell-label {
+  width: 100%;
+}
+
+.tab-content .tab-pane {
+  padding-top: 20px;
+}
+
+.alert {
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.border-bottom {
+  border-bottom: 2px solid black !important;
+}
+
+.border-right {
+  border-right: 2px solid black !important;
+}
+
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+}
+
+
+// > .ngx-datatable .datatable-body-row
+
+//per alternare i colori degli elementi della lista rif.Articolo prezzario nello step 3 del report
+.rifArticoloList {
+  li {
+    background: white;
+  }
+
+  li:nth-child(odd) {
+    background: rgb(226, 223, 223);
+  }
+
+  li:hover {
+    background: grey;
+  }
+}
+
+//tasto ricerca art. Prezzario
+//i pixel dipendono direttamente dalla lunghezza del testo
+// di fianco alla checkbox per la ricerca con i rateCode
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+  .ricercaArtPrezButton {
+    margin-top: 23px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .ricercaArtPrezButton {
+    margin-top: 23px;
+  }
+}
+
+//se sono su un telefono, nascondi gli elementi con la classe pSteps
+@media screen and (max-width: 480px) {
+  .pSteps {
+    display: none;
+  }
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: -1rem;
+  margin-bottom: -1rem;
+}
+
+.btn-icon {
+  padding: 0;
+  margin: 0;
+  margin-left: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon i {
+  font-size: 1.5rem;
+}
+
+.col-large {
+  width: 19.5%;
+}
+
+.col-medium {
+  width: 15.5%;
+}
+
+.col-small-medium {
+  width: 9%;
+}
+
+.col-small {
+  width: 7%;
+}
+
+.col-x-small {
+  width: 5%;
+}
+
+.table {
+  width: 100%;
+}
+
+.custom-file-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.ft-paperclip {
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.file-count {
+  font-size: 14px;
+}
+
+.custom-file-upload:hover .file-count::before {
+  content: attr(data-file-names);
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 4px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.container-files {
+  width: 300px;
+  padding: 2rem;
+  text-align: center;
+  border: var(--primary-color) dashed 5px;
+  position: relative;
+  height: fit-content;
+}

@@ -1,0 +1,212 @@
+<!-- Filter Datatables -->
+<section id="ngx-datatable-filter">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Mezzi</h4>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+
+            <div class="row">
+              <!-- Campo di ricerca -->
+              <div class="col-3">
+                  <fieldset class="form-group">
+                      <label for="ngx-filter-ref">Cerca:</label>
+                      <input id="ngx-filter-ref" class="form-control form-control-sm" type="text" placeholder="Filtra la colonna Nome..." (keyup)="filterUpdate($event)" />
+                  </fieldset>
+              </div>
+
+              <!-- Tasto "Aggiungi mezzi al cantiere" -->
+              <div class="col-auto mt-3">
+                  <button class="btn btn-primary mb-2" (click)="openLg(content)">Aggiungi mezzi al cantiere</button>
+              </div>
+
+              <!-- Tasto "Elimina mezzi dal cantiere" -->
+              <div class="col-auto mt-3">
+                  <button type="button" class="btn bg-light-warning confirm-text mb-2" (click)="ConfirmText()">Elimina mezzi dal cantiere</button>
+              </div>
+          </div>
+
+
+
+            <!-- RICORDA CHE IL TESTO INSERITO NELLE LABEL È LEGATO AI PLACEHOLDER(guarda funzione addDatiNota)!!! -->
+            <!-- codice del popup che viene aperto quando si clicc su creaNota -->
+            <ng-template #content let-modal>
+              <div class="modal-header">
+                <h4 class="modal-title">Aggiungi Mezzi</h4>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="row pb-4">
+                  <div class="col-md-12 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Nuovi mezzi</label>
+                    <div class="form-group">
+                      <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                      <!-- multiple abilita la scelta multipla -->
+                      <!-- <ng-select [items]="mezziget" bindLabel="description" bindValue="id" [multiple]="true"
+                        [closeOnSelect]="false" placeholder="Seleziona mezzi" [(ngModel)]="nuovimezzi"
+                        [clearSearchOnAdd]="true">
+                      </ng-select> -->
+                      <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Seleziona mezzi"
+                        [(ngModel)]="nuovimezzi" [clearSearchOnAdd]="true">
+                        <ng-option *ngFor="let mezzo of mezziget" [value]="mezzo.id">
+
+                          <div>
+                            <strong>{{mezzo.description}}</strong>&#160;&#160;<strong>{{mezzo.brand}}</strong>&#160;&#160;<strong>{{mezzo.model}}</strong>&#160;&#160;<strong>{{mezzo.licensePlate}}</strong>
+                          </div>
+
+                        </ng-option>
+                      </ng-select>
+
+
+
+
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+
+                  <div class="col-12 col-md-12 col-lg-6 col-xl-6 mb-3">
+                    <label class="form-label">Inizio assegnamento</label>
+                    <app-datepicker-single [ph]="'Inizio'" [pos]="''" (cambiadata)="cambia($event, 'dataInizio')"
+                      id="dataInizio">
+                    </app-datepicker-single>
+                    <!-- <form class="form-inline">
+                        <div class="form-group">
+                          <div class="input-group">
+                            <input class="form-control" [footerTemplate]="footerTemplate1" placeholder="Inizio" name="dp1"
+                              [(ngModel)]="dataInizioAssegnamento" ngbDatepicker #d1="ngbDatepicker" placement="right"
+                              (dateSelect)="getDataInizio($event)" readonly>
+                            <div class="input-group-append">
+                              <div class="input-group-text" (click)="d1.toggle()">
+                                <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form> -->
+                  </div>
+
+                  <div class="col-12 col-md-12 col-lg-6 col-xl-6 mb-3">
+                    <label class="form-label">Fine assegnamento</label>
+                    <app-datepicker-single [ph]="'Fine'" [pos]="''" (cambiadata)="cambia($event, 'dataFine')"
+                      id="dataFine">
+                    </app-datepicker-single>
+                    <!-- <form class="form-inline">
+                        <div class="form-group">
+                          <div class="input-group">
+                            <input class="form-control" [footerTemplate]="footerTemplate2" placeholder="Termine" name="dp2"
+                              [(ngModel)]="dataFineAssegnamento" ngbDatepicker #d2="ngbDatepicker" placement="left"
+                              (dateSelect)="getDataTermine($event)" readonly>
+                            <div class="input-group-append">
+                              <div class="input-group-text" (click)="d2.toggle()">
+                                <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form> -->
+                  </div>
+
+                  <!-- <p class="mt-4">Model: {{ popupModel | json }}</p> -->
+                </div>
+                <br>
+                <br>
+
+                <!-- parte in basso -->
+              </div>
+              <div class="modal-footer">
+
+                <!-- bottone crea nota -->
+                <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+                  (click)="aggiungiMezzi()" (click)="TypeSuccess()"
+                  (click)="modal.close('Close click')">Conferma</button>
+
+                <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+              </div>
+            </ng-template>
+
+            <!-- fine popup -->
+
+
+            <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+
+            <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+            <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force" [headerHeight]="60"
+              [footerHeight]="50" rowHeight="50" [limit]="4" [rows]="mezziCantiere" [scrollbarH]="true"
+              [sorts]="[{prop: 'id', dir: 'desc'}]" (select)="onSelect($event)" [selected]="selected"
+              [selectionType]="SelectionType.checkbox"
+              [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+              <!-- ----------------------------checkbox--------------------------- -->
+              <!-- <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false" [draggable]="false"
+                [resizeable]="false">
+                <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected"
+                  let-selectFn="selectFn">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)" />
+                  </div>
+                </ng-template>
+                <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected"
+                  let-onCheckboxChangeFn="onCheckboxChangeFn">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)" />
+                  </div>
+                </ng-template>
+              </ngx-datatable-column> -->
+
+              <!-- ------------------------------fine checkbox------------------------- -->
+              <!-- <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="id" prop="idMezzi"
+                [width]="50"></ngx-datatable-column> -->
+
+              <!-- <ngx-datatable-column name="Azioni" [width]="60">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row)"></i>
+                </ng-template>
+              </ngx-datatable-column> -->
+
+              <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="" [minWidth]="30"
+                [maxWidth]="30" [width]="30" [sortable]="false" [resizeable]="false">
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="Nome"
+                prop="mezzo.description" [width]="150">
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Brand" prop="mezzo.brand" [width]="150"></ngx-datatable-column>
+              <ngx-datatable-column name="Modello" prop="mezzo.model" [width]="150"></ngx-datatable-column>
+              <ngx-datatable-column name="Targa" prop="mezzo.licensePlate" [width]="150"></ngx-datatable-column>
+              <ngx-datatable-column name="dataInizioAssegnamento" [width]="150">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{ row.fromDate | date:'mediumDate':'+0100':'it' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="dataFineAssegnamento" [width]="150">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{ row.toDate | date:'mediumDate':'+0100':'it' }}
+                </ng-template>
+              </ngx-datatable-column>
+
+
+            </ngx-datatable>
+            <!-- ngx-datatable-filter -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--/ Filter Datatables -->
+<ng-template #footerTemplate1>
+  <hr class="my-0">
+  <button class="btn btn-primary btn-sm m-2" (click)="clearDataInizio()">Cancella</button>
+</ng-template>
+<ng-template #footerTemplate2>
+  <hr class="my-0">
+  <button class="btn btn-primary btn-sm m-2" (click)="clearDataFine()">Cancella</button>
+</ng-template>

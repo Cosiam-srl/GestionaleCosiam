@@ -1,0 +1,555 @@
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<!-- Filter Datatables -->
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<section id="ngx-datatable-cantieri">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Cantieri</h4>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="row mb-2">
+              <!-- Campo di ricerca -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="filtroMulticampo">Cerca:</label>
+                  <input id="filtroMulticampo" class="form-control form-control-sm" type="text"
+                    placeholder="Filtra la colonna Descrizione Breve" (keyup)="filterUpdate($event)" />
+                </div>
+              </div>
+              <!-- Selettore numero di righe (Mostra) -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="row-selector">Mostra:</label>
+                  <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                    <option value="10">10 elementi</option>
+                    <option value="25">25 elementi</option>
+                    <option value="50">50 elementi</option>
+                    <option value="100">100 elementi</option>
+                  </select>
+                </div>
+              </div>
+              <!-- Selettore stato -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="status-select">Stato:</label>
+                  <select id="status-select" class="form-control form-control-sm" (change)="filterUpdate($event)"
+                    [(ngModel)]="filtroStato">
+                    <option value="">Tutti</option>
+                    <option value="Da avviare">Da avviare</option>
+                    <option value="In corso">In corso</option>
+                    <option value="Sospeso">Sospeso</option>
+                    <option value="Ultimato">Ultimato</option>
+                    <option value="Bozza">Bozza</option>
+                  </select>
+                </div>
+              </div>
+              <!-- tasto crea cantiere -->
+              <div class="col mt-3">
+                <button *ngIf="!this.shortcut" type="button" class="btn btn-primary" (click)="openLg(content)">Aggiungi
+                  cantiere
+                </button>
+                <!-- fine tasto crea cantiere -->
+              </div>
+            </div>
+            <!-- il campo limit serve per impostare quante righe compaiono per ogni pagina -->
+            <!-- ordino la tabella per id(dall'ultimo cantiere creato al primo) -->
+            <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force" [headerHeight]="50"
+              [footerHeight]="50" rowHeight="50" [limit]="limit" [rows]="cantieri" [scrollbarH]="true"
+              selectionType="single" [sorts]="[{prop: sortCol, dir: sortDir}]" (sort)="sort($event)"
+              (select)="rowSelected($event)" (activate)="rowClick($event)"
+              [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+              <!-- <ngx-datatable-column name="Id" prop="id" [width]="40"></ngx-datatable-column> -->
+              <ngx-datatable-column name="Cod. Commessa" prop="orderCode" [width]="110" [sortable]="true">
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column name="Nome Cliente" prop="clienteName" [width]="200"
+                  [sortable]="false">
+              </ngx-datatable-column> -->
+              <!-- in realtà il backend mi passa la descrizione breve nella description -->
+              <ngx-datatable-column name="Descrizione Breve" prop="description" [width]="300" [sortable]="true">
+                <ng-template let-value="value" ngx-datatable-cell-template>
+                  <div title="{{value}}">{{ value }}</div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Stato" prop="state" [width]="120">
+                <ng-template let-status="value" ngx-datatable-cell-template>
+                  <div class="badge" [ngClass]="{
+                        'bg-light-success': status == 'In corso',
+                        'bg-light-secondary': status == 'Da avviare',
+                        'bg-light-primary': status == 'Ultimato',
+                        'bg-light-info': status == 'Bozza',
+                        'bg-light-warning': status == 'Sospeso'
+                      }">
+                    {{ status }}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Importo Complessivo" prop="finalAmount" [width]="200" [sortable]="true">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{ row.finalAmount | number:'1.2-2':'it' }} €
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column name="Avanzamento %" [width]="200" [sortable]="false">
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Scostamento %" prop="scostament" [width]="200"
+                  [sortable]="false">
+              </ngx-datatable-column> -->
+              <ngx-datatable-column name="Inizio" prop="start" [width]="80">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{ row.start | date:'mediumDate':'+0100':'it' }}
+                  <!-- {{ row.start }} -->
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Termine stimato" prop="estimatedEnding" [width]="80">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{ row.estimatedEnding | date:'mediumDate':'+0100':'it' }}
+                  <!-- {{ row.estimatedEnding }} -->
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- Se sono nella main dashboard non mostro la colonna delle azioni -->
+              <!-- Se sono nella dashboard cantiere si -->
+              <ngx-datatable-column *ngIf="!this.shortcut" name="Elimina" [width]="45" [sortable]="true">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <!-- <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row)"></i> -->
+                  <i class="ft-trash fs-6 text-primary cursor-pointer" (click)="deleteCantiere(row)"></i>
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column name="Salary" prop="salary" [width]="100"></ngx-datatable-column> -->
+            </ngx-datatable>
+            <!-- ngx-datatable-filter -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--/ Filter Datatables -->
+<!-- inizio popup crea cantieri -->
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Crea Cantiere</h4>
+  </div>
+  <div class="modal-body">
+    <form #cantiereForm="ngForm">
+      <div class="row">
+        <!-- <div class="mb-3 col-md-4">
+  <label for="exampleFormControlInput1" class="form-label">Cliente</label>
+  <div class="form-group">
+    <ng-select [items]="clientiget" (focus)="this.size=4" name="cliente" #cliente="ngModel" required title=""
+      (ngModelChange)="validationForm(cantiereForm)" bindLabel="name" bindValue="id" [multiple]="false"
+      [closeOnSelect]="false" placeholder="Seleziona cliente" [(ngModel)]="clienteselezionato">
+    </ng-select>
+    <small class="form-text text-muted danger" *ngIf="cliente.errors?.required">Campo obbligatorio</small>
+
+  </div>
+</div> -->
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Contratto</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="contrattiget" name="contratto" #contratto="ngModel" title="" required
+              (ngModelChange)="validationForm(cantiereForm)" bindLabel="shortDescription" bindValue="id"
+              [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona contratto"
+              [(ngModel)]="nuovocantiere.idContratto" (change)="riempiSoa($event)">
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="contratto.errors?.required">Campo
+              obbligatorio</small>
+            <!-- <p class="text-italic font-small-2 mt-1">
+Selected cities: {{selectedCityIds}}
+</p> -->
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Descrizione Breve</label>
+          <div class="form-group">
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Descrizione Breve"
+              [(ngModel)]="nuovocantiere.shortDescription" name="descrBreve" #descrBreve="ngModel"
+              (ngModelChange)="validationForm(cantiereForm)">
+          </div>
+        </div>
+        <div class="form-groupcol-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="selectStato" class="form-label">Stato</label>
+          <select class="form-control" name="stato" #stato="ngModel" required title=""
+            (ngModelChange)="validationForm(cantiereForm)" onfocus='this.size=3;' onblur='this.size=1;'
+            onchange='this.size=1; this.blur();' aria-label="Default select example" [(ngModel)]="nuovocantiere.state"
+            (change)="stato()">
+            <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+            <option value="Da avviare">Da avviare</option>
+            <option value="In corso">In corso</option>
+            <option value="Sospeso">Sospeso</option>
+            <option value="Ultimato">Ultimato</option>
+          </select>
+          <small class="form-text text-muted danger" *ngIf="stato.errors?.required">Campo obbligatorio</small>
+          <!-- <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="stato"
+(keyup)="createNota($event)"> -->
+        </div>
+        <div class="col-12 col-md-12 col-lg-2 col-xl-2 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CAP</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 93012"
+            [(ngModel)]="nuovocantiere.cap" name="cap" #cap="ngModel" (ngModelChange)="validationForm(cantiereForm)"
+            pattern="[0-9]{5}">
+          <small class="form-text text-muted success">Il cap è necessario per la visualizzazione del
+            meteo</small>
+          <small class="form-text text-muted danger" *ngIf="cap.errors?.pattern">Inserisci 5 cifre</small>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Codice commessa</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 21-01"
+            [(ngModel)]="nuovocantiere.orderCode" name="codicecommessa" #codicecommessa="ngModel"
+            (ngModelChange)="validationForm(cantiereForm)" required>
+          <small class="form-text text-muted danger" *ngIf="codicecommessa.errors?.required">Campo
+            obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Località/Area</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Località/Area"
+            [(ngModel)]="nuovocantiere.address" name="indirizzo" #indirizzo="ngModel"
+            (ngModelChange)="validationForm(cantiereForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1">Descrizione lavori</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+              [(ngModel)]="nuovocantiere.description" name="descrizionelavori" #descrizionelavori="ngModel"
+              (ngModelChange)="validationForm(cantiereForm)"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">PM</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="personale_get" bindLabel="fullName" bindValue="id" [multiple]="true"
+              [closeOnSelect]="false" placeholder="Seleziona il project manager" [(ngModel)]="pm_selezionati"
+              name="pmCantiere" #pmCantiere="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)" required>
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="pmCantiere.errors?.required">Campo
+              obbligatorio</small>
+            <!-- <p class="text-italic font-small-2 mt-1">
+Selected cities: {{selectedCityIds}}
+</p> -->
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Capocantiere</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="personale_get" bindLabel="fullName" bindValue="id" [multiple]="true"
+              [closeOnSelect]="false" placeholder="Seleziona il Capocantiere" [(ngModel)]="capocantieri_selezionati"
+              name="capoCantiere" #capoCantiere="ngModel" (ngModelChange)="validationForm(cantiereForm)" required>
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="capoCantiere.errors?.required">Campo
+              obbligatorio</small>
+            <!-- <p class="text-italic font-small-2 mt-1">
+Selected cities: {{selectedCityIds}}
+</p> -->
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3" *ngIf="this.soa.length!=0">
+          <label for="exampleFormControlInput1" class="form-label">Categoria SOA</label>
+          <div class="form-group">
+            <ng-select [items]="this.soa" bindLabel="name" bindValue="name" [multiple]="true" [closeOnSelect]="false"
+              placeholder="Seleziona la categoria" name="soacat"
+              (change)="categoriaSOA($event);validationForm(cantiereForm)">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="row"> -->
+      <!-- <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+    <label for="exampleFormControlInput1" class="form-label">CIG</label>
+    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CIG"
+      [(ngModel)]="nuovocantiere.cig" name="cig" #cig="ngModel" (ngModelChange)="validationForm(cantiereForm)">
+  </div>
+  <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+    <label for="exampleFormControlInput1" class="form-label">CUP</label>
+    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CUP"
+      [(ngModel)]="nuovocantiere.cup" name="cup" #cup="ngModel" (ngModelChange)="validationForm(cantiereForm)">
+  </div>
+  <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+    <label for="exampleFormControlInput1" class="form-label">ODA/RDO</label>
+    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="ODA/RDO"
+      [(ngModel)]="nuovocantiere.oda" name="oda" #oda="ngModel" (ngModelChange)="validationForm(cantiereForm)">
+  </div> -->
+      <!-- </div> -->
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Lavori</label>
+          <div class="input-group mb-0">
+            <input type="number" class="form-control" min=1 placeholder="Digita l'ammontare"
+              [(ngModel)]="nuovocantiere.workBudget" name="importolavori" #importolavori="ngModel"
+              (ngModelChange)="validationForm(cantiereForm)" title="" pattern="^[1-9]\d*(\.\d+)?$" required>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+          @if (importolavori.errors?.required) {
+          <small class="form-text text-muted danger">Campo
+            obbligatorio</small>
+          }
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="importolavori.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Oneri</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+              [(ngModel)]="nuovocantiere.chargesBudget" name="importooneri" #importooneri="ngModel"
+              (ngModelChange)="validationForm(cantiereForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="importooneri.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Commessa</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [ngModel]="nuovocantiere.orderAmount | number:'1.0-2':'it-IT'" name="importocommessa"
+              #importocommessa="ngModel" (ngModelChange)="validationForm(cantiereForm)" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-1 justify-content-center align-items-center mt-4"
+          *ngIf="nuovocantiere.valoriAggiuntivi.length === 0">
+          <button (click)="addValoriAggiuntivi(nuovocantiere); validationForm(cantiereForm)" type="button"
+            class="btn btn-success d-flex" style="height: 40.5px; ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus"
+              viewBox="0 0 16 16">
+              <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        @for (valoreaggiuntivo of nuovocantiere.valoriAggiuntivi; track valoreaggiuntivo; let i = $index) {
+        <div class="d-flex gap-4 flex-column flex-lg-row">
+          <div class="d-flex m-2 d-lg-none" style="height: 2px ; background-color: black"></div>
+          <div>
+            <label class="form-label">Lavori Agg. Lordo</label>
+            <div class="input-group">
+              <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+                [(ngModel)]="valoreaggiuntivo.additionalGrossWorkAmount" name="importolavoriaggiuntivolordo{{i}}"
+                #importolavoriaggiuntivolordo="ngModel" (ngModelChange)="validationForm(cantiereForm)" title=""
+                pattern="^[0-9]\d*(\.\d+)?$">
+              <div class="input-group-append">
+                <span class="input-group-text">€</span>
+              </div>
+            </div>
+            <small class="form-text text-muted danger" style="margin-top: -11px;"
+              *ngIf="importolavoriaggiuntivolordo.errors?.pattern">Inserisci
+              una cifra numerica</small>
+          </div>
+          <div>
+            <label class="form-label">Oneri Agg.</label>
+            <div class="input-group">
+              <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+                [(ngModel)]="valoreaggiuntivo.additionalChargesAmount" name="importooneriaggiuntivo{{i}}"
+                #importooneriaggiuntivo="ngModel" (ngModelChange)="validationForm(cantiereForm)" title=""
+                pattern="^[0-9]\d*(\.\d+)?$">
+              <div class="input-group-append">
+                <span class="input-group-text">€</span>
+              </div>
+            </div>
+            <small class="form-text text-muted danger" style="margin-top: -11px;"
+              *ngIf="importooneriaggiuntivo.errors?.pattern">Inserisci
+              una cifra numerica</small>
+          </div>
+          <div>
+            <label class="form-label">Aggiuntivo Netto</label>
+            <div class="input-group">
+              <input type="text" class="form-control" [ngModel]="valoreaggiuntivo.additionalNetAmount | number:'1.0-2':'it-IT'"
+                name="importoaggiuntivonetto{{i}}" #importoaggiuntivonetto="ngModel"
+                (ngModelChange)="validationForm(cantiereForm)" title="" disabled>
+              <div class="input-group-append">
+                <span class="input-group-text">€</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Giorni Solari Agg.</label>
+            <div class="input-group">
+              <input type="number" class="form-control" [(ngModel)]="valoreaggiuntivo.additionalSolarDays"
+                name="additionalSolarDays{{i}}" (ngModelChange)="validationForm(cantiereForm)" title=""
+                pattern="^[0-9]\d*(\.\d+)?$">
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Data</label>
+            <app-datepicker-single (cambiadata)="cambia($event, 'datacantiere', valoreaggiuntivo)" id="datacontratto">
+            </app-datepicker-single>
+          </div>
+          <div class="d-flex justify-content-end align-items-center mt-2">
+            <button (click)="removeValoriAggiuntivi(valoreaggiuntivo, nuovocantiere); validationForm(cantiereForm)"
+              type="button" class="btn btn-danger " style="height: 40.5px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-trash-fill" viewBox="0 0 16 16">
+                <path
+                  d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
+                </path>
+              </svg>
+            </button>
+          </div>
+          <div class="d-flex justify-content-center align-items-center mt-2" *ngIf="isLastIndex(i)">
+            <button (click)="addValoriAggiuntivi(nuovocantiere); validationForm(cantiereForm)" type="button"
+              class="btn btn-success d-flex" style="height: 40.5px; ">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus"
+                viewBox="0 0 16 16">
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      <div class="row mt-3">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Lavori Totale Lordo</label>
+          <div class="input-group">
+            <input type="text" class="form-control" min=0 [ngModel]="nuovocantiere.totalGrossWorkAmount | number:'1.0-2':'it-IT'"
+              name="importolavoritotalelordo" #importolavoritotalelordo="ngModel"
+              (ngModelChange)="validationForm(cantiereForm)" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Oneri Totale</label>
+          <div class="input-group">
+            <input type="text" class="form-control" min=0 [ngModel]="nuovocantiere.totalChargesAmount | number:'1.0-2':'it-IT'"
+              name="importooneritotale" #importooneritotale="ngModel" (ngModelChange)="validationForm(cantiereForm)"
+              title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Totale Netto</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [ngModel]="nuovocantiere.finalAmount | number:'1.0-2':'it-IT'" name="importototalenetto"
+              #importototalenetto="ngModel" (ngModelChange)="validationForm(cantiereForm)" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">R.U.P.</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="RUP"
+            [(ngModel)]="nuovocantiere.rup" name="rup" #rup="ngModel" (ngModelChange)="validationForm(cantiereForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">D.L.</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="DL"
+            [(ngModel)]="nuovocantiere.dl" name="dl" #dl="ngModel" (ngModelChange)="validationForm(cantiereForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">C.S.E.</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CSE"
+            [(ngModel)]="nuovocantiere.cse" name="cse" #cse="ngModel" (ngModelChange)="validationForm(cantiereForm)">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label">Data di inizio</label>
+          <app-datepicker-single [ph]="'Inizio'" [pos]="'top'" (cambiadata)="cambia($event, 'datainizio')"
+            id="datainizio">
+          </app-datepicker-single>
+          <!-- <form class="form-inline">
+<div class="form-group">
+  <div class="input-group">
+    <input class="form-control" placeholder="Inizio" name="dp1" [(ngModel)]="nuovocantiere.start"
+      ngbDatepicker #d1="ngbDatepicker" placement="right" (dateSelect)="getDataInizio($event)" readonly>
+    <div class="input-group-append">
+      <div class="input-group-text" (click)="d1.toggle()">
+        <i class="fa fa-calendar" style="cursor: pointer;"></i>
+      </div>
+    </div>
+  </div>
+</div>
+</form> -->
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label">Termine stimato</label>
+          <app-datepicker-single [ph]="'Fine stimata'" [pos]="'top'" (cambiadata)="cambia($event, 'dataFineStimata')"
+            id="dataFineStimata">
+          </app-datepicker-single>
+          <!-- <form class="form-inline">
+<div class="form-group">
+  <div class="input-group">
+    <input class="form-control" placeholder="Fine stimata" name="dp2"
+      [(ngModel)]="nuovocantiere.estimatedEnding" ngbDatepicker #d2="ngbDatepicker" placement="right"
+      (dateSelect)="getDataTermine($event)" readonly>
+    <div class="input-group-append">
+      <div class="input-group-text" (click)="d2.toggle()">
+        <i class="fa fa-calendar" style="cursor: pointer;"></i>
+      </div>
+    </div>
+  </div>
+</div>
+</form> -->
+        </div>
+        <!-- <p class="mt-4">Model: {{ popupModel | json }}</p> -->
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label">Costi iniziali:</label>
+          <input [(ngModel)]="nuovocantiere.costiIniziali" (ngModelChange)="validationForm(cantiereForm)"
+            name="costiIniziali" type="number" class="form-control" min=0 placeholder="Digita l'ammontare" title="">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label">Ricavi iniziali:</label>
+          <input [(ngModel)]="nuovocantiere.ricaviIniziali" (ngModelChange)="validationForm(cantiereForm)" type="number"
+            name="ricaviIniziali" class="form-control" min=0 placeholder="Digita l'ammontare" title="">
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- parte in basso -->
+  <div class="modal-footer">
+    @if (!cantiereFormIsValid) {
+    <button type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+    </button>
+    }
+
+    <!-- bottone crea nota -->
+    @if (cantiereFormIsValid == true) {
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="modal.close('Close click'); creaCantiereBozza()">Salva come Bozza
+    </button>
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="modal.close('Close click'); creaCantiere()">Conferma
+    </button>
+    }
+
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+  </div>
+</ng-template>
+<!-- fine popup -->
+<!-- fine popup crea cantieri -->

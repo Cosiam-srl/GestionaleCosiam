@@ -1,0 +1,1046 @@
+<!-- necessario per lo spinner quando si aggiunge una nuova scadenza(amministrazione, hse, ...) -->
+<ngx-spinner name="spinner1" type="ball-fall">
+  <p style="color: white; font-size: 22px;"> Verifico che non ci sia un report parzialmente compilato... </p>
+</ngx-spinner>
+<ngx-spinner name="spinner2" type="ball-scale-multiple">
+  <p style="color: white; font-size: 22px;">Attendi... </p>
+</ngx-spinner>
+<ngx-spinner name="spinner3" type="ball-scale-multiple">
+  <p style="color: white; font-size: 22px;">Sto generando il report... </p>
+</ngx-spinner>
+<!-- Filter Datatables -->
+<section id="report-table">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Report</h4>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <!-- ngx-datatable-filter -->
+            <!-- <fieldset class="form-group">
+                <label for="ngx-filter-ref">Cerca:
+                    <input id="ngx-filter-ref" class="form-control form-control-sm d-inline-block width-200"
+                        type="text" placeholder="Filtra la colonna Nome..."
+                        (keyup)="filterUpdate($event)" />
+                </label>
+            </fieldset> -->
+            <div class="row">
+              <!-- Primo bottone "Aggiungi un report" -->
+              <div class="col-auto">
+                <button class="btn btn-primary mb-2" (click)="openLg(create)"
+                        id="openReportButton1">Aggiungi un report
+                </button>
+              </div>
+              <!-- Secondo bottone "Duplica ultimo report" -->
+              <div class="col-auto">
+                <button class="btn btn-primary mb-2" (click)="duplicateLastReport(create)"
+                        id="openReportButton2" [disabled]="reportCantiere?.length<=0">Duplica ultimo
+                  report
+                </button>
+              </div>
+              <!-- Terzo bottone "Aggrega Report"
+              <div class="col-auto">
+                  <button class="btn btn-primary mb-2" (click)="openAggregaModal()" id="openReportButton3"
+                      [disabled]="reportCantiere?.length<=0">Aggrega Report</button>
+              </div>
+
+                  -->
+              <div class="col-auto">
+                <button class="btn btn-primary mb-2" (click)="openAggregaModal()"
+                        id="openReportButton3">Aggrega Report
+                </button>
+              </div>
+              <!-- <div class="col-auto">
+                  <ul class="legend-list ">
+                      <li>Bozza</li>
+                      <li>Approvato</li>
+                      <li>Da Approvare</li>
+                  </ul>
+              </div> -->
+            </div>
+            <!-- Template per il modale -->
+            <ng-template #aggregaModalContent>
+              <div class="modal-header">
+                <h3 *ngIf="idReport==0" class="modal-title">Aggrega Report</h3>
+                <h3 *ngIf="idReport>0" class="modal-title">Scarica Report del
+                  {{ startDateAggrega.split('-').reverse().join('-') }}</h3>
+              </div>
+              <div class="modal-body">
+                <div *ngIf="idReport==0" class="row">
+                  <h5 class="modal-title">Seleziona le date</h5>
+                  <div class="col-md-6">
+                    <label>Data inizio:</label>
+                    <input style="margin-right: 20px;" class="form-control" type="date"
+                           [(ngModel)]="startDateAggrega">
+                  </div>
+                  <div class="col-md-6">
+                    <label>Data fine:</label>
+                    <input type="date" class="form-control" [(ngModel)]="endDateAggrega">
+                  </div>
+                </div>
+                <hr *ngIf="idReport==0" style="width:100%; height: 1px; background-color: #000;">
+                <div class="row mt-2">
+                  <h5 class="modal-title">Mostrare nel report:</h5>
+                  <div *ngIf="idReport==0" class="col-3 mb-3">
+                    <div class="form-check">
+                      <label class="form-check-label">Dettagliato</label>
+                      <input class="form-check-input" type="checkbox"
+                             [(ngModel)]="reportCompleto">
+                    </div>
+                  </div>
+                  <div [ngClass]="idReport!==0 ? 'col-4' : 'col-3'" class="mb-3">
+                    <div class="form-check">
+                      <label class="form-check-label">Costi</label>
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="mostraCosti">
+                    </div>
+                  </div>
+                  <div [ngClass]="idReport!==0 ? 'col-4' : 'col-3'" class="mb-3">
+                    <div class="form-check">
+                      <label class="form-check-label" for="checkbox2">Ricavi</label>
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="mostraRicavi">
+                    </div>
+                  </div>
+                  <div [ngClass]="idReport!==0 ? 'col-4' : 'col-3'" class="mb-3">
+                    <div class="form-check">
+                      <label class="form-check-label" for="checkbox3">Foto</label>
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="mostraFoto">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary"
+                    (click)="modal.dismiss()">Annulla</button> -->
+                <div class="row w-100">
+                  <div class="col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
+                    <label>Esporta report</label>
+                  </div>
+                  <div class="col-md-3 col-sm-6 d-flex align-items-center justify-content-center">
+                    <button type="button" class="btn btn-primary" (click)="confirmDate('pdf')">
+                      PDF
+                    </button>
+                  </div>
+                  <div *ngIf="idReport==0"
+                       class="col-md-3 col-sm-6 d-flex align-items-center justify-content-center">
+                    <button type="button" class="btn btn-primary" (click)="confirmDate('xlsx')">
+                      Excel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+            <!-- fine  Aggiungi personale al cantiere -->
+            <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+            <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+            <ngx-datatable class="bootstrap core-bootstrap" id="tableReport" [columnMode]="columnMode.force"
+                           [headerHeight]="60" [footerHeight]="50" rowHeight="auto" [limit]="this.pageSize"
+                           [rows]="reportCantiere" [scrollbarH]="true" [sorts]="[{prop: sortCol, dir: sortDir}]"
+                           id="ngx-report" (page)="onPageChanged($event)"
+                           [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}"
+                           [rowClass]="reportRowsStyle" (sort)="sort($event)">
+              <ngx-datatable-column name="Azioni" [width]="70" [sortable]="false">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                  <!-- <i class="ft-edit text-primary cursor-pointer"></i> -->
+                  <div id="Azioni"></div>
+                  <!-- i report approvati possono essere eliminati solo dal PM del cantiere o dall'admin. I capocommessa non posso eliminare -->
+                  <i
+                    *ngIf=" !this._auth.isHeadOfOrder() && !(row.status==this.reportStatus.Approved && !this.canApproveReport) "
+                    class="ft-trash text-primary cursor-pointer ml-1" title="Elimina"
+                    (click)="deleteReportDiCantiere(row)"></i>
+                  <!-- i report approvati possono essere modificati solo dal PM del cantiere o dall'admin-->
+                  <i *ngIf="!(row.status==this.reportStatus.Approved && !this.canApproveReport)"
+                     class="ft-edit text-primary cursor-pointer ml-1" title="Modifica"
+                     (click)="modifyReportDiCantiere(row,create); selectReport(row)"></i>
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="Id"
+                  prop="id" [width]="80"></ngx-datatable-column> -->
+              <ngx-datatable-column name="Autore" prop="author" [width]="150">
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Stato" prop="status" [width]="150" [sortable]="false">
+                <ng-template let-status="value" let-row="row" ngx-datatable-cell-template>
+                  <div class="badge" [ngClass]="{
+                                      'bg-light-warning': status == 0,
+                                      'bg-light-secondary': status == 1,
+                                        'bg-light-success': status == 2,
+                                      }">
+                    {{ status == 0 ? 'Bozza' : (status == 1 ? 'Da Approvare' : 'Approvato') }}
+                    @if (status == 2) {
+                      <div> {{ "da " + row.approvalAuthor }}</div>
+                      <div>il {{ row.approvalDate | dataleggibile }}</div>
+                    }
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Report" [width]="150">
+                <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+                  <!-- <button type="button" class="btn btn-primary btn-sm"
+                      (click)="downloadReport(row)">Scarica</button>-->
+                  <button class="btn btn-primary mb-2" (click)="openAggregaModal(row)"
+                          id="openReportButton3">Scarica
+                  </button>
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- DATA CREAZIONE REPORT -->
+              <!-- <ngx-datatable-column name="Data e Ora Creazione Report" prop="date" [width]="150">
+                  <ng-template ngx-datatable-cell-template let-value="value">
+                      {{value | dataleggibile}},
+                      {{value.substring(11,19)}}
+                  </ng-template>
+              </ngx-datatable-column> -->
+              <ngx-datatable-column name="Data Report" prop="referenceDateAsDate" [width]="150">
+                <ng-template ngx-datatable-cell-template let-value="value">
+                  {{ value | date: 'dd/MM/yyyy' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Costi" prop="costi" [width]="100">
+                <ng-template ngx-datatable-cell-template let-value="value">
+                  <div class="w-100 text-end">
+                    {{ value | number:'1.2-2':'it' }} €
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Ricavi" prop="ricavi" [width]="100">
+                <ng-template ngx-datatable-cell-template let-value="value">
+                  <div class="w-100 text-end">
+                    {{ value | number:'1.2-2':'it' }} €
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Margine" prop="margine" [width]="100">
+                <ng-template ngx-datatable-cell-template let-value="value">
+                  <div class="w-100 text-end">
+                    {{ value | number:'1.2-2':'it' }} €
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Allegati Lavori Eseguiti" prop="allegatiLavoriEseguiti"
+                                    [width]="200" [sortable]="false">
+                <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+                  <div *ngIf="value">
+                    <div *ngFor="let el of value">
+                      {{ el.fileName }}
+                      <i class="ft-download text-primary cursor-pointer ml-2"
+                         (click)="downloadAttachment(el)"></i>
+                      <i class="ft-trash text-primary cursor-pointer ml-2"
+                         (click)="removeAttachment(el, row.id)"></i>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Allegati Provviste" prop="allegatiProvviste" [width]="200"
+                                    [sortable]="false">
+                <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+                  <div *ngIf="value">
+                    <div *ngFor="let el of value">
+                      {{ el.fileName }}
+                      <i class="ft-download text-primary cursor-pointer ml-2"
+                         (click)="downloadAttachment(el)"></i>
+                      <i class="ft-trash text-primary cursor-pointer ml-2"
+                         (click)="removeAttachment(el, row.id)"></i>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Foto" prop="foto" [minWidth]="200"
+                                    [width]="400" [maxWidth]="500" [sortable]="false">
+                <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+                  <div *ngIf="value">
+                    <div *ngFor="let el of value">
+                      {{ el.fileName }}
+                      <i class="ft-download text-primary cursor-pointer ml-2"
+                         (click)="downloadAttachment(el)"></i>
+                      <i class="ft-trash text-primary cursor-pointer ml-2"
+                         (click)="removeAttachment(el, row.id)"></i>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+            <!-- ngx-datatable-filter -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<ng-template #manageAttachments let-modal>
+  <div class="position-fixed" style="right:10px; bottom:10px">
+    <button class="btn btn-primary mb-2" (click)="attachmentsManagerModal.close()">
+      Chiudi
+    </button>
+  </div>
+  <div class="d-flex flex-column align-items-center overflow-scroll">
+    <h2 class="my-5">Gestisci allegati</h2>
+    <div class="d-flex flex-column justify-content-evenly align-items-center w-100 flex-md-row">
+      <div class="p-2 text-center rounded-1 cursor-pointer "
+           style="width:300px; border: var(--primary-color) dashed 5px;  height: fit-content;"
+           (click)="triggerFileInputClick(selectedAttachmentsIndex)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+             stroke="currentColor" style="width: 100px; height: 100px;">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+        </svg>
+        <label class="py-3 px-5 my-3 bg-primary rounded-5 text-white">Cerca tra i file</label>
+      </div>
+      <div class="text-center">
+        <h5 class="mt-5">Allegati da caricare</h5>
+        <div class="d-flex mt-5 flex-column flex-wrap gap-4 justify-content-center">
+          @switch (activeIndex) {
+            @case (2) {
+              @for (file of formDataProvvisteNames[selectedAttachmentsIndex]; track file) {
+                <div
+                  class="d-flex flex-row align-items-center justify-content-between gap-4 px-3 py-2 border-primary border-2 rounded-1 "
+                  style="height: fit-content">
+                  {{ file }}
+                  <i class="ft-trash text-primary cursor-pointer ml-2"
+                     (click)="arrayRemove(formDataProvvisteNames[selectedAttachmentsIndex], file) "></i>
+                </div>
+              } @empty {
+                <p>Nessun elemento da mostrare</p>
+              }
+            }
+            @case (3) {
+              @for (file of formDataLavoriEseguitiNames[selectedAttachmentsIndex]; track file) {
+                <div
+                  class="d-flex flex-row align-items-center justify-content-between gap-4 px-3 py-2 border-primary border-2 rounded-1 "
+                  style="height: fit-content">
+                  {{ file }}
+                  <i class="ft-trash text-primary cursor-pointer ml-2"
+                     (click)="arrayRemove(formDataLavoriEseguitiNames[selectedAttachmentsIndex], file) "></i>
+                </div>
+              } @empty {
+                <p>Nessun elemento da mostrare</p>
+              }
+            }
+          }
+        </div>
+        <h5 class="mt-5">Allegati del report</h5>
+        <div class="d-flex mt-5 mb-5 flex-column flex-wrap gap-4 justify-content-center">
+          @switch (activeIndex) {
+            @case (2) {
+              @for (file of selectedReport.allegatiProvviste; track file) {
+                <div
+                  class="d-flex flex-row align-items-center justify-content-between gap-4 px-3 py-2 border-primary border-2 rounded-1 "
+                  style="height: fit-content">
+                  {{ file.fileName }}
+                  <div>
+                    <i class="ft-download text-primary cursor-pointer ml-2"
+                       (click)="downloadAttachment(file)"></i>
+                    <i class="ft-trash text-primary cursor-pointer ml-2"
+                       (click)="removeAttachment(file, selectedReport.id)"></i>
+                  </div>
+                </div>
+              } @empty {
+                <p>Nessun elemento da mostrare</p>
+              }
+            }
+            @case (3) {
+              @for (file of selectedReport.allegatiLavoriEseguiti; track file) {
+                <div
+                  class="d-flex flex-row align-items-center justify-content-between gap-4 px-3 py-2 border-primary border-2 rounded-1 "
+                  style="height: fit-content">
+                  {{ file.fileName }}
+                  <div>
+                    <i class="ft-download text-primary cursor-pointer ml-2"
+                       (click)="downloadAttachment(file)"></i>
+                    <i class="ft-trash text-primary cursor-pointer ml-2"
+                       (click)="removeAttachment(file, selectedReport.id)"></i>
+                  </div>
+                </div>
+              } @empty {
+                <p>Nessun elemento da mostrare</p>
+              }
+            }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #create>
+<!-- inizio template di creazione di un report -->
+
+  <!-- <div class="modal-header">
+      <h4 class="modal-title"></h4>
+  </div> -->
+  <div class="modal-body" style="background-color: white;">
+    <p-steps class="pSteps" [model]="items" [(activeIndex)]="activeIndex" [readonly]="false"></p-steps>
+    <ngx-spinner></ngx-spinner>
+    @switch (activeIndex) {
+      @case (0) {
+        <form [formGroup]="formPersonale" class="editForm" novalidate>
+          <h4 class="head text-center">Aggiungi il personale</h4>
+          <div class='row'>
+            <div class='col-12'>
+              <div *ngFor="let topic of formPersonale.get('employees').controls; index as i; let last = last">
+                <ng-template #quickPersonale>
+                  <employees-small-form [idCantiere]="this.targetCantiereId"
+                                        (personaleAdded)="personaleAddedQuickForm($event)">
+                  </employees-small-form>
+                </ng-template>
+                <div>
+                  <table class="table table-bordered mb-0">
+                    <thead *ngIf="i==0">
+                    <tr>
+                      <th class="text-center col-medium">Personale
+                        <i *ngIf="_auth.isAdmin() || _auth.isHeadOfOrder"
+                           style="color: blue; font-size: large; margin-left: 4px;"
+                           (click)="employeesQuickCreation(quickPersonale)"
+                           title="Aggiungi personale" class="ft-plus-circle">
+                        </i>
+                      </th>
+                      <th class="text-center col-small">Ore ordinarie</th>
+                      <th class="text-center col-small">Ore straord.</th>
+                      <th class="text-center col-small">Ore spost.</th>
+                      <th class="text-center col-small-medium">Costo ord.</th>
+                      <th class="text-center col-small-medium">Costo straor.</th>
+                      <th class="text-center col-small-medium">Costo spost.</th>
+                      <th class="text-center col-small-medium">Costo totale</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td class="col-medium">
+                        <div formArrayName="employees">
+                          <ng-select [items]="personaleCantiereNgSelect[i]"
+                                     bindLabel="fullName" [multiple]="false" [closeOnSelect]="true"
+                                     placeholder="Seleziona il personale" id="employeesSelect{{i}}"
+                                     (change)="changePersonale($event, i)" [formControlName]="i">
+                          </ng-select>
+
+                        </div>
+                      </td>
+                      <td class="col-small">
+                        <div formArrayName="hours">
+                          <input type="number" min="0" class="form-control text-center"
+                                 name="ordinaryhours{{i}}" (change)="changeHours($event, i)"
+                                 id="orepersonale{{i}}" [formControlName]="i">
+                        </div>
+                      </td>
+                      <td class="col-small">
+                        <div formArrayName="extraordinaryHours">
+                          <input type="number" min="0" class="form-control text-center"
+                                 name="extraordinaryhours{{i}}"
+                                 (change)="changeExtraordinaryHours($event, i)"
+                                 [formControlName]="i">
+                        </div>
+                      </td>
+                      <td class="col-small">
+                        <div formArrayName="travelHours">
+                          <input type="number" min="0" class="form-control text-center"
+                                 name="travelhours{{i}}" (change)="changeTravelHours($event, i)"
+                                 [formControlName]="i">
+                        </div>
+                      </td>
+                      <td class="text-center col-small-medium">
+                        {{
+                          formPersonale.value.hours[i] && formPersonale.value.ordinaryCost[i]
+                          && formPersonale.value.ordinaryAmount[i] ? formPersonale.value.hours[i]
+                            + "h x " + formPersonale.value.ordinaryCost[i] + "€/h" + " = " +
+                            formPersonale.value.ordinaryAmount[i] + "€" : "-"
+                        }}
+                      </td>
+                      <td class="text-center col-small-medium">
+                        {{
+                          formPersonale.value.extraordinaryHours[i] &&
+                          formPersonale.value.extraordinaryCost[i] &&
+                          formPersonale.value.extraordinaryAmount[i] ?
+                            formPersonale.value.extraordinaryHours[i] + "h x " +
+                            formPersonale.value.extraordinaryCost[i] + "€/h" + " = " +
+                            formPersonale.value.extraordinaryAmount[i] + "€" : "-"
+                        }}
+                      </td>
+                      <td class="text-center col-small-medium">
+                        {{
+                          formPersonale.value.travelHours[i] &&
+                          formPersonale.value.travelHoursCost[i] &&
+                          formPersonale.value.travelAmount[i] ? formPersonale.value.travelHours[i]
+                            + "h x " + formPersonale.value.travelHoursCost[i] + "€/h" + " = " +
+                            formPersonale.value.travelAmount[i] + "€" : "-"
+                        }}
+                      </td>
+                      <td class="text-center col-small-medium">
+                        {{
+                          formPersonale.value.totalCost[i] != null ?
+                            formPersonale.value.totalCost[i] + "€" : "-"
+                        }}
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="button-container">
+                  <button type="button" class="btn btn-danger btn-icon"
+                          (click)="deleteFormPersonaleElement(i)">
+                    <i class="ft-minus"></i></button>
+                  <!-- tasto + per aggiungere una riga nel form -->
+                  <button *ngIf="last" type="button" class="btn btn-primary btn-icon"
+                          (click)="addInputFormPersonale()">
+                    <i class="ft-plus"></i></button>
+                </div>
+              </div>
+              <div class="form-group text-center mb-2 mt-2">
+                <button type="button" class="btn btn-secondary" style="margin-right:10px; margin-top:10px"
+                        (click)="closeForm()">Chiudi
+                </button>
+                <button type="button" uiSref="work" class="btn btn-primary" style="margin-top:10px"
+                        (click)="nextStep()">
+                  Avanti
+                  <span style="margin-left:10px;">
+                                    <i class="ft-chevron-right"></i>
+                                </span>
+                </button>
+                <button type="button" class="btn btn-warning bg-light-warning"
+                        style="margin-left:10px;margin-top:10px" (click)="printForm(reportStatus.Draft)">Salva
+                  Bozza
+                </button>
+              </div>
+              <button type="button" class="btn btn-dark" style="margin-right:10px;"
+                      (click)="reinizializzaInteroForm()">Reinizializza
+              </button>
+            </div>
+          </div>
+        </form>
+      }
+      @case (1) {
+        <form [formGroup]="formMezzi" class="editForm" novalidate>
+          <h4 class="head text-center">Aggiungi i mezzi e le attrezzature</h4>
+          <div class='row'>
+            <div class='col-12'>
+              <div *ngFor="let topic of formMezzi.get('vehicles').controls; index as i; let last = last">
+                <ng-template #quickMezzi>
+                  <mezzi-small-form [idCantiere]="this.targetCantiereId"
+                                    (mezzoAdded)="mezzoAddedQuickForm($event)">
+                  </mezzi-small-form>
+                </ng-template>
+                <div>
+                  <table class="table table-bordered mb-0">
+                    <thead *ngIf="i==0">
+                    <tr>
+                      <th class="text-center col-large">Mezzi
+                        <i *ngIf="_auth.isAdmin() || _auth.isHeadOfOrder"
+                           style="color: blue; font-size: large; margin-left: 4px;"
+                           (click)="mezzoQuickCreation(quickMezzi)" title="Aggiungi un mezzo"
+                           class="ft-plus-circle">
+                        </i>
+                      </th>
+                      <th class="text-center col-small">Litri utilizzati</th>
+                      <th class="text-center col-small">Costo gasolio/L</th>
+                      <th class="text-center col-small">Prezzo Giornaliero</th>
+                      <th class="text-center col-small">Costo gasolio</th>
+                      <th class="text-center col-small">Costo totale</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td class="col-large">
+                        <div formArrayName="vehicles">
+                          <ng-select [items]="mezziCantiereNgSelect[i]"
+                                     bindLabel="mezzo.fullDescription" [multiple]="false"
+                                     [closeOnSelect]="true" placeholder="Seleziona i mezzi"
+                                     id="employeesSelect{{i}}" (change)="changeMezzo($event, i)"
+                                     [formControlName]="i">
+                          </ng-select>
+                        </div>
+                      </td>
+                      <td class="col-small">
+                        <div formArrayName="liters">
+                          <input type="number" min="0" class="form-control text-center"
+                                 name="liters{{i}}" (change)="changeVehicleLiters($event, i)"
+                                 [formControlName]="i">
+                        </div>
+                      </td>
+                      <td class="col-small">
+                        <div formArrayName="costPerLiter">
+                          <input type="number" min="0" class="form-control text-center"
+                                 name="costPerLiter{{i}}"
+                                 (change)="changeVehicleCostPerLiter($event, i)"
+                                 [formControlName]="i">
+                        </div>
+                      </td>
+                      <td class="text-center col-small">
+                        {{
+                          formMezzi.value.dailyPrice[i] != null ? formMezzi.value.dailyPrice[i]
+                            + "€" : "-"
+                        }}
+                      </td>
+                      <td class="text-center col-small">
+                        {{
+                          formMezzi.value.fuelTotalPrice[i] != null ?
+                            formMezzi.value.fuelTotalPrice[i] + "€" : "-"
+                        }}
+                      </td>
+                      <td class="text-center col-small">
+                        {{
+                          formMezzi.value.totalPrice[i] != null ? formMezzi.value.totalPrice[i]
+                            + "€" : "-"
+                        }}
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="button-container">
+                  <button type="button" class="btn btn-danger btn-icon"
+                          (click)="deleteFormMezziElement(i)">
+                    <i class="ft-minus"></i></button>
+                  <!-- tasto + per aggiungere una riga nel form -->
+                  <button *ngIf="last" type="button" class="btn btn-primary btn-icon"
+                          (click)="addInputFormMezzi()">
+                    <i class="ft-plus"></i></button>
+                </div>
+              </div>
+              <div class="form-group text-center mb-2 mt-2">
+                <button type="button" uiSref="work" class="btn btn-primary" (click)="prevStep()">
+                                <span>
+                                    <i class="ft-chevron-left"></i>
+                                </span>
+                  Indietro
+                </button>
+                <button type="button" class="btn btn-secondary" style="margin-right:10px;margin-left:10px;"
+                        (click)="closeForm()">Chiudi
+                </button>
+                <button type="button" uiSref="work" class="btn btn-primary" (click)="nextStep()">
+                  Avanti
+                  <span style="margin-left:10px;">
+                                    <i class="ft-chevron-right"></i>
+                                </span>
+                </button>
+                <button type="button" class="btn btn-warning bg-light-warning" style="margin-left:10px"
+                        (click)="printForm(reportStatus.Draft)">Salva Bozza
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      }
+      @case (2) {
+        <!-- PROVVISTE coincide con l'ex BENI E SERVIZI -->
+        <form [formGroup]="formBeniDiConsumo" class="editForm" novalidate>
+          <h4 class="head text-center">Aggiungi i materiali, noli o servizi esterni</h4>
+          <div class='row'>
+            <div class='col-12'>
+              <div
+                *ngFor="let description of formBeniDiConsumo.get('descriptions').controls; index as i; let last = last">
+                <ng-template #quickFornitori>
+                  <fornitori-small-form [idCantiere]="this.targetCantiereId"
+                                        (fornitoreAdded)="fornitoreAddedQuickForm($event)">
+                  </fornitori-small-form>
+                </ng-template>
+                <ng-template #quickServiziFornitore>
+                  <beni-servizi-small-form
+                    [idFornitore]="formBeniDiConsumo.get('suppliers').controls[i]?.value?.id"
+                    (servizioFornitoreAdded)="serviziFornitoreAddedQuickForm($event, i)">
+                  </beni-servizi-small-form>
+                </ng-template>
+                <div>
+                  <table class="table table-bordered mb-0">
+                    <thead *ngIf="i==0">
+                    <tr>
+                      <th class="text-center col-large">Fornitore
+                        <i *ngIf="_auth.isAdmin() || _auth.isHeadOfOrder"
+                           style="color: blue; font-size: large; margin-left: 4px;"
+                           (click)="fornitoreQuickCreation(quickFornitori)"
+                           title="Aggiungi un fornitore" class="ft-plus-circle">
+                        </i>
+                      </th>
+                      <th class="text-center col-large">Servizio
+                        <i *ngIf="formBeniDiConsumo.get('suppliers').controls[i]?.value?.id"
+                           style="color: blue; font-size: large; margin-left: 4px;"
+                           (click)="serviziFornitoreQuickCreation(quickServiziFornitore, i)"
+                           title="Aggiungi un servizio al fornitore selezionato"
+                           class="ft-plus-circle">
+                        </i>
+                      </th>
+                      <th class="text-center col-small">Quantità</th>
+                      <th class="text-center col-small">Unità di misura</th>
+                      <th class="text-center col-small">Prezzo unitario</th>
+                      <th class="text-center col-small">Prezzo totale</th>
+                      <th class="text-center col-small">Allegati</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td class="col-large">
+                        <div formArrayName="suppliers">
+                          <ng-select [items]="fornitoriget" bindLabel="name"
+                                     [multiple]="false" [closeOnSelect]="true"
+                                     placeholder="Seleziona il fornitore" id="employeesSelect{{i}}"
+                                     (change)="serviziFornitoreBeniDiConsumo($event, i)"
+                                     [formControlName]="i">
+                          </ng-select>
+                        </div>
+                      </td>
+                      <td class="col-large">
+                        <div formArrayName="descriptions">
+                          <ng-select [items]="serviziSingleFornitore[i]"
+                                     bindLabel="description" [multiple]="false"
+                                     [closeOnSelect]="true" placeholder="Seleziona il servizio"
+                                     id="employeeselect{{i}}"
+                                     (change)="changeDescriptionFormBeniDiConsumo($event, i)"
+                                     [formControlName]="i">
+                          </ng-select>
+                        </div>
+                      </td>
+                      <td class="col-small">
+                        <div formArrayName="quantities">
+                          <input type="number" min="0" class="form-control text-center"
+                                 name="quantity{{i}}" id="quantity{{i}}"
+                                 (change)="changeQuantitiesFormBeniDiConsumo($event, i)"
+                                 [formControlName]="i">
+                        </div>
+                      </td>
+                      <td class="text-center col-small">
+                        {{
+                          formBeniDiConsumo.value.ums[i] != null ?
+                            formBeniDiConsumo.value.ums[i] : "-"
+                        }}
+                      </td>
+                      <td class="text-center col-small">
+                        {{
+                          formBeniDiConsumo.value.unitaryPrices[i] != null ?
+                            formBeniDiConsumo.value.unitaryPrices[i] + "€" : "-"
+                        }}
+                      </td>
+                      <td class="text-center col-small">
+                        {{
+                          formBeniDiConsumo.value.totalPrices[i] != null ?
+                            formBeniDiConsumo.value.totalPrices[i] + "€" : "-"
+                        }}
+                      </td>
+                      <td class="col-small">
+                        <div class="custom-file-upload">
+                          <i class="ft-paperclip"
+                             (click)="openAttachmentsManager(manageAttachments); selectedAttachmentsIndex= i"></i>
+                          <span class="file-count"
+                                [attr.data-file-names]="formDataProvvisteNames[i]?.join(', ') || ''">
+                                                        {{ formDataProvvisteNames[i]?.length || 0 }}
+                                                    </span>
+                          <input type="file" class="form-control file-input"
+                                 id="inputGroupFile01{{i}}"
+                                 (change)="addFileToNota($event, i, 'provviste')" multiple>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="button-container">
+                  <button type="button" class="btn btn-danger btn-icon"
+                          (click)="deleteFormBeniDiConsumoElement(i)">
+                    <i class="ft-minus"></i></button>
+                  <!-- tasto + per aggiungere una riga nel form -->
+                  <button *ngIf="last" type="button" class="btn btn-primary btn-icon"
+                          (click)="addInputFormBeniDiConsumo()">
+                    <i class="ft-plus"></i></button>
+                </div>
+              </div>
+              <div class="form-group text-center mb-2 mt-2">
+                <button type="button" uiSref="work" class="btn btn-primary" (click)="prevStep()">
+                                <span>
+                                    <i class="ft-chevron-left"></i>
+                                </span>
+                  Indietro
+                </button>
+                <button type="button" class="btn btn-secondary" style="margin-right:10px;margin-left:10px"
+                        (click)="closeForm()">Chiudi
+                </button>
+                <button type="button" uiSref="work" class="btn btn-primary" (click)="nextStep()">
+                  Avanti
+                  <span style="margin-left:10px;">
+                                    <i class="ft-chevron-right"></i>
+                                </span>
+                </button>
+                <button type="button" class="btn btn-warning bg-light-warning" style="margin-left:10px"
+                        (click)="printForm(reportStatus.Draft)">Salva Bozza
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      }
+      @case (3) {
+        <!-- lavori eseguiti corrisponde all'ex SERVIZI OFFERTI step 3 -->
+        <form [formGroup]="formDescrizioneAttivita" class="editForm" novalidate>
+          <h4 class="head text-center">Aggiungi i lavori eseguiti</h4>
+          <div class='row'>
+            <div class='col-12'>
+              <div
+                *ngFor="let topic of formDescrizioneAttivita.get('prezziario').controls; index as i; let last = last">
+                <ng-template #quickArticoloPrezzario>
+                  <prezzario-small-form [idPrezzari]="this.cantiere.contratto.prezzari_id"
+                                        (articoloPrezzarioAdded)="articoloPrezzarioAddedQuickForm($event, i)">
+                  </prezzario-small-form>
+                </ng-template>
+                <div>
+                  <table class="table table-bordered mb-0">
+                    <thead *ngIf="i==0">
+                    <tr>
+                      <th class="text-center col-large">Rif. Prezzario
+                        <i style="color: blue; font-size: large; margin-left: 4px;"
+                           (click)="articoloPrezzarioQuickCreation(quickArticoloPrezzario, i)"
+                           title="Aggiungi un prezzo" class="ft-plus-circle">
+                        </i>
+                      </th>
+                      <th class="text-center col-large">Descrizione</th>
+                      <th class="text-center col-small">Imp. Unit.</th>
+                      <th class="text-center col-small">U.M.</th>
+                      <th class="text-center col-small">Par.uguali</th>
+                      <th class="text-center col-small">Lunghezza</th>
+                      <th class="text-center col-small">Larghezza</th>
+                      <th class="text-center col-small">H/peso</th>
+                      <th class="text-center col-small">Quantità</th>
+                      <th class="text-center col-small">Imp. Totale</th>
+                      <th class="text-center col-small">Allegati</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td class="col-large">
+                        <div class="form-group" formArrayName="prezziario">
+                          <div class="input-group mb-0">
+                            <input id="typeahead-basic{{i}}" type="text"
+                                   class="form-control" name="search"
+                                   [value]="formDescrizioneAttivita.get('prezziario').value[i] ? (formDescrizioneAttivita.get('prezziario').value[i].rateCode ? formDescrizioneAttivita.get('prezziario').value[i].rateCode + ' - ' : '') + (formDescrizioneAttivita.get('prezziario').value[i].description || '') : null"
+                                   placeholder="Digita e premi il tasto per la ricerca"/>
+                            <button class="btn btn-primary m-0" style="border-radius:0"
+                                    (click)="search2(i)" title="Avvia ricerca">
+                              <i *ngIf="!this.loading[i]" class="ft-search"></i>
+                              <i *ngIf="this.loading[i]" class="spinner-border text-dark"
+                                 role="status" style="height: 20px;width: 20px;">
+                              </i>
+                            </button>
+                            <button class="btn btn-danger" (click)="cleanSearch(i)"
+                                    style="border-top-left-radius: 0;border-bottom-left-radius: 0;">
+                              <i class="ft-x"></i>
+                            </button>
+                            <!-- class="ricercaArtPrezButton"> -->
+                          </div>
+                          <ul style="max-height: 200px; overflow: auto;padding-left: 3px;cursor: pointer;"
+                              class="rifArticoloList">
+                            <li style="min-height: 50px ;max-height: 200px;font-size: small;"
+                                *ngFor="let item of listaSearch[i]; index as iii"
+                                id="{{iii}}" title="{{item.description}}"
+                                (click)="listClicked($event,iii,i); listaSearch[i]=[]">
+                                                            <span style="color: blue;">
+                                                                <!-- segnalo che il prodotto è scontato -->
+                                                              {{ item.applyDiscount ? "[S] " : null }}
+                                                            </span>
+                                                            <strong>
+                                                                {{item.rateCode ? item.rateCode + " - " :
+                                                                null}}
+                                                            </strong>
+                                                            {{item.description | truncatePipe : '120'}}
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td class="col-large">
+                                                <div formArrayName="activities">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" name="description{{i}}"
+                                                            (change)="changeDescrizioneAttivita($event, i)"
+                                                            [formControlName]="i">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center col-small">
+                                                {{ formDescrizioneAttivita.value.unitaryPrices[i] !=
+                                                null ? (formDescrizioneAttivita.value.unitaryPrices[i] | number:'1.2-2') + "€" :
+                                                "-"}}
+                                            </td>
+                                            <td class="text-center col-small">
+                                                {{ formDescrizioneAttivita.value.ums[i] != null ?
+                                                formDescrizioneAttivita.value.ums[i] : "-"}}
+                                            </td>
+                                            <td class="col-small" formArrayName="equalParts"><input type="number"
+                                                    class="form-control" id="equalParts{{i}}" min="1"
+                                                    (change)="calculateQuantity(i)" [formControlName]="i"></td>
+                                            <td class="col-small" formArrayName="lengths"><input type="number"
+                                                    class="form-control" id="length{{i}}" min="0"
+                                                    (change)="calculateQuantity(i)" [formControlName]="i"></td>
+                                            <td class="col-small" formArrayName="widths"><input type="number"
+                                                    class="form-control" min="0" id="width{{i}}"
+                                                    (change)="calculateQuantity(i)" [formControlName]="i"></td>
+                                            <td class="col-small" formArrayName="heights"><input type="number"
+                                                    class="form-control" min="0" id="height{{i}}"
+                                                    (change)="calculateQuantity(i)" [formControlName]="i"></td>
+                                            <td class="text-center col-small">
+                                                {{ formDescrizioneAttivita.value.quantities[i] != null ?
+                                                (formDescrizioneAttivita.value.quantities[i] | number:'1.2-2') : "-" }}
+                                            </td>
+                                            <td class="text-center col-small">
+                                                {{ formDescrizioneAttivita.value.totalPrice[i] != null ?
+                                                formDescrizioneAttivita.value.totalPrice[i] + "€" :
+                                                "-"}}
+                                            </td>
+                                            <td class="col-small">
+                                                <div class="custom-file-upload">
+                                                    <i class="ft-paperclip" (click)="triggerFileInputClick(i)"></i>
+                                                    <span class="file-count"
+                                                        [attr.data-file-names]="formDataLavoriEseguitiNames[i]?.join(', ') || ''">
+                                                        {{ formDataLavoriEseguitiNames[i]?.length || 0 }}
+                                                    </span>
+                          <input type="file" class="form-control file-input"
+                                 id="inputGroupFile01{{i}}"
+                                 (change)="addFileToNota($event, i, 'lavoriEseguiti')" multiple>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="button-container">
+                  <button type="button" class="btn btn-danger btn-icon"
+                          (click)="deleteFormDescrizioneAttivitaElement(i)"><i class="ft-minus"></i></button>
+                  <!-- tasto + per aggiungere una riga nel form -->
+                  <button *ngIf="last" type="button" class="btn btn-primary btn-icon"
+                          (click)="addInputFormDescrizioneAttivita()"><i class="ft-plus"></i></button>
+                </div>
+              </div>
+              <div class="form-group text-center mb-2 mt-2">
+                <button type="button" uiSref="work" class="btn btn-primary" (click)="prevStep()">
+                                <span>
+                                    <i class="ft-chevron-left"></i>
+                                </span>
+                  Indietro
+                </button>
+                <button type="button" class="btn btn-secondary" style="margin-right:10px;margin-left:10px;"
+                        (click)="closeForm()">Chiudi
+                </button>
+                <button type="button" uiSref="work" class="btn btn-primary" (click)="nextStep()">
+                  Avanti
+                  <span style="margin-left:10px">
+                                    <i class="ft-chevron-right"></i>
+                                </span>
+                </button>
+                <button type="button" class="btn btn-warning bg-light-warning" style="margin-left:10px"
+                        (click)="printForm(reportStatus.Draft)">Salva
+                  Bozza
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      }
+      @case (4) {
+        <div class="d-flex align-items-center flex-column gap-4">
+          <h1 class="mt-3">Allega foto</h1>
+          <div class="container-files rounded-1">
+            <input type="file" #fileDropRef id="fileDropRef" multiple accept="image/*"
+                   class="opacity-0 position-absolute z-2 w-100 h-100 top-0 start-0 cursor-pointer rounded-1"
+                   (change)="fileBrowseHandler($event.target.files)"/>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" style="width: 100px; height: 100px;">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/>
+            </svg>
+            <h3>Trascina qui i file</h3>
+            <h3>o</h3>
+            <label for="fileDropRef" class="py-3 px-5 bg-primary rounded-5 text-white">Cerca tra i file</label>
+          </div>
+          <div class="d-flex flex-row flex-wrap gap-4 justify-content-center">
+            @for (file of photos; track file) {
+              <div class="d-flex flex-column gap-4 px-3 py-2 border-primary border-2 rounded-1 "
+                   style="height: fit-content">
+                <img src="{{file.imgSrc}}" style="width: 300px; height: fit-content" alt="">
+                <div>
+                  <h6>Nome</h6>
+                  <div class="d-flex flex-row gap-2 justify-content-center align-items-center">
+                    <input class="form-control form-control-sm" type="text" [(ngModel)]="file.filename"
+                           style="width: 300px;">
+                    <i class="ft-trash text-primary cursor-pointer ml-2"
+                       (click)="arrayRemove(photos, file) "></i>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="form-group text-center mb-2 mt-5">
+          <button type="button" uiSref="work" class="btn btn-primary" (click)="prevStep()">
+                                <span>
+                                    <i class="ft-chevron-left"></i>
+                                </span>
+            Indietro
+          </button>
+          <button type="button" class="btn btn-secondary" style="margin-right:10px;margin-left:10px;"
+                  (click)="closeForm()">Chiudi
+          </button>
+          <button type="button" uiSref="work" class="btn btn-primary" (click)="nextStep()">
+            Avanti
+            <span style="margin-left:10px">
+                                    <i class="ft-chevron-right"></i>
+                                </span>
+          </button>
+          <button type="button" class="btn btn-warning bg-light-warning" style="margin-left:10px"
+                  (click)="printForm(reportStatus.Draft)">Salva
+            Bozza
+          </button>
+        </div>
+      }
+      @case (5) {
+        <h4 class="head text-center">Seleziona la data di riferimento</h4>
+        <br/>
+        <div class="text-center form-group">
+          <label for="">Autore report</label>
+          <input disabled type="string" [(ngModel)]="this.user" style="width: 200px; margin: auto;"
+                 class="form-control text-center">
+        </div>
+        <div class="text-center form-group mt-4">
+          <label for="">Data riferimento report</label>
+          <input type="date" [(ngModel)]="referenceDate" style="width: 200px; margin: auto;"
+                 class="form-control text-center">
+          <small *ngIf="!referenceDate" class="text-danger">Obbligatoria (non per la bozza)</small>
+        </div>
+        <form [formGroup]="formAllegatieDomande" class="editForm" novalidate>
+          <div class="text-center form-group mt-4">
+            <label for="">Commenti generali</label>
+            <textarea class="form-control text-center" style="width: 400px; height: 100px; margin: auto;"
+                      id="commenti" rows="2" placeholder="" name="commenti" formControlName="commenti"></textarea>
+          </div>
+        </form>
+        <!-- <div style="margin: auto; width: 50%; ">
+                            <app-signature-pad (firma)="getSignature($event)"></app-signature-pad>
+                        </div> -->
+          <!-- <div class="text-center form-group mt-5">Progressivo report :{{this.model.counter}} </div> -->
+        <div class='row'>
+          <div class='col-12'>
+            <div class="form-group text-center">
+              <div class="form-group text-center" style="margin-top: 100px; margin-bottom: 50px;">
+                <button type="button" uiSref="work" class="btn btn-primary"
+                        style="margin-right:10px; margin-top:10px" (click)="prevStep()">
+                                <span>
+                                    <i class="ft-chevron-left"></i>
+                                </span>
+                  Indietro
+                </button>
+                <button type="button" class="btn btn-secondary" style="margin-top:10px"
+                        (click)="closeForm()">Chiudi
+                </button>
+                <button type="button" class="btn btn-success bg-light-success" [disabled]="!referenceDate"
+                        style="margin-left:10px; margin-top:10px"
+                        (click)="printForm()">{{
+                    reportModifyFlag.modify ? "Conferma modifica" : "Termina(da approvare)"
+                  }}
+                </button>
+                <button type="button" class="btn btn-warning bg-light-warning"
+                        style="margin-left:10px; margin-top:10px" (click)="printForm(reportStatus.Draft)">Salva
+                  Bozza
+                </button>
+                <button type="button" *ngIf="canApproveReport" [disabled]="!referenceDate"
+                        class="btn btn-warning bg-light-success" (click)="printForm(reportStatus.Approved)"
+                        style="margin-left:10px; margin-top:10px">Approva Report
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</ng-template>

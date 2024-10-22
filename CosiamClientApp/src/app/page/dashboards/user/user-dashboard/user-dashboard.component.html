@@ -1,0 +1,192 @@
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<!-- Filter Datatables -->
+<section id="ngx-datatable-filter">
+    <div class="row">
+        <div class="col-12">
+            <!-- Filter starts -->
+            <div class="users-list-filter px-2">
+                <form>
+                    <div class="row border rounded py-2 mb-2 mx-n2">
+
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            <label for="users-list-role">Livello</label>
+                            <fieldset class="form-group">
+                                <select id="users-list-role" class="form-control" (change)="filtro()" [(ngModel)]="livello" name="livello">
+                  <option value="">Tutti</option>
+                  <option value="Amministratore">Amministratore</option>
+                  <option value="Utente">Utente</option>
+                  <option value="Capocantiere">Capocantiere</option>
+                </select>
+                            </fieldset>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            <label for="users-list-status">Stato</label>
+                            <fieldset class="form-group">
+                                <select id="users-list-status" class="form-control" (change)="filtro()" [(ngModel)]="stato" name="stato">
+                  <option value="">Tutti</option>
+                  <option value="Attivo">Attivo</option>
+                  <option value="Disabilitato">Disabilitato</option>
+                </select>
+                            </fieldset>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-lg-3 d-flex align-items-center">
+                            <button type="button" class="btn btn-primary btn-block mb-0" (click)="pulisciFiltro()">
+                Cancella
+              </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- Filter ends -->
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-body">
+                        <!-- ngx-datatable-filter -->
+                        <fieldset class="form-group">
+                            <label>Mostra
+                <select name="users-list-select"
+                  class="form-control form-control-sm d-inline-block width-100 p-right-25 pl-4 mx-1"
+                  (click)="updateLimit($event)">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                utenti</label>
+                            <label for="ngx-filter-ref" class="float-right">Cerca:
+                <input id="ngx-filter-ref" class="form-control form-control-sm d-inline-block width-200 ml-1"
+                  type="text" (keyup)="filterUpdate($event)" />
+              </label>
+                        </fieldset>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-success mb-3" (click)="openLg(content)">Crea utente</button>
+                            </div>
+                        </div>
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [limit]="limitRef" [rows]="getUtenti" [scrollbarH]="true" (activate)="viewPage($event)">
+
+                            <ngx-datatable-column name="ID" prop="id" [width]="50"></ngx-datatable-column>
+                            <!-- <ngx-datatable-column name="Username" prop="Username" [width]="150">
+                  <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                      <img class="rounded-circle mr-1" src="assets/img/portrait/small/{{
+                          row.avatar
+                        }}" height="32" width="32" alt="datatable-avatar" />
+
+                      <div class="cell-line-height">
+                        <a class="line-height-1 mb-0" routerLink="/pages/users-view">{{ name }}</a>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column> -->
+                            <ngx-datatable-column name="Nome" prop="userName" [width]="100"></ngx-datatable-column>
+                            <!-- <ngx-datatable-column name="Last Activity" prop="Last Activity" [width]="120"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Livello" prop="Role" [width]="70"></ngx-datatable-column>
+                            <ngx-datatable-column name="Stato" prop="Status" [width]="70">
+                                <ng-template let-status="value" ngx-datatable-cell-template>
+                                    <div class="badge" [ngClass]="{
+                        'bg-light-success': status == 'Attivo',
+                        'bg-light-danger': status == 'Disabilitato'
+                      }">
+                                        {{ status }}
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Azioni" [width]="50">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row)"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+                        </ngx-datatable>
+                        <!-- ngx-datatable-filter -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--/ Filter Datatables -->
+
+<!-- inizio popup crea utente -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Crea Utente</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <div class="modal-body">
+        <form #userForm="ngForm">
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label for="exampleFormControlInput1" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Username" [(ngModel)]="nuovoutente.username" name="username" #username="ngModel" (ngModelChange)="validationForm(userForm)" required>
+                    <small class="form-text text-muted danger" *ngIf="username.errors?.required">Campo obbligatorio</small>
+                </div>
+                <div class="mb-3 col-md-4">
+                    <label for="exampleFormControlInput1" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email" [(ngModel)]="nuovoutente.email" name="email" #email="ngModel" (ngModelChange)="validationForm(userForm)" email required>
+                    <small class="form-text text-muted danger" *ngIf="email.errors?.email">Ricontrolla la mail inserita</small>
+                    <small class="form-text text-muted danger" *ngIf="email.errors?.required">Campo obbligatorio</small>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <label for="floatingPassword">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" [(ngModel)]="nuovoutente.password" name="password" #password="ngModel" (ngModelChange)="validationForm(userForm)" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                        <small class="form-text text-muted danger" *ngIf="password.errors?.pattern">La password deve contenere
+              almeno un numero, un carattere maiuscolo, uno minuscolo e deve essere di almeno 8 caratteri</small>
+                        <small class="form-text text-muted danger" *ngIf="password.errors?.required">Campo obbligatorio</small>
+                        <!-- An element to toggle between password visibility -->
+                        <input type="checkbox" (click)="showPassword()"><small>Mostra password</small>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-4 mb-5">
+                    <label for="exampleFormControlInput1" class="form-label">Personale</label>
+                    <div class="form-group">
+                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                        <!-- multiple abilita la scelta multipla -->
+                        <ng-select [items]="personaleget" bindLabel="fullName" [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona destinatari" [(ngModel)]="nuovoutente.persona" name="personale" #personale="ngModel" (ngModelChange)="validationForm(userForm)">
+                        </ng-select>
+                        <small class="form-text text-muted success">Volendo puoi associare l'utente ad un personale</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="controls">
+                            <label for="users-edit-role">Livello</label>
+                            <select id="users-edit-role" class="form-control" required [(ngModel)]="nuovoutente.level" name="livello" #livello="ngModel" (ngModelChange)="validationForm(userForm)">
+                <option value="User">Utente</option>
+                <option value="HeadOfOrder">Capocommessa</option>
+                <option value="Admin">Amministratore</option>
+              </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="modal.close('Close click')" (click)="createUser()">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>

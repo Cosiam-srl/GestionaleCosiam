@@ -1,0 +1,15 @@
+<!-- caricamento file -->
+<!-- nascosto dal css -->
+<input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload>
+<!-- ---------------- -->
+
+<span class="file-upload">
+
+    <button class="btn btn-primary btn-md ml-1" style="margin-bottom: 11px;" (click)="fileUpload.click()">
+        Carica
+    </button>
+    {{fileName || "Non hai ancora caricato nessun file"}}
+
+</span>
+
+<p><ngb-progressbar [value]="caricamento" id="uploadProgress" [showValue]="true" *ngIf="caricamento != 0"></ngb-progressbar></p>

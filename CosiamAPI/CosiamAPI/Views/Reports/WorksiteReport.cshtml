@@ -1,0 +1,1047 @@
+﻿@using CosiamAPI.Models
+@using System.Globalization
+
+@model ReportDiCantiereViewModel
+
+@{
+	Layout = null;
+}
+
+@{
+	CultureInfo ci = new CultureInfo("it-IT");
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<link href='https://fonts.googleapis.com/css2?family=Exo+2' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css2?family=Caveat&family=Noto+Sans&display=swap" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		html * {
+			font-family: "Exo 2";
+		}
+
+		figure {
+			float: left;
+			width: 50%;
+			border: 1px solid black;
+			background: #ffffff;
+			margin: auto;
+			padding: 10px 10px 0px 10px;
+		}
+
+		figcaption {
+			padding: 5px;
+			background-color: #d0cece;
+			color: black;
+		}
+
+		table,
+		th,
+		td {
+			border: 1px solid black;
+		}
+
+		tr {
+			page-break-inside: avoid;
+		}
+
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			font: 12pt;
+		}
+
+		* {
+			box-sizing: border-box;
+			-moz-box-sizing: border-box;
+		}
+
+		/* .page {
+																				   width: 210mm;
+																				   min-height: 297mm;
+																				   padding: 20mm;
+																				   margin: 10mm auto;
+																				   border: 1px #D3D3D3 solid;
+																				   border-radius: 5px;
+																				   background: white;
+																				   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+																			   } */
+
+		.col-1-container {
+			display: table;
+			width: 100%;
+			border: 2px solid rgb(0, 0, 0);
+		}
+
+		.col-3-container {
+			display: table;
+			width: 100%;
+			border: 1px solid rgb(0, 0, 0);
+			margin-top: 10px;
+		}
+
+		.col-container {
+			display: table;
+			width: 100%;
+			border: 1px solid rgb(0, 0, 0);
+		}
+
+		table {
+			border-collapse: collapse;
+			border-spacing: 0;
+			width: 100%;
+			border: 1px solid #ddd;
+			table-layout: fixed;
+		}
+
+		.truncate-text {
+			text-align: left;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			padding-left: 5px;
+			padding-right: 10px;
+		}
+
+
+		.row {
+			display: flex;
+			margin-left: 0px;
+			margin-right: 0px;
+		}
+
+		.column {
+			flex: 50%;
+		}
+
+		.col-1-1 {
+			display: table-cell;
+			border-right: 2px solid rgb(0, 0, 0);
+			text-align: center;
+			width: 30%;
+		}
+
+		.col-1-2 {
+			display: table-cell;
+			border-right: 2px solid rgb(0, 0, 0);
+			text-align: center;
+			width: 40%;
+			vertical-align: top;
+		}
+
+		.col-1-3 {
+			display: table-cell;
+			text-align: center;
+			width: 30%;
+		}
+
+		.col-2-1 {
+			display: table-cell;
+			border-right: 1px solid rgb(0, 0, 0);
+			text-align: center;
+			width: 40%;
+			padding-left: 10px;
+		}
+
+		.col-2-2 {
+			display: table-cell;
+			border-right: 1px solid rgb(0, 0, 0);
+			text-align: center;
+			width: 30%;
+			padding-left: 10px;
+		}
+
+		.col-2-3 {
+			display: table-cell;
+			text-align: center;
+			width: 30%;
+		}
+
+		.col-3-1 {
+			display: table-cell;
+			text-align: left;
+			padding-left: 10px;
+			width: 50%;
+			border-right: 1px solid rgb(0, 0, 0);
+		}
+
+		.col-3-2 {
+			display: table-cell;
+			text-align: left;
+			padding-left: 10px;
+			width: 50%;
+		}
+
+		.col {
+			display: table-cell;
+			text-align: center;
+		}
+
+		.table-title {
+			font-size: 14pt;
+			font-weight: 600;
+		}
+
+		.report-title {
+			font-size: 18pt;
+			font-weight: 600;
+			vertical-align: middle;
+			margin-bottom: 6px;
+			margin-top: 6px;
+			line-height: 1.2;
+		}
+
+		.firma {
+			font-family: 'Caveat', cursive;
+			font-size: 30pt
+		}
+
+		.capo-cantiere {
+			font-size: 14pt;
+			font-weight: 600;
+		}
+
+		@@page {
+			size: A4;
+			margin: 0;
+		}
+
+		@@media print {
+
+			html,
+			body {
+				width: 210mm;
+				height: 297mm;
+			}
+
+			.page {
+				margin: 0;
+				border: initial;
+				border-radius: initial;
+				width: initial;
+				min-height: initial;
+				box-shadow: initial;
+				background: initial;
+				page-break-after: always;
+			}
+		}
+
+		.breakhere {
+			page-break-after: always
+		}
+
+		}
+	</style>
+</head>
+
+<body>
+	<div class="report">
+		<div class="page">
+			<div class="col-1-container">
+				<div class="col-1-1">
+					<img style="object-fit: contain; width:auto; max-height:60px; vertical-align: bottom; margin-top:8px; margin-bottom:8px"
+						 src=https://gestionale.cosiam.it/assets/img/logos/Logo-Cosiam-WOB.png>
+				</div>
+
+				@{
+					string[] dates = Model.date.Split(" - ");
+
+					DateTime parsedDate;
+					string formattedDate;
+
+					if (Model.Id != 0 && DateTime.TryParseExact(dates[0], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
+					{
+						formattedDate = parsedDate.ToString("dddd dd/MM/yyyy", new CultureInfo("it-IT"));
+					}
+					else
+					{
+						formattedDate = Model.date;  // If parsing fails, use the original string
+					}
+				}
+
+				@if (Model.Id != 0)
+				{
+					<div class="col-1-2">
+						<div class="report-title">Report di cantiere<br><a style="font-size: 14pt">@formattedDate</a></div>
+					</div>
+				}
+				else
+				{
+					<div class="col-1-2">
+						<div class="report-title">Consuntivo di cantiere<br><a style="font-size: 14pt">@formattedDate</a></div>
+					</div>
+				}
+
+				<div class="col-1-3">
+					<img style="object-fit: contain; width:auto; max-height: 60px; vertical-align: bottom; margin-top:8px; margin-bottom:8px"
+						 src="@Model.Cantiere.Contratto.Cliente.File">
+				</div>
+			</div>
+
+
+			<!-- Seconda riga -->
+			<div class="col-container">
+
+				@if (Model.ProgressivoContatore != null)
+				{
+					<div class="col-2-2">
+						<div class="table-title">Rapportino n°: @Model.ProgressivoContatore</div>
+					</div>
+				}
+				else
+				{
+					<div class="col-2-2">
+						<div class="table-title"></div>
+					</div>
+				}
+
+				<div class="col-2-1">
+					<div class="table-title">Codice Commessa: @Model.Cantiere.orderCode</div>
+				</div>
+
+
+				<div class="col-2-3">
+					<div class="table-title">@Model.Cantiere.ShortDescription</div>
+				</div>
+
+				<!-- <div class="col">
+					<h4>Cliente: @Model.Cantiere.Contratto.Cliente.Name</h4>
+				</div>
+				 -->
+			</div>
+			<!-- terza riga -->
+			<!-- <div class="col-container">
+				<div class="col-3-1">
+					<h4>
+			@if (Model.Cantiere != null)
+			{
+																<p>Località: @Model.Cantiere.Address</p>
+			}
+					</h4>
+				</div>
+				<div class="col-3-2">
+					<h4>@Model.Cantiere.ShortDescription</h4>
+				</div>
+			</div> -->
+			<!-- Tabelle personale e mezzi-->
+			@*  Con questi flag possiamo stampare nel report i valori dei flag mostraCosti, Ricavi, Foto etc....
+			@{
+			<div class="col-3-container">
+			<div class="col">
+			<div class="table-title" style="text-align:center; background-color: #ffbfaa">Report completo =  @Model.reportCompleto</div>
+			</div>
+			</div>
+
+			<div class="col-3-container">
+			<div class="col">
+			<div class="table-title" style="text-align:center; background-color: #ffbfaa">Mostra Costi =  @Model.mostraCosti</div>
+			</div>
+			</div>
+
+			<div class="col-3-container">
+			<div class="col">
+			<div class="table-title" style="text-align:center; background-color: #ffbfaa">Mostra Ricavi =  @Model.mostraRicavi</div>
+			</div>
+			</div>
+			<div class="col-3-container">
+			<div class="col">
+			<div class="table-title" style="text-align:center; background-color: #ffbfaa">Mostra Foto =  @Model.mostraFoto</div>
+			</div>
+			</div>
+
+			}
+			*@
+
+
+			<div class="col-3-container">
+				<div class="col">
+					<div class="table-title" style="text-align:center; background-color: #ffbfaa">Manodopera</div>
+				</div>
+			</div>
+			@{
+				decimal parziale = 0;
+				decimal totale_finale = 0;
+
+				// Ordina i dati per il costo totale decrescente
+				var oreNormaliOrdinati = Model.oreNormali
+				.Select(p =>
+				{
+					double OreNormali, OreStraordinarie, OreSpostamento;
+					try
+					{
+						OreNormali = Model.oreNormali.Single(x => x.PersonaleId == p.PersonaleId).NumberOfHours;
+						if (p.Personale.OrganizationRole == "Impiegato tecnico" && Model.ProgressivoContatore != null)
+						{
+							OreNormali = 8.0;
+						}
+					}
+					catch (System.InvalidOperationException)
+					{
+						OreNormali = 0.0;
+					}
+					try
+					{
+						OreStraordinarie = Model.OreStraordinarie.Single(x => x.PersonaleId == p.PersonaleId).NumberOfHours;
+						if (p.Personale.OrganizationRole == "Impiegato tecnico" && Model.ProgressivoContatore != null)
+						{
+							OreStraordinarie = 0.0;
+						}
+					}
+					catch (System.InvalidOperationException)
+					{
+						OreStraordinarie = 0.0;
+					}
+					try
+					{
+						OreSpostamento = Model.OreSpostamento.Single(x => x.PersonaleId == p.PersonaleId).NumberOfHours;
+						if (p.Personale.OrganizationRole == "Impiegato tecnico" && Model.ProgressivoContatore != null)
+						{
+							OreSpostamento = 0.0;
+						}
+					}
+					catch (System.InvalidOperationException)
+					{
+						OreSpostamento = 0.0;
+					}
+					double StraordinarioESpostamento = OreStraordinarie + OreSpostamento;
+
+					var TotaleOrdinario = Math.Round((decimal)(OreNormali * (p.Personale.ordinaryPrice == null ? 0.0 : p.Personale.ordinaryPrice)), 2);
+					var TotaleStraordinario = Math.Round((decimal)(OreStraordinarie * (p.Personale.extraordinaryPrice == null ? 0.0 : p.Personale.extraordinaryPrice)), 2);
+					var TotaleSpostamento = Math.Round((decimal)(OreSpostamento * (p.Personale.travelPrice == null ? 0.0 : p.Personale.travelPrice)), 2);
+					var TotaleStraordinarioESpostamento = TotaleStraordinario + TotaleSpostamento;
+					decimal Totale = TotaleOrdinario + TotaleStraordinario + TotaleSpostamento;
+
+					return new
+					{
+						Personale = p.Personale,
+						OreNormali,
+						StraordinarioESpostamento,
+						TotaleOrdinario,
+						TotaleStraordinarioESpostamento,
+						Totale
+					};
+				})
+				.OrderByDescending(x => x.Totale)
+				.ToList();
+			}
+			<table>
+				<tr style="background-color:#d0cece">
+
+					@if (Model.mostraCosti == true)
+					{
+						<th style="width:30%; text-align: left; padding-left: 5px">Nome e Cognome</th>
+						<th style="width:25%; text-align: left; padding-left: 5px">Qualifica</th>
+						<th style="width:10%">Ore</th>
+						<th style="width:20%">Dettaglio ore</th>
+						<th style="width:15%">Costo tot.</th>
+					}
+					else
+					{
+						<th style="width:40%; text-align: left; padding-left: 5px">Nome e Cognome</th>
+						<th style="width:40%; text-align: left; padding-left: 5px">Qualifica</th>
+						<th style="width:20%">Ore</th>
+					}
+				</tr>
+				@if (!oreNormaliOrdinati.Any())
+				{
+					<tr>
+						<td colspan="5" style="text-align: center;">Nessun dato disponibile</td>
+					</tr>
+				}
+				else
+				{
+					double totale_ore_finali = 0;
+
+					foreach (var p in oreNormaliOrdinati)
+					{
+						parziale += p.Totale;
+						totale_ore_finali = totale_ore_finali + p.OreNormali + p.StraordinarioESpostamento;
+
+						<tr>
+							<td class="truncate-text">@p.Personale.Name @p.Personale.Surname</td>
+							<td class="truncate-text">@p.Personale.job</td>
+							<td style="text-align: center;">@p.OreNormali + @p.StraordinarioESpostamento</td>
+							@if (Model.mostraCosti == true)
+							{
+								<td style="text-align: center;">@p.TotaleOrdinario.ToString("N2", ci) € + @p.TotaleStraordinarioESpostamento.ToString("N2", ci) €</td>
+								<td style="text-align: center;">@p.Totale.ToString("N2", ci) €</td>
+							}
+						</tr>
+					}
+					<tr style="background-color:#d0cece; text-align: right;">
+						@if (Model.mostraCosti == true)
+						{
+							<td colspan="2" style="font-weight: bold; padding-right: 5px">Totale Ore</td>
+							<td style="text-align: center; font-weight: bold;">@totale_ore_finali.ToString("N2")</td>
+							<td colspan="1" style="font-weight: bold; padding-right: 5px">Totale Costo</td>
+							<td style="text-align: center; font-weight: bold;">@parziale.ToString("N2", ci) €</td>
+						}
+						else
+						{
+							<td colspan="2" style="font-weight: bold; padding-right: 5px">Totale Ore</td>
+							<td style="text-align: center; font-weight: bold;">@totale_ore_finali.ToString()</td>
+						}
+
+						@{
+							totale_finale += parziale;
+						}
+					</tr>
+
+				}
+
+			</table>
+		</div>
+
+		@{
+			decimal totale_costo_mezzi;
+			parziale = 0;
+
+			// Ordina i dati per il costo totale decrescente
+			var vehiclesStuffOrdinati = Model.VehiclesStuff
+			.Select(p =>
+			{
+				decimal p_fuel_cost = Math.Round(((decimal)(p.LitersOfFuel * p.FuelCost)), 2);
+				decimal p_daily_cost = p.Mezzo.DailyCost != 0 ? (decimal)(p.Mezzo.DailyCost * (p.NumberOfHoursOfUsage ?? 1)) : 0;
+				decimal p_total_cost = p_fuel_cost + p_daily_cost;
+
+				return new
+				{
+					Mezzo = p.Mezzo,
+					p.LitersOfFuel,
+					p.FuelCost,
+					p_daily_cost,
+					p_fuel_cost,
+					p_total_cost
+				};
+			})
+			.OrderByDescending(x => x.p_total_cost)
+			.ToList();
+		}
+		<div class="col-3-container">
+			<div class="col">
+				<div class="table-title" style="text-align:center; background-color: #ffbfaa">Mezzi e Attrezzature</div>
+			</div>
+		</div>
+		<table>
+			<tr style="background-color:#d0cece">
+				@if (Model.mostraCosti == true)
+				{
+					<th style="width:45%; text-align: left; padding-left: 5px">Descrizione</th>
+					<th style="width:10%">Costo GG</th>
+					<th style="width:10%">Gasolio</th>
+					<th style="width:20%">Dettaglio costi</th>
+					<th style="width:15%">Costo tot.</th>
+				}
+				else
+				{
+					<th style="width:100%; text-align: left; padding-left: 5px">Descrizione</th>
+				}
+
+			</tr>
+			@if (!vehiclesStuffOrdinati.Any())
+			{
+				<tr>
+					<td colspan="5" style="text-align: center;">Nessun dato disponibile</td>
+				</tr>
+			}
+			else
+			{
+				@foreach (var p in vehiclesStuffOrdinati)
+				{
+					parziale += p.p_total_cost;
+					<tr>
+						@if (Model.mostraCosti == true)
+						{
+							<td class="truncate-text">@p.Mezzo.Description @p.Mezzo.Brand @p.Mezzo.Model @p.Mezzo.LicensePlate</td>
+
+							<td style="text-align: center;">@((@p.Mezzo.DailyCost?.ToString("N2", ci)) ?? "N/A") €</td>
+							<td style="text-align: center;">@p.LitersOfFuel.ToString("N2", ci) L</td>
+							<td style="text-align: center;">@p.p_daily_cost.ToString("N2", ci) € + @p.p_fuel_cost.ToString("N2", ci) €</td>
+							<td style="text-align: center;">@p.p_total_cost.ToString("N2", ci) €</td>
+						}
+						else
+						{
+							<td class="truncate-text">@p.Mezzo.Description @p.Mezzo.Brand @p.Mezzo.Model @p.Mezzo.LicensePlate</td>
+						}
+
+					</tr>
+				}
+
+				@if (Model.mostraCosti == true)
+				{
+					<tr style="background-color:#d0cece; text-align: right;">
+						<td colspan="4" style="font-weight: bold; padding-right: 5px">Tot. costo mezzi</td>
+						<td style="text-align: center; font-weight: bold;">@parziale.ToString("N2", ci) €</td>
+					</tr>
+				}
+
+				totale_finale += parziale; totale_costo_mezzi = parziale;
+			}
+		</table>
+
+		<!-- Tabella dei Beni di Consumo -->
+		@{
+			parziale = 0;
+
+			// Ordina i dati per il costo totale decrescente
+			var provvisteOrdinati = Model.Provviste
+			.Select(p =>
+			{
+				decimal Totale = Math.Round((decimal)(p.ServizioFornitore.PricePerUM * p.Quantity), 2);
+
+				return new
+				{
+					ServizioFornitore = p.ServizioFornitore,
+					p.Quantity,
+					Totale
+				};
+			})
+			.OrderByDescending(x => x.Totale)
+			.ToList();
+		}
+		<div class="col-3-container">
+			<div class="col">
+				<div class="table-title" style="text-align:center; background-color: #ffbfaa">Materiali - Noli - Servizi Esterni</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="column">
+				<table>
+					<tr style="background-color:#d0cece">
+						@if (Model.mostraCosti == true)
+						{
+							<th style="width:35%; text-align: left; padding-left: 5px">Descrizione</th>
+							<th style="width:20%; text-align: left; padding-left: 5px">Fornitore</th>
+							<th style="width:10%">Qtà</th>
+							<th style="width:10%">U.M.</th>
+							<th style="width:10%">P.U.</th>
+							<th style="width:15%">Costo tot.</th>
+						}
+						else
+						{
+							<th style="width:40%; text-align: left; padding-left: 5px">Descrizione</th>
+							<th style="width:30%; text-align: left; padding-left: 5px">Fornitore</th>
+							<th style="width:20%">Qtà</th>
+							<th style="width:10%">U.M.</th>
+						}
+					</tr>
+					@if (!provvisteOrdinati.Any())
+					{
+						<tr>
+							<td colspan="6" style="text-align: center;">Nessun dato disponibile</td>
+						</tr>
+					}
+					else
+					{
+						@foreach (var p in provvisteOrdinati)
+						{
+							parziale += p.Totale;
+							<tr>
+
+								<td class="truncate-text">@p.ServizioFornitore.Description</td>
+								<td class="truncate-text">@p.ServizioFornitore.Fornitore.Name</td>
+								<td style="text-align: center;">@p.Quantity.ToString("N2", ci)</td>
+								<td style="text-align: center;">@p.ServizioFornitore.UM</td>
+								@if (Model.mostraCosti == true)
+								{
+									<td style="text-align: center;">@p.ServizioFornitore.PricePerUM.ToString("N2", ci) €</td>
+									<td style="text-align: center;">@p.Totale.ToString("N2", ci) €</td>
+								}
+							</tr>
+						}
+
+						@if (Model.mostraCosti == true)
+						{
+							<tr style="background-color:#d0cece; text-align: right;">
+								<td colspan="5" style="font-weight: bold; padding-right: 5px">Tot. Costi provviste</td>
+								<td style="text-align: center; font-weight: bold;">@parziale.ToString("N2", ci) €</td>
+							</tr>
+						}
+						totale_finale += parziale;
+					}
+
+				</table>
+			</div>
+		</div>
+
+		<!-- Tabella descrizione dei lavori e dei controlli eseguiti -->
+		@{
+			parziale = 0;
+			decimal totale_venduto = 0;
+
+			// Ordina i dati per il ricavo totale decrescente
+			var lavoriEseguitiOrdinati = Model.LavoriEseguiti
+			.Select(p =>
+			{
+				decimal Totale = Math.Round((decimal)(p.servizioCliente.PricePerUm * p.Quantity), 2);
+
+				return new
+				{
+					p.Description,
+					p.servizioCliente.rateCode,
+					p.servizioCliente.UM,
+					p.EqualParts,
+					p.Length,
+					p.Width,
+					p.Height,
+					p.Quantity,
+					p.servizioCliente.PricePerUm,
+					ServiceDescription = p.servizioCliente.Description,
+					Totale
+				};
+			})
+			.OrderByDescending(x => x.Totale)
+			.ToList();
+		}
+		<div class="col-3-container">
+			<div class="col">
+				<div class="table-title" style="text-align:center; background-color: #dceddd">Attività di ricavo</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="column">
+				<table>
+					<tr style="background-color:#d0cece">
+						
+						@if(Model.ReportSingolo){
+							<th style="width:13%; text-align: left; padding-left: 5px">Rif. Prezzario</th>
+							<th style="width:35%; text-align: left; padding-left: 5px">Descrizione attività</th>
+							<th style="width:10%">Par.Ug</th>
+							<th style="width:10%">Lung</th>
+							<th style="width:10%">Larg</th>
+							<th style="width:10%">H/Peso</th>
+							<th style="width:10%">Qnt.</th>
+							<th style="width:7%">U.M.</th>
+							@if (Model.mostraRicavi == true)
+							{
+								<th style="width:10%">P.U.</th>
+								<th style="width:15%">Ricavo tot.</th>
+							}
+						}
+						else
+						{
+								<!-- se è un report aggregato non mostro le 3 colonne dell'altezza, larghezza, H/peso-->
+							<th style="width:13%; text-align: left; padding-left: 5px">Rif. Prezzario</th>
+							<th style="width:35%; text-align: left; padding-left: 5px">Descrizione attività</th>
+							<th style="width:10%">Qnt.</th>
+							<th style="width:7%">U.M.</th>
+							@if (Model.mostraRicavi == true)
+							{
+								<th style="width:10%">P.U.</th>
+								<th style="width:25%">Ricavo tot.</th>
+							}
+						}
+
+					</tr>
+					@if (!lavoriEseguitiOrdinati.Any())
+					{
+						<tr>
+								<td colspan="@(Model.ReportSingolo ? 10 : (@Model.mostraRicavi.Value? 6 : 4))" style="text-align: center;">Nessun dato disponibile</td>
+						</tr>
+					}
+					else
+					{
+						@foreach (var p in lavoriEseguitiOrdinati)
+						{
+							parziale += p.Totale;
+							<tr>
+								<td colspan="@(Model.ReportSingolo ? 10 : (@Model.mostraRicavi.Value? 6 : 4))" style="text-align: left; padding-left: 5px; font-weight: bold; font-family: 'Caveat'; font-size: 15pt">@p.Description</td>
+							</tr>
+							<tr>
+								<td style="text-align: center;word-wrap: break-word; word-break: break-word;">@p.rateCode</td>
+								<td style="text-align: left; padding-left: 5px">@p.ServiceDescription</td>
+								@if(Model.ReportSingolo){
+									<td style="text-align: center;">@(p.Length != null ? Math.Round((double)p.EqualParts, 2) : "/")</td>
+									<td style="text-align: center;">@(p.Length != null ? Math.Round((double)p.Length, 2) : "/")</td>
+									<td style="text-align: center;">@(p.Width != null ? Math.Round((double)p.Width, 2) : "/")</td>
+									<td style="text-align: center;">@(p.Height != null ? Math.Round((double)p.Height, 2) : "/")</td>
+								}
+								<td style="text-align: center;">@p.Quantity.ToString("N2", ci)</td>
+								<td style="text-align: center;">@p.UM</td>
+
+								@if (Model.mostraRicavi == true)
+								{
+									<td style="text-align: center;">@p.PricePerUm.ToString("N2", ci) €</td>
+									<td style="text-align: center;">@p.Totale.ToString("N2", ci) €</td>
+								}
+							</tr>
+						}
+						@if (Model.mostraRicavi == true)
+						{
+							<tr style="background-color:#d0cece; text-align: right;">
+								<td colspan="@(Model.ReportSingolo ? 9 : 5)" style="font-weight: bold; padding-right: 5px">Tot. ricavi</td>
+								<td style="text-align: center; font-weight: bold;">@parziale.ToString("N2", ci) €</td>
+							</tr>
+
+							totale_venduto += parziale;
+						}
+
+					}
+
+				</table>
+			</div>
+		</div>
+
+		<!-- Tabella organizzazione giornata successiva -->
+		@if (Model.mostraRicavi == true && Model.mostraCosti == true)
+		{
+			<div class="col-3-container">
+				<div class="col">
+					<div class="table-title" style="text-align:center">Risultato operativo (Utile/Perdita)</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="column">
+					<table>
+						<tr>
+							@{
+								double percentualeSpeseGenerali = Model.Cantiere.percentualeSpeseGenerali;
+								decimal spese_generali = Math.Round(((decimal)totale_venduto * (decimal)percentualeSpeseGenerali) / 100, 2);
+
+								decimal margine = totale_venduto - totale_finale - spese_generali;
+								decimal margine_percentuale = totale_venduto ==
+								0 ? 0 : Math.Round(((margine) / totale_venduto) * 100, 2);
+							}
+							<th style="width:20%; background-color: #dceddd">Tot. Ricavo</th>
+							<th style="width:20%; background-color: #ffbfaa">Tot. Costi</th>
+							<th style="width:20%; background-color: #ffbfaa">Spese Generali @percentualeSpeseGenerali%</th>
+							<th style="width:20%">Margine lordo Ass.</th>
+							<th style="width:20%">Margine lordo %</th>
+						</tr>
+						<tr style="background-color:#d0cece">
+							<td style="text-align: center;">@totale_venduto.ToString("N2", ci) €</td>
+							<td style="text-align: center;">@totale_finale.ToString("N2", ci) €</td>
+							<td style="text-align: center;">@spese_generali.ToString("N2", ci) €</td>
+							<td style="text-align: center;">@margine.ToString("N2", ci) €</td>
+							<td style="text-align: center;">@margine_percentuale.ToString("N2", ci) %</td>
+						</tr>
+						<!-- <tr style="background-color:#d0cece; text-align: right;">
+							<td colspan="3">Margine % (L/R)</td>
+							<td style="text-align: center; font-weight: bold;"></td>
+						</tr> -->
+					</table>
+				</div>
+			</div>
+		}
+
+		@if (Model.reportCompleto == true)
+		{
+			@if (Model.Details is not null && @Model.Details.OfType<IGrouping<int, TimeCard>>().Any())
+			{
+				<!-- Tabella Dettaglio Personale -->
+				<div class="col-3-container">
+					<div class="col">
+						<div class="table-title" style="text-align:center; background-color: #ffbfaa">Dettaglio Personale</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="column">
+						<table>
+							<tr style="background-color:#d0cece">
+								<th style="width:30%; text-align: left; padding-left: 5px">Nome e Cognome</th>
+								<th style="width:25%; text-align: left; padding-left: 5px">Qualifica</th>
+								<th style="width:10%">Ore</th>
+								<th style="width:20%">Dettaglio ore</th>
+								<th style="width:15%">Costo tot.</th>
+							</tr>
+
+							@foreach (var reportGroup in @Model.Details.OfType<IGrouping<int, TimeCard>>())
+							{
+								<tr>
+									<th style="width:100%; text-align: center;" colspan="5">
+										<i>  Report # @reportGroup.First().ReportDiCantiere?.Counter - @reportGroup.First().ReportDiCantiere.referenceDate</i>
+									</th>
+								</tr>
+
+								decimal totalePersonaleReport = 0;
+								@foreach (var tc in @reportGroup.GroupBy(x => x.PersonaleId))
+								{
+									//tc.key è l'idPersonale
+									var nome = $"{@tc.First().Personale.Name} {@tc.First().Personale.Surname}";
+									var qualifica = @tc.First().Personale.job;
+									double oreOrdinarie = @tc.SingleOrDefault(x => x.Type == TimeCardsTypes.Ordinary)?.NumberOfHours ?? 0.0;
+									double oreStraordinarie = @tc.SingleOrDefault(x => x.Type == TimeCardsTypes.ExtraOrdinary)?.NumberOfHours ?? 0.0;
+									double oreSpostamento = @tc.SingleOrDefault(x => x.Type == TimeCardsTypes.Travel)?.NumberOfHours ?? 0.0;
+
+									var totaleOrdinario = Math.Round((decimal)(oreOrdinarie * (@tc.First().Personale.ordinaryPrice ?? 0.0)), 2);
+									var totaleStraordinario = Math.Round((decimal)(oreStraordinarie * (@tc.First().Personale.extraordinaryPrice ?? 0.0)), 2);
+									var totaleSpostamento = Math.Round((decimal)(oreSpostamento * (@tc.First().Personale.travelPrice ?? 0.0)), 2);
+									totalePersonaleReport += @totaleOrdinario + @totaleStraordinario + @totaleSpostamento;
+
+									<tr>
+										<td style="width:30%; text-align: left; padding-left: 5px">@nome</td>
+										<td style="width:25%; text-align: left; padding-left: 5px">@qualifica</td>
+										<td style="width:10%;text-align: center;">@oreOrdinarie + @(oreStraordinarie + oreSpostamento)</td>
+										<td style="width:20%;text-align: center;">@totaleOrdinario.ToString("N2", ci) € + @((totaleStraordinario + totaleSpostamento).ToString("N2", ci)) €</td>
+										<td style="width:15%;text-align: center;">@((totaleOrdinario + totaleStraordinario + totaleSpostamento).ToString("N2", ci)) €</td>
+									</tr>
+
+
+
+								}
+
+								<tr style="background-color:#d0cece; text-align: right;">
+									<td colspan="4" style="font-weight: bold; padding-right: 5px">Tot. costo personale</td>
+									<td style="text-align: center; font-weight: bold;">@totalePersonaleReport.ToString("N0", ci) €</td>
+								</tr>
+							}
+						</table>
+					</div>
+				</div>
+			}
+
+			@if (Model.Details is not null && @Model.Details.OfType<IGrouping<int, VehicleCard>>().Any())
+			{
+				<!-- Tabella Dettaglio Mezzi -->
+				<div class="col-3-container">
+					<div class="col">
+						<div class="table-title" style="text-align:center; background-color: #ffbfaa">Dettaglio Mezzi</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="column">
+						<table>
+							<tr style="background-color:#d0cece">
+								<th style="width:40%; text-align: left; padding-left: 5px">Descrizione</th>
+								<th style="width:10%">Costo GG</th>
+								<th style="width:10%">Gasolio</th>
+								<th style="width:20%">Dettaglio costi</th>
+								<th style="width:15%">Costo tot.</th>
+							</tr>
+
+							@foreach (var reportGroup in @Model.Details.OfType<IGrouping<int, VehicleCard>>())
+							{
+								<tr>
+									<th style="width:100%; text-align: center;" colspan="5">
+										<i>  Report # @reportGroup.First().ReportDiCantiere?.Counter - @reportGroup.First().ReportDiCantiere.referenceDate</i>
+									</th>
+								</tr>
+
+								decimal totaleMezziReport = 0;
+								@foreach (var vc in @reportGroup.GroupBy(x => x.MezzoId))
+								{
+									//tv.key è l'id del Mezzo
+									var p = vc.First();
+									var descrizione = $"{p.Mezzo.Description} {p.Mezzo.Brand} {p.Mezzo.LicensePlate}";
+
+									decimal p_fuel_cost = Math.Round((decimal)(@p.LitersOfFuel * @p.FuelCost), 2);
+									decimal p_daily_cost = Math.Round((decimal)(@p.Mezzo.DailyCost * (@p.NumberOfHoursOfUsage ?? 1)), 2);
+									decimal p_total_cost = @p_fuel_cost + @p_daily_cost;
+									totaleMezziReport += @p_total_cost;
+
+									<tr>
+										<td style="width:30%; text-align: left; padding-left: 5px">@descrizione</td>
+										<td style="width:25%; text-align: center; padding-left: 5px">@((p.Mezzo.DailyCost?.ToString("N2", ci)) ?? "N/A") €</td>
+										<td style="width:10%;text-align: center;">@p.LitersOfFuel.ToString("N2", ci) L</td>
+										<td style="width:10%;text-align: center;">@p_daily_cost.ToString("N2", ci) € + @p_fuel_cost.ToString("N2", ci) €</td>
+										<td style="text-align: center;">@p_total_cost.ToString("N2", ci) €</td>
+									</tr>
+								}
+
+								<tr style="background-color:#d0cece; text-align: right;">
+									<td colspan="4" style="font-weight: bold; padding-right: 5px">Tot. costo mezzi</td>
+									<td style="text-align: center; font-weight: bold;">@totaleMezziReport.ToString("N0", ci) €</td>
+								</tr>
+
+
+							}
+
+						</table>
+					</div>
+				</div>
+
+			}
+
+		}
+
+
+
+		@if (Model.Id != 0)
+		{
+			<div class="row">
+				<div class="col-3-container">
+					<div class="table-title" style="text-align:center">Commenti</div>
+				</div>
+
+				<div>
+					<table>
+						@for (int i = 0; i < Model.Questionario.Length; i++)
+						{
+							@* <tr>
+					<td style="text-align: center;"> Meteo </td>
+					<td style="text-align: center;"> @Model.Questionario[i].meteo </td>
+					<td style="text-align: center;"> @Model.Questionario[i].commentiMeteo </td>
+					</tr>
+					<tr>
+					<td style="text-align: center;"> Operai </td>
+					<td style="text-align: center;"> @Model.Questionario[i].risorseUmane </td>
+					<td style="text-align: center;"> @Model.Questionario[i].commentiRisorseUmane </td>
+					</tr>
+					<tr>
+					<td style="text-align: center;"> Fornitori </td>
+					<td style="text-align: center;"> @Model.Questionario[i].fornitori </td>
+					<td style="text-align: center;"> @Model.Questionario[i].commentiFornitori </td>
+					</tr>
+					<tr>
+					<td style="text-align: center;"> Mezzi e Attrezzature </td>
+					<td style="text-align: center;"> @Model.Questionario[i].mezzi </td>
+					<td style="text-align: center;"> @Model.Questionario[i].commentiAttrezzatureMezzi </td>
+					</tr> *@
+							<tr>
+								@*                                 <td style="text-align: center;"> Commenti Generali </td> *@
+								<td style="text-align: center;"> @Model.Questionario[i].commenti </td>
+							</tr>
+						}
+					</table>
+				</div>
+			</div>
+		}
+		<!-- <div class="firma">
+		@{
+			string firma = Model.Sign;
+		}
+			<h2>
+				Il capo cantiere:
+				<img src=@firma>
+			</h2>
+		</div> -->
+		@if (Model.Id != 0)
+		{
+			<div style="margin-top:10px; display: flex; align-items: center;">
+				<p class="capo-cantiere" style="margin: 0;">Il capo cantiere:</p>
+				<p class="firma" style="font-family: 'Caveat'; font-size: 30pt; margin: 0 0 0 10px;">@Model.Author</p>
+			</div>
+		}
+
+		<!-- Tabella Foto -->
+		@if (Model.Immagini.Any() && Model.mostraFoto == true)
+		{
+			<p class="breakhere"></p>
+
+			<div class="row">
+				<div class="col-3-container">
+					<div class="col">
+						<h3 style="text-align:center">Foto del giorno</h3>
+					</div>
+				</div>
+				@foreach (var f in Model.Immagini)
+				{
+					string url = CosiamAPI.Controllers.FileManager.filePathGetter(Model.file_base_path, f.FileDiCantiere.File);
+					Byte[] stream = System.IO.File.ReadAllBytes(url);
+					string file_final = "data:image/png;base64," + Convert.ToBase64String(stream);
+					<figure>
+						<img style="object-fit: contain; width:contain; height:570px;" src=@file_final>
+						<figcaption>Riferimento: @f.type, @f.FileDiCantiere.File.FileName</figcaption>
+					</figure>
+				}
+			</div>
+		}
+</body>
+</html>

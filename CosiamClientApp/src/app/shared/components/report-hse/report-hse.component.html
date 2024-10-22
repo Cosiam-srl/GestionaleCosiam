@@ -1,0 +1,98 @@
+<!-- Filter Datatables -->
+<section id="ngx-datatable-filter">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Report HSE</h4>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+
+            <div class="row">
+              <!-- Campo di ricerca -->
+              <div class="col-3">
+                <fieldset class="form-group">
+                  <label for="ngx-filter-ref">Cerca:</label>
+                  <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                    placeholder="Filtra la colonna Nome..." (keyup)="filterUpdate($event)" />
+                </fieldset>
+              </div>
+
+              <!-- Bottone "Elimina File" -->
+              <div class="col-auto mt-3">
+                <button type="button" class="btn bg-light-warning confirm-text mb-2 mr-2"
+                  (click)="ConfirmText()">Elimina File</button>
+              </div>
+
+              <!-- Componente di caricamento file -->
+              <div class="col-7 mt-3">
+                <app-uploader [url]="filePostUrl" (fileUpload)="onFileUpload($event)"></app-uploader>
+              </div>
+            </div>
+
+
+
+
+            <!-- fine  Elinima File dal cantiere -->
+
+            <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+
+            <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+            <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force" [headerHeight]="60"
+              [footerHeight]="50" rowHeight="50" [limit]="4" [rows]="fileget" [scrollbarH]="true"
+              [sorts]="[{prop: 'id', dir: 'desc'}]" [selectionType]="SelectionType.checkbox" (select)="onSelect($event)"
+              [selected]="selected"
+              [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+              <!-- <ngx-datatable-column name="Id" prop="id" [width]="250"></ngx-datatable-column> -->
+              <!-- <ngx-datatable-column name="" prop="id" [width]="30" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-value="value">
+                    <div class="datatable-checkbox">
+                      <input type="checkbox" (change)="onChange(value,$event)">
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column> -->
+
+
+              <!-- <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="Id" prop="id" [width]="40">
+              </ngx-datatable-column> -->
+              <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="" [minWidth]="30"
+                [maxWidth]="30" [width]="30" [sortable]="false" [resizeable]="false">
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Azioni" [width]="30">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                  <i class="ft-download text-primary cursor-pointer" (click)="onDownload(row)" title="Scarica"></i>
+                </ng-template>
+              </ngx-datatable-column>
+
+
+
+              <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="Nome" prop="fileName"
+                [width]="150">
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Data di caricamento" [width]="150">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{ row.uploadDateTime | date:'mediumDate':'+0100':'it' }}
+                </ng-template>
+
+                <!-- <ng-template ngx-datatable-cell-template let-row="row">
+                    {{ row.uploadDateTime
+                    | date:'mediumDate':'+0100':'it'
+                    }}
+                  </ng-template> -->
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Tipo" prop="type" [width]="100"></ngx-datatable-column>
+
+            </ngx-datatable>
+            <!-- ngx-datatable-filter -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--/ Filter Datatables -->

@@ -1,0 +1,27 @@
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+.dark-modal .modal-content {
+    background-color: #292b2c;
+    color: white;
+  }
+  .dark-modal .close {
+    color: white;
+  }
+  .light-blue-backdrop {
+    background-color: #5cb3fd;
+  }
+
+  @media (min-width: 576px) {
+    .mobile{
+      float: inline-start;
+    }
+  }
+  @media (min-width: 768px) {
+    .mobile{
+      float: inline-end;
+    }
+  }
+
+  .ng-arrow-disable {
+    display: none;
+  }

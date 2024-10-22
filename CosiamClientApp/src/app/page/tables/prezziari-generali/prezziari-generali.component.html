@@ -1,0 +1,228 @@
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<!-- Filter Datatables -->
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<section id="ngx-datatable-prezziario">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Prezzari Generali</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <div class="row mb-2">
+                            <!-- Campo di ricerca -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="ngx-filter-ref">Cerca:</label>
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Nome/Tipo..." (keyup)="filterUpdate($event)" />
+                                </div>
+                            </div>
+
+                            <!-- Selector for number of rows to show -->
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="row-selector" class="mr-1">Mostra:</label>
+                                    <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                                        <option value="10">10 elementi</option>
+                                        <option value="25">25 elementi</option>
+                                        <option value="50">50 elementi</option>
+                                        <option value="100">100 elementi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tasto "Aggiungi un prezzario generale" -->
+                            <div class="col mt-3">
+                                <button class="btn btn-primary" (click)="openLg(content)">Aggiungi un prezzario
+                                    generale</button>
+                            </div>
+                        </div>
+
+                        <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+                        <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force"
+                            [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="limit"
+                            selectionType="single" [rows]="prezziariGenerali" [scrollbarH]="true"
+                            [sorts]="[{prop: 'id', dir: 'desc'}]" (select)="onSelect($event)" [selected]="selected"
+                            (activate)="rowClick($event)"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+
+                            <!-- <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="id" prop="id"
+                                [width]="50"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Cliente" prop="clienteName"
+                                [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Nome" prop="name" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo" prop="type" [width]="150"></ngx-datatable-column>
+                            <ngx-datatable-column name="Anno di validità" prop="validationYear" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Azioni" [width]="45">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onModify(row,modify)"
+                                        title="Modifica"></i>
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;"
+                                        (click)="deletePrezziarioGenerale(row)" title="Elimina"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+
+
+                        </ngx-datatable>
+                        <!-- ngx-datatable-filter -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- RICORDA CHE IL TESTO INSERITO NELLE LABEL È LEGATO AI PLACEHOLDER(guarda funzione addDatiNota)!!! -->
+<!-- codice del popup che viene aperto quando si clicc su aggiungi prezzario generale -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Prezzario Generale</h4>
+    </div>
+    <div class="modal-body">
+        <form #prezziarioGeneraleForm="ngForm">
+            <div class="row pb-4">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Nome Prezzario</label>
+                    <input type="text" class="form-control" name="nome" id="exampleFormControlInput1" placeholder="Nome"
+                        [(ngModel)]="nuovoprezziario.name">
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" name="tipologia" id="exampleFormControlInput1"
+                        placeholder="" [(ngModel)]="nuovoprezziario.type">
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anno di validità</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es.2021"
+                        [(ngModel)]="nuovoprezziario.validationYear" name="annoValidita" #annoValidita=ngModel
+                        (ngModelChange)="validationForm(prezziarioGeneraleForm)" title="" pattern="[0-9]{4}">
+                    <small class="form-text text-muted danger" *ngIf="annoValidita.errors?.pattern">Inserisci un
+                        anno (4 cifre)</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Percentuale Sconto</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="discountPercentage"
+                            id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovoprezziario.discountPercentage">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-5 col-xl-5 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Cliente</label>
+                    <div class="form-group">
+                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                        <!-- multiple abilita la scelta multipla -->
+                        <ng-select [items]="clientiget" name="cliente" #cliente="ngModel" title=""
+                            (ngModelChange)="validationForm(prezziarioGeneraleForm)" bindLabel="name" bindValue="id"
+                            [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona cliente"
+                            [(ngModel)]="nuovoprezziario.idCliente" appendTo="body">
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- parte in basso -->
+        </form>
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="aggiungiPrezziarioGenerale()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+</ng-template>
+
+<!-- fine popup creazione-->
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica Prezzario Generale</h4>
+    </div>
+    <div class="modal-body">
+        <form #prezziarioGeneraleForm="ngForm">
+            <div class="row pb-4">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Nome Prezzario</label>
+                    <input type="text" class="form-control" name="nome" id="exampleFormControlInput1" placeholder="Nome"
+                        [(ngModel)]="nuovoprezziario.name">
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+                    <input type="text" class="form-control" name="tipologia" id="exampleFormControlInput1"
+                        placeholder="" [(ngModel)]="nuovoprezziario.type">
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anno di validità</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es.2021"
+                        [(ngModel)]="nuovoprezziario.validationYear" name="annoValidita" #annoValidita=ngModel
+                        (ngModelChange)="validationForm(prezziarioGeneraleForm)" title="" pattern="[0-9]{4}">
+                    <small class="form-text text-muted danger" *ngIf="annoValidita.errors?.pattern">Inserisci un
+                        anno (4 cifre)</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Percentuale Sconto</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="discountPercentage"
+                            id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovoprezziario.discountPercentage">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-5 col-xl-5 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Cliente</label>
+                    <div class="form-group">
+                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                        <!-- multiple abilita la scelta multipla -->
+                        <ng-select [items]="clientiget" name="cliente" #cliente="ngModel" title=""
+                            (ngModelChange)="validationForm(prezziarioGeneraleForm)" bindLabel="name" bindValue="id"
+                            [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona cliente"
+                            [(ngModel)]="nuovoprezziario.idCliente" appendTo="body">
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- parte in basso -->
+        </form>
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="updatePrezzarioGenerale()" (click)="modal.close('Close click')">Conferma Modifica</button>
+
+        <button type="button" class="btn btn-light" (click)=" clearData();modal.close('Close click')">Chiudi</button>
+    </div>
+</ng-template>
+
+<!-- fine popup creazione-->

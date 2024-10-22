@@ -1,0 +1,30 @@
+/* import stile per il wizard nel report di cantiere */
+@import '~angular-archwizard/styles/archwizard.css';
+
+/* You can add global styles to this file, and also import other style files */
+form label, .form-group label {
+  text-transform: none;
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+/*impostazione colori bottoni*/
+.btn-primary {
+  color: #fff;
+  background-color: #1898D6;
+  border-color: #1898D6;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #168CC5;
+  border-color: #168CC5;
+}
+
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.border-primary {
+  border-color: var(--primary-color) !important;
+}

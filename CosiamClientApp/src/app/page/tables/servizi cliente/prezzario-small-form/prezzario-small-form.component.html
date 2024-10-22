@@ -1,0 +1,113 @@
+<div #content>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Prezzo</h4>
+        <button type="button" class="close" aria-label="Close" (click)="this.articoloPrezzarioAdded.emit(false);">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #prezzarioForm="ngForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="exampleFormControlInput1" class="form-label">Prezzario Generale</label>
+                    <div class="form-group">
+                        <ng-select [items]="prezzariGenerali" bindLabel="name" bindValue="id" [multiple]="false"
+                            [closeOnSelect]="false" placeholder="Seleziona" [(ngModel)]="this.pc.idPrezziarioGenerale"
+                            [required]="true" (ngModelChange)="this.pc.validationForm(prezzarioForm)"
+                            name="prezzarioGen" #prezzarioGen="ngModel">
+                        </ng-select>
+                        <small class="form-text text-muted danger" *ngIf="prezzarioGen.errors?.required">Campo
+                            obbligatorio</small>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row pb-4">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione Articolo</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Piastrelle"
+                        name="descrizionearticolo" #descrizionearticolo="ngModel"
+                        (ngModelChange)="this.pc.validationForm(prezzarioForm)"
+                        [(ngModel)]="this.pc.nuovoservizio.description" required>
+                    <small class="form-text text-muted danger" *ngIf="descrizionearticolo.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Categoria</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Legname"
+                        [(ngModel)]="this.pc.nuovoservizio.category"
+                        (ngModelChange)="this.pc.validationForm(prezzarioForm)" name="categoria" #categoria="ngModel">
+                    <!-- <small class="form-text text-muted danger" *ngIf="categoria.errors?.required">Campo
+                        obbligatorio</small> -->
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                    <div class="form-group">
+                        <ng-select [items]="this.pc.ums" bindLabel="name" bindValue="name" [multiple]="false"
+                            [closeOnSelect]="false" placeholder="Seleziona o aggiungi" [addTag]="addCustomUms"
+                            addTagText="Aggiungi l'unità" [(ngModel)]="this.pc.nuovoservizio.um"
+                            (ngModelChange)="this.pc.validationForm(prezzarioForm)" name="unitadimisura"
+                            #unitadimisura="ngModel">
+                        </ng-select>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Prezzo unitario</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="exampleFormControlInput1" placeholder="Es. 5"
+                            [(ngModel)]="this.pc.nuovoservizio.pricePerUm"
+                            (ngModelChange)="this.pc.validationForm(prezzarioForm)" name="prezzoperum"
+                            #prezzoperum="ngModel">
+                        <!-- pattern="^[0-9]\d*(\.\d+)?$" -->
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                        <!-- <small class="form-text text-muted danger" *ngIf="prezzoperum.errors?.pattern">Inserisci una
+                            cifra numerica col punto decimale</small> -->
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Codice Tariffa</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1"
+                        [(ngModel)]="this.pc.nuovoservizio.rateCode"
+                        (ngModelChange)="this.pc.validationForm(prezzarioForm)" placeholder="Es. 5758 27.02.02.00 1"
+                        name="codicetariffa" #codicetariffa="ngModel">
+
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="discountLabel"
+                    [(ngModel)]="this.pc.nuovoservizio.applyDiscount"
+                    (ngModelChange)="this.pc.validationForm(prezzarioForm)" placeholder="Es. 5758 27.02.02.00 1"
+                    name="applyDiscount" #applyDiscount="ngModel">
+                    <label for="discountLabel" class="form-label">Applica sconto</label>
+                </div>
+                <!-- <div class="col-md-2 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">iva</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 10"
+                        [(ngModel)]="nuovoservizio.iva">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">%</span>
+                    </div>
+                </div>
+            </div> -->
+            </div>
+
+            <!-- parte in basso -->
+        </form>
+    </div>
+    <div class="modal-footer">
+
+
+        <button *ngIf="!this.pc.fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+            disabled>Conferma</button>
+        <button *ngIf="this.pc.fff" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="this.pc.aggiungiServizioCliente();this.articoloPrezzarioAdded.emit(true);">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="this.articoloPrezzarioAdded.emit(false);">Chiudi</button>
+    </div>
+</div>

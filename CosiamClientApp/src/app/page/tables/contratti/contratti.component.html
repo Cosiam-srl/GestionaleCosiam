@@ -1,0 +1,812 @@
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<!-- Basic Datatables -->
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<section id="ngx-datatable-contratti">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Contratti</h4>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="row mb-2">
+              <!-- Campo di ricerca -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="ngx-filter-ref">Cerca:</label>
+                  <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                    placeholder="Filtra la colonna Cliente/Descrizione/Area" (keyup)="filterUpdate($event)" />
+                </div>
+              </div>
+              <!-- Selector for number of rows to show -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="row-selector" class="mr-1">Mostra:</label>
+                  <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                    <option value="10">10 elementi</option>
+                    <option value="25">25 elementi</option>
+                    <option value="50">50 elementi</option>
+                    <option value="100">100 elementi</option>
+                  </select>
+                </div>
+              </div>
+              <!-- Tasto "Aggiungi Contratto" -->
+              <div class="col mt-3">
+                <button type="button" class="btn btn-primary" (click)="openLg(content)">Aggiungi
+                  Contratto
+                </button>
+              </div>
+            </div>
+            <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+            <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+            <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force" [headerHeight]="60"
+              [footerHeight]="50" rowHeight="50" [limit]="limit" [rows]="contratti" [scrollbarH]="true"
+              [sorts]="[{prop: 'id', dir: 'desc'}]" (select)="onSelect($event)" [selected]="selected"
+              [selectionType]="SelectionType.checkbox"
+              [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+              <!-- <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="id" prop="id"
+                  [width]="50"></ngx-datatable-column> -->
+              <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="Cliente"
+                prop="clienteName" [width]="150">
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Descrizione Breve" prop="shortDescription" [width]="150">
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Area" prop="place" [width]="50"></ngx-datatable-column>
+              <ngx-datatable-column name="Importo Totale Netto" prop="totalNetAmount" [width]="50">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  {{ row.totalNetAmount | number:'1.2-2':'it' }} €
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Stato" prop="status" [width]="50">
+                <ng-template let-status="value" ngx-datatable-cell-template>
+                  <div *ngIf="status" class="badge" [ngClass]="{
+                                          'bg-light-secondary': status == 'In corso di stipula',
+                                          'bg-light-success': status == 'Stipulato',
+                                          'bg-light-warning': status == 'Scaduto'
+                                        }">
+                    {{ status }}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Data di termine" prop="endingDate" [width]="50">
+                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+                  {{ value | dataleggibile }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Azioni" [width]="45">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                  <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onModify(modify, row)"
+                    title="Modifica contratto"></i>
+                  <!-- <i class="ft-corner-down-right text-primary cursor-pointer ml-2"
+                          (click)="onView(row)" title="Entra nella dashboard"></i> -->
+                  <i class="ft-trash fs-6 text-primary cursor-pointer" title="Elimina contratto"
+                    style="padding-left: 0.5rem;" (click)="deleteContratto(row)"></i>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+            <!-- ngx-datatable-filter -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--/ Basic Datatables -->
+<!-- popup di creazione nuovo contratto -->
+<ng-template #content let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">Aggiungi Contratto</h4>
+      <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button> -->
+    </div>
+    <div class="modal-body">
+      <form #contrattoForm="ngForm">
+        <div class="row">
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Cliente</label>
+            <div class="form-group">
+              <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+              <!-- multiple abilita la scelta multipla -->
+              <ng-select [items]="clientiget" name="cliente" #cliente="ngModel" title=""
+                (ngModelChange)="validationForm(contrattoForm)" bindLabel="name" bindValue="id" [multiple]="false"
+                [closeOnSelect]="false" placeholder="Seleziona cliente" [(ngModel)]="nuovocontratto.idCliente" required>
+              </ng-select>
+              <small class="form-text text-muted danger" *ngIf="cliente.errors?.required">Campo
+                obbligatorio</small>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Descrizione breve</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+              [(ngModel)]="nuovocontratto.shortDescription" name="descrizionebreve" #descrizionebreve="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title="" required>
+            <small class="form-text text-muted danger" *ngIf="descrizionebreve.errors?.required">Campo
+              obbligatorio</small>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">CIG</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+              [(ngModel)]="nuovocontratto.cig" name="cig" #cig="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+              title="">
+            <small class="form-text text-muted danger" *ngIf="cig.errors?.required">Campo
+              obbligatorio</small>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Cod. contratto/N° repertorio </label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+              [(ngModel)]="nuovocontratto.contractCode" name="codicecontratto" #codicecontratto="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title="">
+          </div>
+          <div class="col-12 col-md-12 col-lg-6 col-xl-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Categoria SOA</label>
+            <ng-select [items]="soatypes" bindLabel="name" bindValue="name" [multiple]="true" [closeOnSelect]="false"
+              placeholder="Seleziona SOA" (change)="categoriaSOA($event);validationForm(contrattoForm)" name="soa"
+              title="">
+            </ng-select>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">PM</label>
+            <div class="form-group">
+              <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+              <!-- multiple abilita la scelta multipla -->
+              <ng-select [items]="personale_get" bindLabel="fullName" bindValue="id" [multiple]="false"
+                [closeOnSelect]="false" placeholder="Seleziona il project manager" name="pm" #pm="ngModel" title=""
+                [(ngModel)]="nuovocontratto.idPm" (ngModelChange)="validationForm(contrattoForm)" required>
+              </ng-select>
+              <small class="form-text text-muted danger" *ngIf="pm.errors?.required">Campo
+                obbligatorio</small>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Area</label>
+            <ng-select [items]="regioni" bindLabel="name" bindValue="name" [multiple]="false" [closeOnSelect]="true"
+              placeholder="Seleziona regione" [(ngModel)]="nuovocontratto.place" name="place" #place="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title="">
+            </ng-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label class="form-label">Data di stipula</label>
+            <app-datepicker-single [initialValue]="dataToStringValue(nuovocontratto.startDate)"
+              (cambiadata)="cambia($event, 'datastipula')" id="datastipula">
+            </app-datepicker-single>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label class="form-label">Data di termine</label>
+            <app-datepicker-single (cambiadata)="cambia($event, 'datatermine')" id="datatermine"
+              [initialValue]="dataToStringValue(nuovocontratto.endingDate)">
+            </app-datepicker-single>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Prezzario</label>
+            <div class="form-group">
+              <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+              <!-- multiple abilita la scelta multipla -->
+              <ng-select [items]="prezziariget" name="prezziario" #prezziario="ngModel" title=""
+                (ngModelChange)="validationForm(contrattoForm)" bindLabel="name" bindValue="id" [multiple]="true"
+                [closeOnSelect]="false" placeholder="Seleziona prezziario" [(ngModel)]="nuovocontratto.prezzari_id"
+                required>
+              </ng-select>
+              <small class="form-text text-muted danger" *ngIf="prezziario.errors?.required">Campo
+                obbligatorio</small>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3 ">
+            <label for="selectStato" class="form-label">Stato</label>
+            <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
+              onchange='this.size=1; this.blur();' aria-label="Default select example"
+              [(ngModel)]="nuovocontratto.status" name="status" #status="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title="">
+              <option value='In corso di stipula'>In corso di stipula</option>
+              <option value='Stipulato'>Stipulato</option>
+              <option value='Scaduto'>Scaduto</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Importo Lavori Iniziale Lordo</label>
+            <div class="input-group">
+              <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+                [(ngModel)]="nuovocontratto.initialGrossWorkAmount" name="importolavoriinizialelordo"
+                #importolavoriinizialelordo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+                pattern="^[0-9]\d*(\.\d+)?$">
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">€</span>
+              </div>
+            </div>
+            <small class="form-text text-muted danger" style="margin-top: -11px;"
+              *ngIf="importolavoriinizialelordo.errors?.pattern">Inserisci
+              una cifra numerica</small>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Importo Oneri per la sicurezza</label>
+            <div class="input-group">
+              <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+                [(ngModel)]="nuovocontratto.initialChargesAmount" name="importooneriinziale"
+                #importooneriinziale="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+                pattern="^[0-9]\d*(\.\d+)?$">
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">€</span>
+              </div>
+            </div>
+            <small class="form-text text-muted danger" style="margin-top: -11px;"
+              *ngIf="importooneriinziale.errors?.pattern">Inserisci
+              una cifra numerica</small>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Importo Iniziale Netto</label>
+            <div class="input-group">
+              <input type="text" class="form-control" [ngModel]="nuovocontratto.startNetAmount | number:'1.0-2':'it-IT'"
+                name="importoinizialenetto" #importoinizialenetto="ngModel"
+                (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">€</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-2 col-xl-2 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Sconto</label>
+            <div class="input-group">
+              <input type="number" class="form-control" min=0 placeholder="Digita un valore da 0 a 99"
+                [(ngModel)]="nuovocontratto.discount" name="sconto" #sconto="ngModel"
+                (ngModelChange)="validationForm(contrattoForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">%</span>
+              </div>
+            </div>
+            <small class="form-text text-muted danger" style="margin-top: -11px;"
+              *ngIf="sconto.errors?.pattern">Inserisci
+              una cifra numerica</small>
+          </div>
+          <div class="col-1 mt-4 justify-content-center align-items-center"
+            *ngIf="nuovocontratto.valoriAggiuntivi.length === 0">
+            <button (click)="addValoriAggiuntivi(nuovocontratto); validationForm(contrattoForm)" type="button"
+              class="btn btn-success d-flex gap-2 px-4" style="height: 40.5px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus"
+                viewBox="0 0 16 16">
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          @for (valoreaggiuntivo of nuovocontratto.valoriAggiuntivi; track valoreaggiuntivo.codiceContratto; let i =
+          $index) {
+          <div class="d-flex gap-4 flex-column flex-lg-row">
+            <div class="d-flex m-2 d-lg-none" style="height: 2px ; background-color: black"></div>
+            <div>
+              <label class="form-label">Lavori Agg. Lordo</label>
+              <div class="input-group">
+                <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+                  [(ngModel)]="valoreaggiuntivo.additionalGrossWorkAmount" name="importolavoriaggiuntivolordo{{i}}"
+                  #importolavoriaggiuntivolordo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+                  pattern="^[0-9]\d*(\.\d+)?$">
+                <div class="input-group-append">
+                  <span class="input-group-text">€</span>
+                </div>
+              </div>
+              <small class="form-text text-muted danger" style="margin-top: -11px;"
+                *ngIf="importolavoriaggiuntivolordo.errors?.pattern">Inserisci
+                una cifra numerica</small>
+            </div>
+            <div>
+              <label class="form-label">Oneri Agg.</label>
+              <div class="input-group">
+                <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+                  [(ngModel)]="valoreaggiuntivo.additionalChargesAmount" name="importooneriaggiuntivo{{i}}"
+                  #importooneriaggiuntivo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+                  pattern="^[0-9]\d*(\.\d+)?$">
+                <div class="input-group-append">
+                  <span class="input-group-text">€</span>
+                </div>
+              </div>
+              <small class="form-text text-muted danger" style="margin-top: -11px;"
+                *ngIf="importooneriaggiuntivo.errors?.pattern">Inserisci
+                una cifra numerica</small>
+            </div>
+            <div>
+              <label class="form-label">Aggiuntivo Netto</label>
+              <div class="input-group">
+                <input type="text" class="form-control" [ngModel]="valoreaggiuntivo.additionalNetAmount | number:'1.0-2':'it-IT'"
+                  name="importoaggiuntivonetto{{i}}" #importoaggiuntivonetto="ngModel"
+                  (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
+                <div class="input-group-append">
+                  <span class="input-group-text">€</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="form-label">Giorni Solari Agg.</label>
+              <div class="input-group">
+                <input type="number" class="form-control" [(ngModel)]="valoreaggiuntivo.additionalSolarDays"
+                  name="additionalSolarDays{{i}}" (ngModelChange)="validationForm(contrattoForm)" title=""
+                  pattern="^[0-9]\d*(\.\d+)?$">
+              </div>
+            </div>
+            <div>
+              <label class="form-label">Codice contratto</label>
+              <div class="input-group">
+                <input type="text" class="form-control" [(ngModel)]="valoreaggiuntivo.codiceContratto"
+                  name="codicecontratto{{i}}" (ngModelChange)="validationForm(contrattoForm)" title="">
+              </div>
+            </div>
+            <div>
+              <label class="form-label">Data</label>
+              <app-datepicker-single (cambiadata)="cambia($event, 'datacontratto', valoreaggiuntivo)"
+                [initialValue]="dataToStringValue(valoreaggiuntivo.data)" id="datacontratto">
+              </app-datepicker-single>
+            </div>
+            <div class="d-flex justify-content-end align-items-center mt-2">
+              <button (click)="removeValoriAggiuntivi(valoreaggiuntivo, nuovocontratto); validationForm(contrattoForm)"
+                type="button" class="btn btn-danger " style="height: 40.5px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-trash-fill" viewBox="0 0 16 16">
+                  <path
+                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
+                  </path>
+                </svg>
+              </button>
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-2" *ngIf="isLastIndex(i)">
+              <button (click)="addValoriAggiuntivi(nuovocontratto); validationForm(contrattoForm)" type="button"
+                class="btn btn-success d-flex" style="height: 40.5px; ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Importo Lavori Totale Lordo</label>
+            <div class="input-group">
+              <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.totalGrossWorkAmount | number:'1.0-2':'it-IT'"
+                name="importolavoritotalelordo" #importolavoritotalelordo="ngModel"
+                (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">€</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Importo Oneri Totale</label>
+            <div class="input-group">
+              <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.totalChargesAmount | number:'1.0-2':'it-IT'"
+                name="importooneritotale" #importooneritotale="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+                title="" disabled>
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">€</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Importo Totale Netto</label>
+            <div class="input-group">
+              <input type="text" class="form-control" [ngModel]="nuovocontratto.totalNetAmount | number:'1.0-2':'it-IT'"
+                name="importototalenetto" #importototalenetto="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+                title="" disabled>
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">€</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+            <label for="exampleFormControlInput1" class="form-label">CUP/ODA/RDO</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+              [(ngModel)]="nuovocontratto.oda" name="oda" #oda="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+              title="">
+            <small class="form-text text-muted danger" *ngIf="oda.errors?.required">Campo
+              obbligatorio</small>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="exampleFormControlTextarea1">Descrizione completa</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder=""
+              [(ngModel)]="nuovocontratto.longDescription" name="longdescription" #longdescription="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title=""></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+      <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+      </button>
+      <!-- bottone crea nota -->
+      @if (fff == true) {
+      <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+        (click)="creaContrattoBozza(); modal.close('Close click')">Salva come Bozza
+      </button>
+      <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+        (click)="creaContratto(); modal.close('Close click')">Conferma
+      </button>
+      }
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+  </div>
+</ng-template>
+<!-- fine popup di creazione nuovo contratto -->
+<!-- popup di modifica contratto -->
+<ng-template #modify let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica Contratto</h4>
+    <br>
+    <h5 style="color: red;" *ngIf="this.nuovocontratto.status=='Bozza'">BOZZA</h5>
+  </div>
+  <div class="modal-body">
+    <form #contrattoForm="ngForm">
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Cliente</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="clientiget" name="cliente" #cliente="ngModel" title=""
+              (ngModelChange)="validationForm(contrattoForm)" bindLabel="name" bindValue="id" [multiple]="false"
+              [closeOnSelect]="false" placeholder="Seleziona cliente" [(ngModel)]="nuovocontratto.idCliente" required>
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="cliente.errors?.required">Campo
+              obbligatorio</small>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Descrizione breve</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+            [(ngModel)]="nuovocontratto.shortDescription" name="descrizionebreve" #descrizionebreve="ngModel"
+            (ngModelChange)="validationForm(contrattoForm)" title="" required>
+          <small class="form-text text-muted danger" *ngIf="descrizionebreve.errors?.required">Campo
+            obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CIG</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+            [(ngModel)]="nuovocontratto.cig" name="cig" #cig="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+            title="">
+          <small class="form-text text-muted danger" *ngIf="cig.errors?.required">Campo
+            obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Cod. contratto/N° repertorio </label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+            [(ngModel)]="nuovocontratto.contractCode" name="codicecontratto" #codicecontratto="ngModel"
+            (ngModelChange)="validationForm(contrattoForm)" title="">
+        </div>
+        <div class="col-12 col-md-12 col-lg-6 col-xl-6 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Categoria SOA</label>
+          <ng-select [items]="soatypes" bindLabel="name" bindValue="name" [multiple]="true" [closeOnSelect]="false"
+            placeholder="Seleziona SOA" [(ngModel)]="this.soa" name=Soa #Soa="ngModel"
+            (change)="categoriaSOA($event);validationForm(contrattoForm)" title="">
+          </ng-select>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">PM</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="personale_get" bindLabel="fullName" bindValue="id" [multiple]="false"
+              [closeOnSelect]="false" placeholder="Seleziona il project manager" name="pm" #pm="ngModel" title=""
+              [(ngModel)]="nuovocontratto.idPm" (ngModelChange)="validationForm(contrattoForm)" required>
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="pm.errors?.required">Campo
+              obbligatorio</small>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Area</label>
+          <ng-select [items]="regioni" bindLabel="name" bindValue="name" [multiple]="false" [closeOnSelect]="true"
+            placeholder="Seleziona regione" [(ngModel)]="nuovocontratto.place" name="place" #place="ngModel"
+            (ngModelChange)="validationForm(contrattoForm)" title="">
+          </ng-select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label class="form-label">Data di stipula</label>
+          <app-datepicker-single (cambiadata)="cambia($event, 'datastipula')" id="datastipula"
+            [initialValue]="dataToStringValue(nuovocontratto.startDate) ">
+          </app-datepicker-single>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label class="form-label">Data di termine</label>
+          <app-datepicker-single (cambiadata)="cambia($event, 'datatermine')" id="datatermine"
+            [initialValue]="dataToStringValue(nuovocontratto.endingDate) ">
+          </app-datepicker-single>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <br>
+          <label for="exampleFormControlInput1" class="form-label">Prezzario</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="prezziariget" name="prezziario" #prezziario="ngModel" title=""
+              (ngModelChange)="validationForm(contrattoForm)" bindLabel="name" bindValue="id" [multiple]="true"
+              [closeOnSelect]="false" placeholder="Seleziona prezziario" [(ngModel)]="nuovocontratto.prezzari_id"
+              required>
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="prezziario.errors?.required">Campo
+              obbligatorio</small>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3 ">
+          <br>
+          <label for="selectStato" class="form-label">Stato</label>
+          <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+            aria-label="Default select example" [(ngModel)]="nuovocontratto.status" name="status" #status="ngModel"
+            (ngModelChange)="validationForm(contrattoForm)" title="">
+            <option value='In corso di stipula'>In corso di stipula</option>
+            <option value='Stipulato'>Stipulato</option>
+            <option value='Scaduto'>Scaduto</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Lavori Iniziale Lordo</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+              [(ngModel)]="nuovocontratto.initialGrossWorkAmount" name="importolavoriinizialelordo"
+              #importolavoriinizialelordo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+              pattern="^[0-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="importolavoriinizialelordo.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Oneri per la sicurezza</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+              [(ngModel)]="nuovocontratto.initialChargesAmount" name="importooneriiniziale"
+              #importooneriiniziale="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+              pattern="^[0-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="importooneriiniziale.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Iniziale Netto</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [ngModel]="nuovocontratto.startNetAmount | number:'1.0-2':'it-IT'"
+              name="importoinizialenetto" #importoinizialenetto="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-2 col-xl-2 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Sconto</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=0 placeholder="Digita un valore da 0 a 99"
+              [(ngModel)]="nuovocontratto.discount" name="sconto" #sconto="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">%</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;" *ngIf="sconto.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div class="col-1 mt-4 justify-content-center align-items-center"
+          *ngIf="nuovocontratto.valoriAggiuntivi.length === 0">
+          <button (click)="addValoriAggiuntivi(nuovocontratto); validationForm(contrattoForm)" type="button"
+            class="btn btn-success d-flex gap-2 px-4" style="height: 40.5px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus"
+              viewBox="0 0 16 16">
+              <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      @for (valoreaggiuntivo of nuovocontratto.valoriAggiuntivi; track valoreaggiuntivo.codiceContratto; let i = $index)
+      {
+      <div class="d-flex gap-4 flex-column flex-lg-row">
+        <div class="d-flex m-2 d-lg-none" style="height: 2px ; background-color: black"></div>
+        <div>
+          <label class="form-label">Lavori Agg. Lordo</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+              [(ngModel)]="valoreaggiuntivo.additionalGrossWorkAmount" name="importolavoriaggiuntivolordo{{i}}"
+              #importolavoriaggiuntivolordo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+              pattern="^[0-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="importolavoriaggiuntivolordo.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div>
+          <label class="form-label">Oneri Agg.</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+              [(ngModel)]="valoreaggiuntivo.additionalChargesAmount" name="importooneriaggiuntivo{{i}}"
+              #importooneriaggiuntivo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+              pattern="^[0-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="importooneriaggiuntivo.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div>
+          <label class="form-label">Aggiuntivo Netto</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [ngModel]="valoreaggiuntivo.additionalNetAmount | number:'1.0-2':'it-IT'"
+              name="importoaggiuntivonetto{{i}}" #importoaggiuntivonetto="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Giorni Solari Agg.</label>
+          <div class="input-group">
+            <input type="number" class="form-control" [(ngModel)]="valoreaggiuntivo.additionalSolarDays"
+              name="additionalSolarDays{{i}}" (ngModelChange)="validationForm(contrattoForm)" title=""
+              pattern="^[0-9]\d*(\.\d+)?$">
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Codice contratto</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [(ngModel)]="valoreaggiuntivo.codiceContratto"
+              name="codicecontratto{{i}}" (ngModelChange)="validationForm(contrattoForm)" title="">
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Data</label>
+          <app-datepicker-single [initialValue]="dataToStringValue(valoreaggiuntivo.data)  "
+            (cambiadata)="cambia($event, 'datacontratto', valoreaggiuntivo); validationForm(contrattoForm)"
+            id="datacontratto">
+          </app-datepicker-single>
+        </div>
+        <div class="d-flex justify-content-end align-items-center mt-2">
+          <button (click)="removeValoriAggiuntivi(valoreaggiuntivo, nuovocontratto); validationForm(contrattoForm)"
+            type="button" class="btn btn-danger " style="height: 40.5px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill"
+              viewBox="0 0 16 16">
+              <path
+                d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
+              </path>
+            </svg>
+          </button>
+        </div>
+        <div class="d-flex justify-content-center align-items-center mt-2" *ngIf="isLastIndex(i)">
+          <button (click)="addValoriAggiuntivi(nuovocontratto); validationForm(contrattoForm)" type="button"
+            class="btn btn-success d-flex" style="height: 40.5px; ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus"
+              viewBox="0 0 16 16">
+              <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      }
+      <div class="row mt-3">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Lavori Totale Lordo</label>
+          <div class="input-group">
+            <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.totalGrossWorkAmount | number:'1.0-2':'it-IT'"
+              name="importolavoritotalelordo" #importolavoritotalelordo="ngModel"
+              (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Oneri Totale</label>
+          <div class="input-group">
+            <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.totalChargesAmount | number:'1.0-2':'it-IT'"
+              name="importooneritotale" #importooneritotale="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+              title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Totale Netto</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [ngModel]="nuovocontratto.totalNetAmount | number:'1.0-2':'it-IT'"
+              name="importototalenetto" #importototalenetto="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+              title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CUP/ODA/RDO</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder=""
+            [(ngModel)]="nuovocontratto.oda" name="oda" #oda="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+            title="">
+          <small class="form-text text-muted danger" *ngIf="oda.errors?.required">Campo
+            obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Ordinato</label>
+          <div class="input-group">
+            <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.orderedImport | number:'1.0-2':'it-IT'"
+              name="importoordinato" #importoordinato="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+              disabled>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Residuo</label>
+          <div class="input-group">
+            <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.residualImport | number:'1.0-2':'it-IT'"
+              name="importoresiduo" #importoresiduo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
+              disabled>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label for="exampleFormControlTextarea1">Descrizione completa</label>
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder=""
+            [(ngModel)]="nuovocontratto.longDescription" name="longdescription" #longdescription="ngModel"
+            (ngModelChange)="validationForm(contrattoForm)" title=""></textarea>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- parte in basso -->
+  <div class="modal-footer">
+    <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+      modifica
+    </button>
+    <!-- bottone crea nota -->
+    <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="updateContrattoBozza()" (click)="modal.close('Close click')">Salva come Bozza
+    </button>
+    <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="updateContratto()" (click)="modal.close('Close click')">Conferma modifica
+    </button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')" (click)="clearData()">Chiudi
+    </button>
+  </div>
+</ng-template>

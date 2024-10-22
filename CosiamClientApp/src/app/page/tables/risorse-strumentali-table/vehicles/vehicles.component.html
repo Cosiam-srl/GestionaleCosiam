@@ -1,0 +1,388 @@
+<ngx-spinner>
+  <app-spinner></app-spinner>
+</ngx-spinner>
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
+<!-- Basic Datatables -->
+<section id="ngx-datatable-mezzi">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Mezzi</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <div class="row mb-2 align-items-start">
+                            <!-- Campo di ricerca -->
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="ngx-filter-ref">Cerca:</label>
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text" placeholder="Filtra la colonna Descrizione/Marca/Targa..." (keyup)="filterUpdate($event)" />
+                                </div>
+                            </div>
+
+                            <!-- Selector for number of rows to show -->
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="row-selector" class="mr-1">Mostra:</label>
+                                    <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                                        <option value="10">10 elementi</option>
+                                        <option value="25">25 elementi</option>
+                                        <option value="50">50 elementi</option>
+                                        <option value="100">100 elementi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tasto "Aggiungi Mezzo" -->
+                            <div class="col-2 mt-3">
+                                <button type="button" class="btn btn-primary mr-1" (click)="openLg(content)">Aggiungi Mezzo</button>
+                            </div>
+                            <div class="col-2 mt-3">
+                                <button type="button" class="btn btn-primary" (click)="openLg(dettagliMezzi)">Estrai
+                                    Dettagli</button>
+                            </div>
+                            <div class="col-2 mt-3">
+                                <button type="button" class="btn btn-primary" (click)="setGasolinePrice()">Imposta Costo Gasolio</button>
+                            </div>
+                        </div>
+                        <!-- ngx-datatable Basic -->
+                        <ngx-datatable [rows]="mezzi" [rowHeight]="50" class="bootstrap core-bootstrap" [limit]="limit"
+                            [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true"
+                            [sorts]="[{prop: 'id', dir: 'desc'}]" (activate)="rowClick($event)" selectionType="single">
+
+                            <!-- <ngx-datatable-column name="Id" prop="id" [width]="50" style="text-align: center;">
+              </ngx-datatable-column> -->
+                            <ngx-datatable-column name="Descrizione" prop="description" [width]="200"
+                                style="text-align: center;">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Marca" prop="brand" [width]="150" [draggable]="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Modello" prop="model" [width]="100" [draggable]="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Targa/Matricola" prop="licensePlate" [width]="100"
+                                [draggable]="false">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Costo Giornaliero" prop="dailyCost" [width]="80"
+                                resizable="false">
+                                <ng-template ngx-datatable-cell-template let-value="value">
+                                    <div *ngIf="value">
+                                        {{value | number:'1.2-2':'it'}} €
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Valore Stimato" prop="extimatedValue" [width]="80"
+                                resizable="false">
+                                <ng-template ngx-datatable-cell-template let-value="value">
+                                    <div *ngIf="value">
+                                        {{value | number:'1.2-2':'it'}} €
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <!-- <ngx-datatable-column name="Scadenza assicurazione" prop="insuranceExpirationDate" [width]="160" resizable="false"></ngx-datatable-column>
+              <ngx-datatable-column name="Scadenza revisione" prop="revisionExpirationDate" [width]="160" resizable="false"></ngx-datatable-column>
+              <ngx-datatable-column name="Scadenza bollo" prop="stampDutyExpirationDate" [width]="160" resizable="false"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Chilometraggio" prop="lastKMCheck" [width]="80"
+                                resizable="false">
+                                <ng-template ngx-datatable-cell-template let-value="value">
+                                    <div *ngIf="value">
+                                        {{value | number:'1.2-2':'it'}} Km
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Elimina" [width]="50">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <!-- <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onEdit(row)"></i> -->
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer" (click)="deleteMezzo(row)"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <!-- <ng-template let-status="value" ngx-datatable-cell-template>
+                  <div class="badge badge-pill"
+                    [ngClass]="{'bg-light-success': status == 'capo', 'bg-light-primary':status == '1', 'bg-light-danger':status == '2' , 'bg-light-warning':status == '4' , 'bg-light-info':status == '5'}">
+                    {{ status == 'capo' ? "Capo" : "Non Disponibile" }}
+                  </div>
+                </ng-template> -->
+
+                        </ngx-datatable>
+                        <!--/ ngx-datatable Basic -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--/ Basic Datatables -->
+
+<!-- inizio popup aggiungi mezzo -->
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Mezzo</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form #mezzoForm="ngForm">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Furgone"
+                        [(ngModel)]="nuovomezzo.description" name="descrizione" #descrizione="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="descrizione.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Brand</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Fiat"
+                        [(ngModel)]="nuovomezzo.brand" name="brand" #brand="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="brand.errors?.required">Campo obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Modello</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 500X"
+                        [(ngModel)]="nuovomezzo.model" name="modello" #modello="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="modello.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Targa/Matricola</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CV504KL"
+                        [(ngModel)]="nuovomezzo.licensePlate" name="targa" #targa="ngModel"
+                        (ngModelChange)="nuovomezzo.licensePlate=nuovomezzo.licensePlate.toUpperCase();validationForm(mezzoForm)"
+                        title="" required>
+                    <small class="form-text text-muted danger" *ngIf="targa.errors?.required">Campo obbligatorio</small>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Valore Stimato</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1"
+                            placeholder="Valore Stimato" [(ngModel)]="nuovomezzo.extimatedValue"
+                            aria-describedby="basic-addon2" name="valorestimato" #valorestimato="ngModel"
+                            (ngModelChange)="validationForm(mezzoForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" style="margin-top: -11px;"
+                        *ngIf="valorestimato.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza Revisione</label>
+                    <app-datepicker-single [ph]="'Scadenza Revisione'" [pos]="''"
+                        (cambiadata)="cambia($event, 'scadenzaRevisione')" id="scadenzaRevisione">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza Bollo</label>
+                    <app-datepicker-single [ph]="'Scadenza Bollo'" [pos]="''"
+                        (cambiadata)="cambia($event, 'scadenzaBollo')" id="scadenzaBollo">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tachigrafo</label>
+                    <app-datepicker-single [ph]="'Tachigrafo'" [pos]="''" (cambiadata)="cambia($event, 'tachigrafo')"
+                        id="tachigrafo">
+                    </app-datepicker-single>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="selectStato" class="form-label">Conto proprio/Conto Terzi</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="contoproprioterzi" name="contopt" #contopt="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)" title="" id="co">
+                        <option value='true'>Conto proprio</option>
+                        <option value='false'>Conto Terzi</option>
+                    </select>
+                </div>
+
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Scadenza Assicurazione</label>
+                    <app-datepicker-single [ph]="'Scadenza Assicurazione'" [pos]="''"
+                        (cambiadata)="cambia($event, 'scadenzaAssicurazione')" id="scadenzaAssicurazione">
+                    </app-datepicker-single>
+                </div>
+
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Data di Immatricolazione</label>
+                    <app-datepicker-single [ph]="'Data di Immatricolazione'" [pos]="''"
+                        (cambiadata)="cambia($event, 'dataImmatricolazione')" id="dataImmatricolazione">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Costo d'acquisto storico</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1"
+                            placeholder="Prezzo Originale" [(ngModel)]="nuovomezzo.originalPrice"
+                            aria-describedby="basic-addon2" name="costostorico" #costostorico="ngModel"
+                            (ngModelChange)="validationForm(mezzoForm)" title="">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Licenza C/Proprio</label>
+                    <app-datepicker-single [ph]="'Licenza C/Proprio'" [pos]="''"
+                        (cambiadata)="cambia($event, 'licenzaCProprio')" id="licenzaCProprio">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Libretto d'usura</label>
+                    <app-datepicker-single [ph]="'Libretto usura'" [pos]="''"
+                        (cambiadata)="cambia($event, 'libretto usura')" id="libretto usura">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Furto/Incendio</label>
+                    <app-datepicker-single [ph]="'Furto/Incendio'" [pos]="''"
+                        (cambiadata)="cambia($event, 'furto/incendio')" id="furto/incendio">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">KM attuali</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="km"
+                            [(ngModel)]="nuovomezzo.lastKMCheck" aria-describedby="basic-addon2" name="kmattuali"
+                            #kmattuali="ngModel" (ngModelChange)="validationForm(mezzoForm)" title="">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">Km</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <br>
+                    <label for="exampleFormControlInput1" class="form-label">ISPSEL</label>
+                    <app-datepicker-single [ph]="'ISPSEL'" [pos]="''" (cambiadata)="cambia($event, 'ispsel')"
+                        id="ispsel">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Verifica ventennale organi di
+                        sollevamento</label>
+                    <app-datepicker-single [ph]="'Data verifica'" [pos]="''"
+                        (cambiadata)="cambia($event, 'verifica ventennale')" id="verifica ventennale">
+                    </app-datepicker-single>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <br>
+                    <label for="exampleFormControlInput1" class="form-label">Costo giornaliero</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" min=0 id="exampleFormControlInput1" placeholder=""
+                            [(ngModel)]="nuovomezzo.dailyCost" title="" name="costogiornaliero"
+                            #costogiornaliero="ngModel" (ngModelChange)="validationForm(mezzoForm)">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€/giorno</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+                    <br>
+                    <label for="exampleFormControlInput1" class="form-label">In forza</label>
+                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
+                        onchange='this.size=1; this.blur();' aria-label="Default select example"
+                        [(ngModel)]="nuovomezzo.inStrenght" name="inforza" #inforza="ngModel"
+                        (ngModelChange)="validationForm(mezzoForm)">
+                        <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+                        <option value="Si">Si</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+            </div>
+            <br>
+            <br>
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+            disabled>Conferma</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="creaMezzo()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+            (click)="clearData()">Close</button>
+    </div>
+
+
+</ng-template>
+
+<ng-template #dettagliMezzi let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Estrai Dettaglio</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" style="padding-bottom: 75px">
+        <div class="row">
+            <p>Estrai in formato xlsx i dettagli dei mezzi per poter controllare in quali cantieri hanno lavorato e
+                qual è stato il loro costo</p>
+        </div>
+        <div class="row mb-5">
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <ng-select [multiple]="true" [closeOnSelect]="false" placeholder="Seleziona i mezzi"
+                        [(ngModel)]="estraiDatiModel.ids" [clearSearchOnAdd]="true">
+                        <ng-option *ngFor="let p of mezzi" [value]="p.id">
+                            <div>{{p.description}} {{p.brand}} {{p.model}} {{p.licensePlate}} </div>
+                        </ng-option>
+                    </ng-select>
+                    <small class="text-danger" *ngIf="estraiDatiModel?.ids?.length==0">Campo obbligatorio</small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-12 pb-4">
+                    <input type="date" class="form-control" name="estraiDateFrom" id=""
+                        [(ngModel)]="estraiDatiModel.dateFrom">
+                </div>
+                <div class="col-md-6 col-12">
+                    <input type="date" class="form-control" name="estraiDateTo" id=""
+                        [(ngModel)]="estraiDatiModel.dateTo">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('xlsx')"
+            (click)="modal.close('Close click')" [disabled]="estraiDatiModel?.ids?.length==0">Estrai XLSX</button>
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('pdf')"
+            (click)="modal.close('Close click')" [disabled]="estraiDatiModel?.ids?.length==0">Estrai PDF</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+
+</ng-template>

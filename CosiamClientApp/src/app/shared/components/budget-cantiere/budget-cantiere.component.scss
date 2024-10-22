@@ -1,0 +1,49 @@
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 1);
+}
+
+.b-2 {
+  border-top: 3px solid rgba(0, 0, 0, 1);
+}
+
+.three-dots {
+  color: #2f8be6;
+  cursor: pointer;
+}
+
+
+.three-dots:hover {
+  color: #2469ad
+}
+
+
+@media (max-width: 768px) {
+  .base_space {
+    flex-basis: 0;
+  }
+
+  .customGap {
+    gap: 30px
+  }
+
+}
+
+@media (min-width: 768px) {
+  .base_space {
+    flex-basis: 300px;
+
+  }
+  .base_spaceHalf {
+    flex-basis: 150px;
+
+  }
+
+
+  .customGap {
+
+    gap: 40px
+  }
+}

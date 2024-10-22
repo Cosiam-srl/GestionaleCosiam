@@ -1,0 +1,12 @@
+{
+    "env": {
+        "name": "dev"
+    },
+    "logging": {
+        "console": true,
+        "minLevel": "debug"
+    },
+    "apiServer": {
+        "baseUrl": "https://api.e38.it"
+    }
+}

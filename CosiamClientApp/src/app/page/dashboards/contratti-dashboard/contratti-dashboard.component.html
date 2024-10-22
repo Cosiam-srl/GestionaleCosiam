@@ -1,0 +1,413 @@
+<div class="row" (resized)="onResized($event)">
+
+    <!-- prima colonna della prima riga -->
+    <div class="col-md-3" id="contrattocard">
+        <div class="card" style="align-items: center;">
+            <button type="button" style="float: right;" class="btn btn-primary btn-sm" (click)=" openLg(modify)">Modifica</button>
+            <img src="https://www.stradeanas.it/sites/default/files/logotext.png" alt="immagine cliente" class="users-avatar-shadow avatar mt-3 rounded-circle" height="64" width="64">
+            <div class="card-body">
+                <h5 class="card-title text-center">{{nuovocontratto.shortDescription != null ? nuovocontratto.shortDescription : "/" }}
+                </h5>
+                <p class="card-text text-center">(2342)</p>
+                <p class="card-text"><strong>Descrizione</strong>: {{nuovocontratto.longDescription != null ? nuovocontratto.longDescription : "/"}}
+                </p>
+                <p class="card-text"><strong>CIG</strong>: {{nuovocontratto.cig != null ? nuovocontratto.cig : "/"}}</p>
+                <p class="card-text"><strong>Codice Contratto</strong>: {{nuovocontratto.contractCode != null ? nuovocontratto.contractCode : "/"}}</p>
+                <p class="card-text"><strong>Categoria SOA</strong>: {{nuovocontratto.soa != null ? nuovocontratto.soa : "/"}}</p>
+                <p class="card-text"><strong>PM</strong>: {{pmContratto.fullName != null ? pmContratto.fullName : "/"}}</p>
+            </div>
+        </div>
+    </div>
+    <!-- fine prima colonna della prima riga -->
+
+    <!-- inizio seconda colonna della prima riga -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Località</h4>
+                                <p class="card-text"><strong>{{nuovocontratto.place != null ?
+                                        nuovocontratto.place : "/"}}</strong></p>
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-briefcase font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-lighten-3 w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Stato</h4>
+                                <p class="card-text"><strong>{{nuovocontratto.status != null ?
+                                        nuovocontratto.status : "/"}}</strong></p>
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fine seconda colonna della prima riga -->
+
+    <!-- inizio terza colonna della prima riga -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Data di stipula</h4>
+                                <h2 class="mt-4">{{nuovocontratto.startDate != null ? nuovocontratto.startDate : "/"}}</h2>
+                                <h4 class>Data di termine</h4>
+                                <h2 class="mt-4">{{nuovocontratto.endingDate != null ? nuovocontratto.endingDate : "/"}}</h2>
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Consegna DPI</h4>
+                                <h2 class="mt-4">SI</h2>
+                            </div>
+                        </div>
+                        <div class="media-right text-right">
+                            <i class="ft-shield font-large-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <!-- fine terza colonna della prima riga -->
+
+    <!-- inizio quarta colonna della prima riga -->
+    <!-- <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">                                
+                                <h4 class>Scadenze Imminenti </h4>
+                                <p class="mt-4 card-text"><strong>Assicurazione:</strong> 06/07/2021</p>
+                                <p class="card-text"><strong>Bollo:</strong> 25/08/2021</p>
+                            </div>
+                        </div> -->
+    <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+    <!-- </div>
+                </div>
+            </div>
+        </div>        
+    </div> -->
+    <!-- fine quarta colonna della prima riga -->
+</div>
+<!-- inizio prima tabs -->
+<!-- <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <li [ngbNavItem]="1">
+        <a ngbNavLink>Scadenze</a>
+        <ng-template ngbNavContent> -->
+<!-- prima tabella -->
+<section id="striped-light">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Dettagli</h4>
+                    <!-- datepicker per selezionare la data -->
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped m-0">
+                                <thead>
+                                    <tr>
+                                        <!-- titoli colonne -->
+                                        <th>Importo netto contrattuale</th>
+                                        <th>Importo perizia (extra work)</th>
+                                        <th>Importo totale</th>
+                                        <th>Eseguito al 31/12/2020 (Fatturato - SAL)</th>
+                                        <th>Residuo al 01/01/2021</th>
+                                        <th>Budget 2021 SICURO</th>
+                                        <th>Budget 2021 DA SBLOCCARE</th>
+                                        <th>Modifica</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{nuovocontratto.totalAmountDiscounted != null ? nuovocontratto.totalAmountDiscounted + "€" : "/"}} </td>
+                                        <td>-</td>
+                                        <td>734.861 €</td>
+                                        <td>411.843 €</td>
+                                        <td>322.838 €</td>
+                                        <td>411.000 €</td>
+                                        <td>-</td>
+                                        <td><i class="ft-edit text-primary cursor-pointer" (click)="openLg(modifyDettagli)"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- </ng-template>
+    </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div> -->
+<!-- fine prima tabs -->
+
+
+<!-- popup di modifica -->
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica Contratto</h4>
+
+    </div>
+    <div class="modal-body">
+        <form #contrattoForm="ngForm">
+            <div class="row">
+                <div class="mb-3 col-md-3">
+                    <label for="exampleFormControlInput1" class="form-label">Cliente</label>
+                    <div class="form-group">
+                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                        <!-- multiple abilita la scelta multipla -->
+                        <ng-select [items]="clientiget" name="cliente" #cliente="ngModel" title="" (ngModelChange)="validationForm(contrattoForm)" bindLabel="name" bindValue="id" [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona cliente" [(ngModel)]="nuovocontratto.idCliente"
+                            required>
+                        </ng-select>
+                        <small class="form-text text-muted danger" *ngIf="cliente.errors?.required">Campo
+                            obbligatorio</small>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Descrizione breve</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" [(ngModel)]="nuovocontratto.shortDescription" name="descrizionebreve" #descrizionebreve="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="descrizionebreve.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">CIG</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" [(ngModel)]="nuovocontratto.cig" name="cig" #cig="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="cig.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">CUP</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" [(ngModel)]="nuovocontratto.cup" name="cup" #cup="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="cup.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Categoria SOA</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" [(ngModel)]="nuovocontratto.soa" name="soa" #soa="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="soa.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="mb-3 col-md-3">
+                    <label for="exampleFormControlInput1" class="form-label">PM</label>
+                    <div class="form-group">
+                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                        <!-- multiple abilita la scelta multipla -->
+                        <ng-select [items]="personale_get" bindLabel="fullName" bindValue="id" [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona il project manager" name="pm" #pm="ngModel" title="" [(ngModel)]="nuovocontratto.idPm" (ngModelChange)="validationForm(contrattoForm)"
+                            required>
+                        </ng-select>
+                        <small class="form-text text-muted danger" *ngIf="pm.errors?.required">Campo
+                            obbligatorio</small>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Località</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" [(ngModel)]="nuovocontratto.place" name="place" #place="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" required>
+                    <small class="form-text text-muted danger" *ngIf="place.errors?.required">Campo
+                        obbligatorio</small>
+                </div>
+                <div class="col-md-3 mb-3 ">
+                    <label for="selectStato" class="form-label">Stato</label>
+                    <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();' aria-label="Default select example" [(ngModel)]="nuovocontratto.status" name="status" #status="ngModel" (ngModelChange)="validationForm(contrattoForm)"
+                        title="">
+                        <option value='Attivo'>Attivo</option>
+                        <option value='Da Iniziare'>Da Iniziare</option>
+                        <option value='Terminato'>Terminato</option>
+                        <option value='Sospeso'>Sospeso</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Anno stimato di completamento</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" [(ngModel)]="nuovocontratto.yearOfCompletition" name="annocompletamento" #annocompletamento="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" pattern="[0-9]{4}">
+                    <small class="form-text text-muted danger" *ngIf="annocompletamento.errors?.pattern">Inserisci un
+                        anno (4 cifre)</small>
+                </div>
+
+                <div class="mb-3 col-md-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo contrattuale netto</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digita l'ammontare" [(ngModel)]="nuovocontratto.netContractualAmount" name="ammontarenetto" #ammontarenetto="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" pattern="[0-9]{0,}">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted danger" *ngIf="ammontarenetto.errors?.pattern">Inserisci
+                        una cifra numerica</small>
+                </div>
+                <div class="mb-3 col-md-3">
+                    <label for="exampleFormControlInput1" class="form-label">Prezzario</label>
+                    <div class="form-group">
+                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+                        <!-- multiple abilita la scelta multipla -->
+                        <ng-select [items]="prezziariget" name="prezziario" #prezziario="ngModel" title="" (ngModelChange)="validationForm(contrattoForm)" bindLabel="name" bindValue="id" [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona prezziario" [(ngModel)]="nuovocontratto.idPrezziarioCliente"
+                            required>
+                        </ng-select>
+                        <small class="form-text text-muted danger" *ngIf="prezziario.errors?.required">Campo
+                            obbligatorio</small>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="exampleFormControlTextarea1">Descrizione completa</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="" [(ngModel)]="nuovocontratto.longDescription" name="longdescription" #longdescription="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""></textarea>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma modifica</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="updateContratto()" (click)="modal.close('Close click')">Conferma modifica</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')" (click)="restoreData()">Chiudi</button>
+    </div>
+
+
+</ng-template>
+
+
+<!-- popup di modifica dei dettagli del contratto -->
+<ng-template #modifyDettagli let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica Dettagli Contratto</h4>
+
+    </div>
+    <div class="modal-body">
+        <form #contrattoDettagliForm="ngForm">
+            <div class="row">
+
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo netto contrattuale</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" [(ngModel)]="nuovocontratto.netContractualAmount" name="descrizionebreve">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo perizia extra work</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" name="descrizionebreve">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Importo totale</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" name="descrizionebreve">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Eseguito al 31/12/2020 (Fatturato -
+                        SAL)</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" name="descrizionebreve">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Residuo al 01/01/2021</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" name="descrizionebreve">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Budget 2021 SICURO</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" name="descrizionebreve">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Budget 2021 DA SBLOCCARE</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="" name="descrizionebreve">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="basic-addon2">€</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <!-- parte in basso -->
+    <div class="modal-footer">
+
+        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma</button>
+        <!-- bottone crea nota -->
+        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="updateDettagliContratto()" (click)="modal.close('Close click')">Conferma</button>
+
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+
+
+</ng-template>

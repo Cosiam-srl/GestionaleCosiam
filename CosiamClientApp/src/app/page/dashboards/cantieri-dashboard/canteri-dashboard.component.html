@@ -1,0 +1,1407 @@
+<div class="row" (resized)="onResized($event)">
+  <!-- la classe  d-flex align-items-stretch mi permette di visualizzare le cards tutte della stessa
+    lunghezza in verticale -->
+  <!-- prima colonna della prima riga -->
+  <ng-template #importoComplessivo>
+    <div><strong>Importo lavori:</strong>: {{
+      (model.workBudget) ? (model.workBudget | number:'1.2-2':'it') : "Nessun dato inserito"
+      }} €
+    </div>
+    <br>
+    <div><strong>Importo commessa</strong>: {{
+      (model.orderAmount) ? (model.orderAmount | number:'1.2-2':'it') : "Nessun dato inserito"
+      }} €
+    </div>
+    <br>
+    <div><strong>Atti aggiuntivi:</strong>: {{
+      (model.additionalActsBudget) ? (model.additionalActsBudget |
+      number:'1.2-2':'it') : "Nessun dato inserito"
+      }} €
+    </div>
+    <br>
+    <div><strong>Oneri di sicurezza</strong>: {{
+      (model.chargesBudget) ? (model.chargesBudget | number:'1.2-2':'it') :
+      "Nessun dato inserito"
+      }} €
+    </div>
+  </ng-template>
+  <ng-template #infoAggiuntive>
+    <div *ngIf="contrattoCantiere"><strong>CIG</strong>: {{
+      contrattoCantiere.cig ? contrattoCantiere.cig : "Nessun dato inserito"
+      }}
+    </div>
+    <br>
+    <div *ngIf="contrattoCantiere">
+      <strong>CUP/ODA/RDO</strong>: {{
+      contrattoCantiere.oda ? contrattoCantiere.oda : "Nessun dato inserito"
+      }}
+    </div>
+  </ng-template>
+  <ng-template #creditiVsClienti>
+    <div><strong>Da contabilizzare</strong><span class="badge bg-light-info float-right">15.000€</span></div>
+    <br>
+    <div><strong>Da fatturare</strong><span class="badge bg-light-info float-right">35.000€</span></div>
+    <br>
+    <div><strong>Da incassare</strong><span class="badge bg-light-info float-right">2.000€</span></div>
+  </ng-template>
+  <ng-template #debitiVsFornitori>
+    <div><strong>Paghe</strong><span class="badge bg-light-info float-right">15.000€</span></div>
+    <br>
+    <div><strong>Fatture ricevute</strong><span class="badge bg-light-info float-right">15.000€</span></div>
+    <br>
+    <div><strong>Fatture da ricevere</strong><span class="badge bg-light-info float-right">35.000€</span></div>
+    <br>
+  </ng-template>
+  <!------------------------------------- card ------------------------------------------------- -->
+  <div class="col-xl-12 col-lg-12 col-md-12 col-12 text-center" style="z-index: 1000;">
+    <div class="col-xl-3 col-lg-3 col-md-3 col-3" style="margin-bottom: -10px; z-index: 1000;">
+      <button type="button" class="btn btn-primary btn-sm" (click)="openLg(modify)">Modifica
+        Cantiere
+      </button>
+    </div>
+  </div>
+  <div class="card col-xl-12 col-lg-12 col-md-12 col-12" style="margin-top: 0px;" id="cardPrincipale">
+    <div class="col-md-12">
+      <div class="row" *ngIf="model">
+        <div class="row">
+          <div class="col-xl-3 col-lg-3 col-md-3 col-12">
+            <div class="pb-0 pt-0">
+              <div class="card-body p-0">
+                <div class="text-center mt-3">
+                  <div>
+                    <img *ngIf="imageSource; else placeholder" [src]="imageSource" alt="Logo"
+                      style="cursor: default;object-fit: contain;" height="120" width="200">
+                    <ng-template #placeholder>
+                      <img [src]="placeholderImage" alt="Placeholder" style="cursor: default;object-fit: contain;"
+                        height="120" width="200">
+                    </ng-template>
+                  </div>
+                </div>
+                <!-- <p class="card-text" ngbPopover="{{descrizionelavori}}" triggers="mouseenter:mouseleave"
+                    popoverTitle="Descrizione"><strong>Descrizione
+                      lavori</strong>{{model.description?model.description: "Nessuna descrizione inserita"}}</p> -->
+                <!-- <p class="card-text"><strong>Località/Area</strong>: {{model.address}}</p> -->
+                <!-- <p class="card-text" *ngIf="clienteCantiere"><strong>Cliente</strong>: {{clienteCantiere.name}}</p> -->
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-12 custom-border">
+            <div>
+              <div class="card-body pb-0 pt-0 mt-3" style="padding-left: 0px;padding-right: 0px;">
+                <p *ngIf="model.description" style="cursor: pointer;" class="card-text"
+                  ngbPopover="{{descrizionelavori}}" triggers="mouseenter:mouseleave" popoverTitle="Descrizione"
+                  placement='bottom'><strong>Descrizione
+                    breve: </strong>{{ model.shortDescription }}</p>
+                <p><strong>Codice commessa</strong>: {{ model.orderCode }}</p>
+                <span [ngSwitch]="model.state">
+
+                  <span *ngSwitchCase="'Da avviare'" style="color:grey">
+                    <p style="margin-bottom: 0px;"><strong>Stato: </strong>{{ model.state }}</p>
+                  </span>
+                  <span *ngSwitchCase="'In corso'" style="color:green">
+                    <p style="margin-bottom: 0px;"><strong>Stato: </strong>{{ model.state }}</p>
+                  </span>
+                  <span *ngSwitchCase="'Sospeso'" style="color:orange">
+                    <p style="margin-bottom: 0px;"><strong>Stato: </strong>{{ model.state }}</p>
+                  </span>
+                  <span *ngSwitchCase="'Ultimato'" style="color:blue">
+                    <p style="margin-bottom: 0px;"><strong>Stato: </strong>{{ model.state }}</p>
+                  </span>
+                  <span *ngSwitchCase="'Bozza'" style="color:deeppink">
+                    <p style="margin-bottom: 0px;"><strong>Stato: </strong>{{ model.state }}</p>
+                  </span>
+                  <span *ngSwitchDefault>
+                    <p style="margin-bottom: 0px;" *ngIf="model.state"><strong>Stato: </strong>{{ model.state }}</p>
+                    <p style="margin-bottom: 0px;" *ngIf="!model.state"><strong>Stato: </strong>Non definito</p>
+                  </span>
+                </span>
+                <!-- <p><strong>Riferimento contratto(id contratto)</strong>: {{model.idContratto || "Nessun contratto
+                    inserito"}}
+                  </p> -->
+                <!-- <p *ngIf="soaInModify.length==0">
+                    <strong>Categoria SOA</strong>: Non definito
+                  </p> -->
+                <!-- <div *ngIf="soaInModify.length!=0">
+                    <strong>Categoria SOA</strong>
+                    <ul class="pl-3">
+                      <li *ngFor="let item of this.soaInModify">{{item}}</li>
+                    </ul>
+                  </div> -->
+                <!-- <p [ngStyle]="{'color': model.state=='Terminata'? 'red': 'orange'}"><strong>Stato: </strong>{{model.state}}</p> -->
+                <!-- <app-maps></app-maps> -->
+                <br>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-12 custom-border">
+            <!-- <h5 class="card-title text-center">Avanzamento Temporale</h5> -->
+            <div>
+              <div class="card-body pb-0 pt-0 mt-3" style="padding-left: 0px;padding-right: 0px;">
+                <p class="card-text" style=" white-space:pre-wrap; cursor: pointer;" placement='bottom'
+                  [ngbPopover]="importoComplessivo" triggers="mouseenter:mouseleave" popoverTitle="Importi">
+                  <strong>Importo:</strong> {{
+                  (model.finalAmount) ? (model.finalAmount | number:'1.2-2':'it') :
+                  "/"
+                  }} €
+                </p>
+                <p *ngIf="model.start"><strong>Data inizio: </strong>{{ model.start | dataleggibile }}</p>
+                <p *ngIf="model.estimatedEnding"><strong>Data di termine stimata: </strong>{{
+                  model.estimatedEnding |
+                  dataleggibile
+                  }}
+                </p>
+                <!-- <p><strong>R.U.P.</strong>: {{model.rup? model.rup: "Non definito"}}</p>
+              <p><strong>D.L.</strong>: {{model.dl? model.dl: "Non definito"}}</p>
+              <p><strong>C.S.E.</strong>: {{model.cse? model.cse: "Non definito"}}</p>
+              <p class="card-text mb-1" style=" white-space:pre-wrap;cursor: pointer;" placement='top'
+                [ngbPopover]="infoAggiuntive" triggers="mouseenter:mouseleave" popoverTitle="Info Aggiuntive">
+                <strong>Info aggiuntive
+                  :</strong> CIG, CUP/ODA/RDO
+              </p> -->
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-3 col-12 custom-border">
+            <div>
+              <div class="card-body pb-0 pt-0 mt-3" style="padding-left: 0px;padding-right: 0px;">
+                <div class="card-text" *ngIf="pmsCantiere?.length>0"><strong>PM</strong>:</div>
+                <ul>
+                  <li *ngFor="let pm of pmsCantiere"> {{
+                    pm.fullName || "Nessun PM inserito"
+                    }}
+                  </li>
+                </ul>
+                <div class="card-text" *ngIf="capoCantieri?.length>0"><strong>CC</strong>:</div>
+                <ul>
+                  <li *ngFor="let cc of capoCantieri"> {{
+                    cc.fullName || "Nessun CC inserito"
+                    }}
+                  </li>
+                </ul>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="card col-xl-2 col-lg-2 col-md-12 col-12"
+    style="background-color: antiquewhite; box-shadow: none; border-radius: 0px 20px 20px 0px;">
+    <div class="card-body p-0" *ngIf="meteo && model">
+      <h4 class="card-title text-center mb-2 mt-2">{{model.address? model.address : "Località non definita"}}</h4>
+      <div class="mb-1">
+        <span>
+          <span>Oggi:</span>
+          <span style="font-size: x-large; margin-left: 20px; margin-left: 10%;"> {{meteo.today}}°C </span> -->
+  <!-- <ng-template let-status="meteo.weather1">
+              <div [ngClass]="{
+                      'ft-sun': status == 'Clear',
+                      'ft-cloud': status == 'Clouds'
+                    }">
+                {{ status }}
+              </div>
+            </ng-template> -->
+  <!--
+          <span *ngIf="meteo.weather1 == 'Clear'" class="ft-sun" style="font-size: x-large;"></span>
+          <span *ngIf="meteo.weather1 == 'Clouds'" class="ft-cloud" style="font-size: x-large;"></span>
+          <span *ngIf="meteo.weather1 == 'Rain'" class="ft-cloud-rain" style="font-size: x-large;"></span>
+
+        </span>
+      </div>
+      <div class="mb-1">Domani:
+        <span style="font-size: x-large; margin-left: 20px; margin-left: 8%;"> {{meteo.tomorrow}}°C </span>
+        <span *ngIf="meteo.weather2 == 'Clear'" class="ft-sun" style="font-size: x-large;"></span>
+        <span *ngIf="meteo.weather2 == 'Clouds'" class="ft-cloud" style="font-size: x-large;"></span>
+        <span *ngIf="meteo.weather2 == 'Rain'" class="ft-cloud-rain" style="font-size: x-large;"></span>
+      </div>
+      <div class="mb-4">Dopodomani:
+        <span style="font-size: x-large; margin-left: 20px; margin-left: 3%;"> {{meteo.dayaftertomor}}°C </span>
+        <span *ngIf="meteo.weather3 == 'Clear'" class="ft-sun" style="font-size: x-large;"></span>
+        <span *ngIf="meteo.weather3 == 'Clouds'" class="ft-cloud" style="font-size: x-large;"></span>
+        <span *ngIf="meteo.weather3 == 'Rain'" class="ft-cloud-rain" style="font-size: x-large;"></span>
+      </div>
+    </div>
+  </div>
+ -->
+  <!------------------------------------------ card eni ------------------------------------------------------>
+  <!-- <div class="col-md-3 d-flex align-items-stretch">
+        <div class="card" style="align-items: center;">
+          <img src="https://www.eni.com/assets/images/topic/chi-siamo/gallery-logo-1970-OK.jpg.rend.1140.0.jpg"
+            style="width: 70%" alt="LOGO NON DISPONIBILE">
+          <div class="card-body">
+            <h5 class="card-title text-center">ENI</h5>
+            <p class="card-text text-center">(CD-9918)</p>
+            <p class="card-text"><strong>indirizzo</strong>: Via Butera 12</p>
+            <p class="card-text " placement='right' ngbPopover="{{descrizionebella}}" triggers="mouseenter:mouseleave"
+              popoverTitle="Descrizione completa"><strong>Descrizione lavori:</strong>Pontile</p>
+            <p class="card-text"><strong>PM</strong>: Luigi Morello</p>
+            <p class="card-text"><strong>Capocantiere</strong>: Andrea Romano</p>
+            <p class="card-text " placement='right' ngbPopover="{{dettaglioimporto}}" triggers="mouseenter:mouseleave"
+              popoverTitle="Dettaglio"><strong>Importo complessivo:</strong> €11.550.400</p>
+            <p class="card-text " placement='right' ngbPopover="{{infoaggiuntive}}" triggers="mouseenter:mouseleave"
+              popoverTitle="Info aggiuntive"><strong>Info aggiuntive</strong></p>
+          </div>
+        </div>
+      </div> -->
+  <!------------------------------------------fine card eni ------------------------------------------------------>
+  <!-- fine prima colonna della prima riga -->
+  <!-- inizio seconda colonna della prima riga -->
+  <!-- <div class="col-md-9 col-lg-9 "> -->
+  <div class="col-xl-10 col-lg-10 col-md-12 col-12">
+    <!-- <div class="row">
+      <div class="col-md-12 col-12">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media py-0">
+                <div class="media-body text-left">
+
+                  <h3>Cash Flow</h3>
+
+                  <h3 *ngIf="!editCashFlow; else modifyCashFlow " class="mb-1 warning">
+                    {{datiFinanziariCantiere.cashflow? (datiFinanziariCantiere.cashflow | number:'1.2-2':'it') +
+                    "€":"0€"}}
+                  </h3>
+                  <ng-template #modifyCashFlow>
+                    <span>
+                      <input id="cashFlowEditInput" name="modifyCashFlow" [value]="datiFinanziariCantiere?.cashflow"
+                        [(ngModel)]="nuoviDatiFinanziariCantiere.cashflow" type="number" class="form-control mr-2">
+
+                    </span>
+                  </ng-template>
+                </div>
+                <button type="button" style="margin-top: 40px;" class="btn btn-light media-right align-self-center"
+                  (click)="!editCashFlow? onModifyCashFlow() : confermaDatiFinanziari() ">
+                  <i class="warning font-medium-2 float-right" [ngClass]="{
+                    'ft-edit':!editCashFlow,
+                    'ft-check':editCashFlow
+                  }"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <div class="row">
+      <div class="col-md-12 col-12">
+        <div class="card">
+          <div class="card-body">
+            <!-- <app-editable-grid-mini [columns]="budgetColumns" [(data)]="dataArray" (dataChange)="onValueChange($event)"></app-editable-grid-mini> -->
+            <!-- <div class="my-2" style="display: flex; justify-content: space-around;">
+              <div>
+                <label for="">Data inizio</label>
+                <app-datepicker-single style="width: 40%;" (cambiadata)="cambia($event, 'budgetdatainizio')">
+                </app-datepicker-single>
+              </div>
+              <div>
+                <label for="">Data Fine</label>
+                <app-datepicker-single style="width: 40%;" (cambiadata)="cambia($event, 'budgetdatafine')">
+                </app-datepicker-single>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                <div class="p-1 text-center" style="display: inline-block ;">
+                  <a class="btn round black font-medium-1 mr-1">Globale</a>
+                </div>
+                <div class="p-1 text-center" style="display: inline-block ;">
+                  <a class="btn round black font-medium-1">Mese</a>
+                </div>
+                <div class="p-1 text-center" style="display: inline-block ;">
+                  <a class="btn round black font-medium-1">Settimana</a>
+                </div>
+                <div class="p-1 text-center" style="display: inline-block ;">
+                  <a class="btn round black font-medium-1">Giorno</a>
+                </div>
+              </div>
+
+            </div>
+
+            <table class="table table-sm mt-2 table-hover">
+              <thead>
+                <th scope="col" class="border-right border-bottom">#</th>
+                <th scope="col" class="text-center border-bottom">Medie periodo</th>
+                <th scope="col" class="text-center border-bottom">Delta rispetto al budget</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color: green;" class="border-right">R</td>
+                  <td class="text-center">2</td>
+                  <td class="text-center">30%</td>
+                </tr>
+                <tr>
+                  <td style="color:red;" class="border-right">C</td>
+                  <td class="text-center">4</td>
+                  <td class="text-center">3%</td>
+                </tr>
+                <tr>
+                  <td style=" color:yellow;" class="border-right">U/P</td>
+                  <td class="text-center">+1000€</td>
+                  <td class="text-center">/</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="my-3 text-center black">
+              <div class="font-large-2 d-block mb-1">
+                <span>€789.890</span>
+                <i class="ft-arrow-up font-large-2"></i>
+              </div>
+              <span class="font-medium-1">Settimana +15.44</span>
+            </div> -->
+            <app-line-chart [height]="200" [cantieriId]="[this.idCantiere]">
+            </app-line-chart>
+            <!-- <div id="lineChart" class="lineChart lineChart2 shadow">
+            <x-chartist class="height-250" [data]="lineChart2.data" [type]="lineChart2.type" [options]="lineChart2.options"
+              [responsiveOptions]="lineChart2.responsiveOptions" [events]="lineChart2.events">
+            </x-chartist>
+          </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="col-xl-5 col-lg-5 col-md-12 col-12 ">
+    <form #datiFinanziariForm="ngForm">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-body">
+            <h4 class="card-title">
+              <span>Dati Finanziari</span>
+            </h4>
+            <p class="grey" style="float:left">Globali</p>
+            <br>
+            INIZIO COMMENTATO
+            <span><button type="button" class="btn btn-primary btn-sm" [ngStyle]="{
+            'margin-left' : mod==true? '200px' : '230px'}"
+           (click)="mod==false? mod=true: mod=false">Modifica</button></span>
+           FINE COMMENTATO
+            <div style="float: right;" class="mb-1">
+              <span *ngIf="!mod"><button type="button" class="btn btn-primary btn-sm"
+                  (click)="mod==false? mod=true: mod=false; nuoviDatiFinanziari()">Modifica</button></span>
+              <span *ngIf="mod"><button type="button" class="btn btn-primary btn-sm"
+                  (click)="mod==false? mod=true: mod=false; clearNuoviDatiFinanziari()">Annulla</button></span>
+              <span *ngIf="mod && fff"><button type="button" class="btn btn-success btn-sm fa fa-check"
+                  (click)="mod==false? mod=true: mod=false; confermaDatiFinanziari()"></button></span>
+              <span *ngIf="mod && !fff"><button type="button" class="btn btn-success btn-sm fa fa-check"
+                  (click)="mod==false? mod=true: mod=false; confermaDatiFinanziari()" disabled></button></span>
+            </div>
+            <table class="table table-sm mt-2 table-hover">
+              <thead>
+                <th colspan="2" class="border-right border-bottom text-center">CREDITI</th>
+                <th colspan="2" class="text-center border-bottom">DEBITI</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color: green;" colspan=1>Crediti vs Clienti</td>
+                  <td *ngIf="!mod" class="text-center border-right" colspan=1>
+                    {{datiFinanziariCantiere.creditiVsClienti | number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" class="text-center border-right" colspan=1>
+                    {{nuoviDatiFinanziariCantiere.creditiVsClienti | number:'1.0-0':'it'}} €</td>
+                  <td style="color: red;" colspan=1> Debiti a breve</td>
+                  <td *ngIf="!mod" class="text-right" colspan=1>{{datiFinanziariCantiere.debitiABreve |
+                    number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" class="text-center" colspan=1><input type="text"
+                      [(ngModel)]="nuoviDatiFinanziariCantiere.debitiABreve" name="debitiABreve" #debitiABreve="ngModel"
+                      (ngModelChange)="validationForm(datiFinanziariForm)" pattern="^[0-9]\d*(\.\d+)?$" size="4">
+                    <small class="form-text text-muted danger" *ngIf="debitiABreve.errors?.pattern">Errore</small>
+
+                  </td>
+
+
+                </tr>
+                <tr>
+                  <td style="color: green; padding-left: 20px;">Da Contabilizzare</td>
+                  <td *ngIf="!mod" class="text-center border-right">{{datiFinanziariCantiere.daContabilizzare |
+                    number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" class="text-center border-right">
+                    <input type="text" [(ngModel)]="nuoviDatiFinanziariCantiere.daContabilizzare"
+                      name="dacontabilizzare" #dacontabilizzare="ngModel"
+                      (ngModelChange)="validationForm(datiFinanziariForm)" pattern="^[0-9]\d*(\.\d+)?$" size="4">
+                    <small class="form-text text-muted danger" *ngIf="dacontabilizzare.errors?.pattern">Errore</small>
+
+                  </td>
+                  <td style="color: red;" colspan=1>Anticipazioni da restituire</td>
+                  <td *ngIf="!mod" class="text-right">{{datiFinanziariCantiere.anticipazioniDaRestituire |
+                    number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" class="text-center"><input type="text"
+                      [(ngModel)]="nuoviDatiFinanziariCantiere.anticipazioniDaRestituire" name="anticdarestituire"
+                      #anticdarestituire="ngModel" (ngModelChange)="validationForm(datiFinanziariForm)"
+                      pattern="^[0-9]\d*(\.\d+)?$" size="4">
+                    <small class="form-text text-muted danger" *ngIf="anticdarestituire.errors?.pattern">Errore</small>
+
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color: green;padding-left: 20px;">Da Fatturare</td>
+                  <td *ngIf="!mod" class="text-center border-right">{{datiFinanziariCantiere.daFatturare |
+                    number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" class="text-center border-right"><input type="text"
+                      [(ngModel)]="nuoviDatiFinanziariCantiere.daFatturare" name="dafatturare" #dafatturare="ngModel"
+                      (ngModelChange)="validationForm(datiFinanziariForm)" pattern="^[0-9]\d*(\.\d+)?$" size="4">
+                    <small class="form-text text-muted danger" *ngIf="dafatturare.errors?.pattern">Errore</small>
+                  </td>
+                  <td style="color: red;">Debiti vs Fornitori</td>
+                  <td *ngIf="!mod" style="float: right;">{{datiFinanziariCantiere.debitiVsFornitori |
+                    number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" style="float: right;">{{nuoviDatiFinanziariCantiere.debitiVsFornitori |
+                    number:'1.0-02':'it'}} €</td>
+                </tr>
+                <tr>
+                  <td style="color: green;padding-left: 20px;">Da Incassare</td>
+                  <td *ngIf="!mod" class="text-center border-right">{{datiFinanziariCantiere.daIncassare |
+                    number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" class="text-center border-right"><input type="text"
+                      [(ngModel)]="nuoviDatiFinanziariCantiere.daIncassare" name="daincassare" #daincassare="ngModel"
+                      (ngModelChange)="validationForm(datiFinanziariForm)" pattern="^[0-9]\d*(\.\d+)?$" size="4">
+                    <small class="form-text text-muted danger" *ngIf="daincassare.errors?.pattern">Errore</small>
+                  </td>
+                  <td style="color: red;padding-left: 20px;">Paghe</td>
+                  <td *ngIf="!mod" class="text-right">{{datiFinanziariCantiere.paghe | number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" class="text-center"><input type="text" [(ngModel)]="nuoviDatiFinanziariCantiere.paghe"
+                      name="paghe" #paghe="ngModel" (ngModelChange)="validationForm(datiFinanziariForm)"
+                      pattern="^[0-9]\d*(\.\d+)?$" size="4">
+                    <small class="form-text text-muted danger" *ngIf="paghe.errors?.pattern">Errore</small>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color: green;"></td>
+                  <td class="text-center border-right"></td>
+                  <td style="color: red;padding-left: 20px;">Fatture Ricevute</td>
+                  <td *ngIf="!mod" class="text-right">{{datiFinanziariCantiere.fattureRicevute | number:'1.0-0':'it'}}
+                    €
+                  </td>
+                  <td *ngIf="mod" class="text-center"><input type="text"
+                      [(ngModel)]="nuoviDatiFinanziariCantiere.fattureRicevute" name="fattureRicevute"
+                      #fattureRicevute="ngModel" (ngModelChange)="validationForm(datiFinanziariForm)"
+                      pattern="^[0-9]\d*(\.\d+)?$" size="4">
+                    <small class="form-text text-muted danger" *ngIf="fattureRicevute.errors?.pattern">Errore</small>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color: green;"></td>
+                  <td class="text-center border-right"></td>
+                  <td style="color: red;padding-left: 20px;">Fatture da Ricevere</td>
+                  <td *ngIf="!mod" class="text-right">{{datiFinanziariCantiere.fattureDaRicevere |
+                    number:'1.0-0':'it'}}
+                    €</td>
+                  <td *ngIf="mod" class="text-center"><input type="text"
+                      [(ngModel)]="nuoviDatiFinanziariCantiere.fattureDaRicevere" name="fattureDaRicevere"
+                      #fattureDaRicevere="ngModel" (ngModelChange)="validationForm(datiFinanziariForm)"
+                      pattern="^[0-9]\d*(\.\d+)?$" size="4">
+                    <small class="form-text text-muted danger" *ngIf="fattureDaRicevere.errors?.pattern">Errore</small>
+                  </td>
+                </tr>
+                <tr>
+                  <td *ngIf="!mod" class="text-center"
+                    [ngClass]="{'saldo-positivo': datiFinanziariCantiere.saldo > 0, 'saldo-negativo' : 0 > datiFinanziariCantiere.saldo}"
+                    colspan=4>SALDO:{{datiFinanziariCantiere.saldo | number:'1.0-0':'it'}} €</td>
+                  <td *ngIf="mod" class="text-center"
+                    [ngClass]="{'saldo-positivo': nuoviDatiFinanziariCantiere.saldo > 0, 'saldo-negativo' : 0 > nuoviDatiFinanziariCantiere.saldo}"
+                    colspan=4>SALDO:{{nuoviDatiFinanziariCantiere.saldo | number:'1.0-0':'it'}} €</td>
+                </tr>
+              </tbody>
+            </table>
+            INIZIO COMMENTATO
+            <ul class="list-group mb-3 mt-2">
+            <li class="list-group-item card-text" style=" white-space:pre-wrap;" placement='right'
+              [ngbPopover]="creditiVsClienti" triggers="mouseenter:mouseleave" popoverTitle="Importi">
+              <span class="card-text">
+                Crediti vs Clienti
+              </span>
+              <span class=" badge bg-light-info float-right">52.000€</span>
+            </li>
+
+            <li class="list-group-item">
+              <span>Debiti a breve</span>
+              <span class="badge bg-light-info float-right">12.000€</span>
+            </li>
+            <li class="list-group-item">
+              <span>Anticipazioni da restituire</span>
+              <span class="badge bg-light-info float-right">12.000€</span>
+            </li>
+            <li class="list-group-item card-text" style=" white-space:pre-wrap;" placement='right'
+              [ngbPopover]="debitiVsFornitori" triggers="mouseenter:mouseleave" popoverTitle="Importi">
+              <span class="card-text">
+                Debiti vs Fornitori
+              </span>
+              <span class="badge bg-light-info float-right">50.000€</span>
+            </li>
+            <li class="list-group-item">
+              <span>Capitale Circolante Netto</span>
+              <span [ngClass]="{
+              'badge bg-light-warning float-right': 100 > 500,
+              'badge bg-light-success float-right': 500 > 100
+            }">5.000€</span>
+            </li>
+
+          </ul>
+          FINE COMMENTATO
+          </div>
+          <div class="card-body">
+            <table class="table table-sm mt-2 table-hover">
+              <thead>
+                <th scope="col" class="border-right border-bottom">#</th>
+                <th scope="col" class="text-center border-bottom">%</th>
+                <th scope="col" class="text-center border-bottom">ESEG/TOT</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color: green;" class="border-right">Avanz. Temporale</td>
+                  <td *ngIf="this.avanzamentoTemporale.perc!=null" class="text-center">
+                    {{this.avanzamentoTemporale.perc}}%</td>
+                  <td *ngIf="this.avanzamentoTemporale.totalDays!=null && this.avanzamentoTemporale.daysElapsed!=null "
+                    class="text-center">
+                    {{this.avanzamentoTemporale.daysElapsed}}/{{this.avanzamentoTemporale.totalDays}} gg
+                  </td>
+                </tr>
+                <tr>
+                  <td style="color:red;" class="border-bottom border-right">Avanz. Produzione
+                  </td>
+                  <td class="text-center border-bottom">{{avanzamentoProduzionePerc}}%</td>
+                  <td class="text-center border-bottom" *ngIf="model">{{avanzamentoProduzione}}/{{model.finalAmount?
+                    model.finalAmount +"€" : "///"}}</td>
+                </tr>
+                <tr>
+                  <td style=" color:blue;" class="border-right ">SCOSTAMENTO</td>
+                  <td class="text-center text-danger"
+                    *ngIf="avanzamentoProduzionePerc - this.avanzamentoTemporale.perc < 0" colspan=2>
+                    {{avanzamentoProduzionePerc - this.avanzamentoTemporale.perc}}%</td>
+                  <td class="text-center text-success"
+                    *ngIf="avanzamentoProduzionePerc - this.avanzamentoTemporale.perc >= 0" colspan=2>
+                    {{avanzamentoProduzionePerc - this.avanzamentoTemporale.perc}}%</td>
+
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-body">
+            <table class="table table-sm mt-2 table-hover">
+              <thead>
+                <th scope="col" class="border-right border-bottom">#</th>
+                <th scope="col" class="text-center border-bottom">#</th>
+
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color: green;" class="border-right">Prox SAL</td>
+                  <td *ngIf="!modifyProxSal" class="text-center" (dblclick)="modifyProxSal=true"
+                    ngbTooltip="Doppio click per modificare" placement="right">{{this.datiFinanziariCantiere.proxSal |
+                    number:'1.0-0':'it'}} €
+                  </td>
+                  <td *ngIf="modifyProxSal" class="text-center"><input type="number" pattern="^[0-9]\d*(\.\d+)?$"
+                      class="form-control form-control-sm width-200" #prox_Sal="ngModel"
+                      [(ngModel)]="this.nuoviDatiFinanziariCantiere.proxSal" name="prox_Sal"
+                      (blur)="modifyProxSal=false; updateProxSal()">
+                    <small class="form-text text-muted danger" *ngIf="prox_Sal.errors?.pattern">Errore</small>
+                  </td>
+
+                </tr>
+                <tr>
+                  <td style="color:red;" class="border-right border-bottom">Valore della produzione</td>
+                  <td class="text-center border-bottom">{{valoreDellaProduzione | number:'1.0-0':'it'}} €</td>
+                </tr>
+                <tr>
+                  <td style=" color:blue" class="border-right">Mancanti</td>
+                  <td class="text-center">{{mancanti | number:'1.0-0':'it'}} €</td>
+
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+
+  </div> -->
+  <div class="col-xl-2 col-lg-2 col-md-12 col-12">
+    <div class="card" style="min-height: 260px;">
+      <h4 class="card-header text-center mb-2 mt-2">Note recenti</h4>
+      <div class="card-body">
+        <p *ngIf="lastFiveNotes.length==0">Nessuna nota nel cantiere</p>
+        <ul *ngIf="lastFiveNotes.length!=0" style="padding-left: 10px;">
+          <li class="mb-3" *ngFor="let n of lastFiveNotes">
+            <strong *ngIf="n.nota.name.length<20">{{ n.nota.name.substring(0, 20) }}</strong>
+            <strong *ngIf="n.nota.name.length>20">{{ n.nota.name.substring(0, 20) }}...</strong>
+            <p>Creata il : {{ n.nota.creationDate | dataleggibile }}</p>
+            <p *ngIf="n.nota.dueDate">Scadenza: {{ n.nota.dueDate | dataleggibile }}</p>
+            <p *ngIf="!n.nota.dueDate">Scadenza: /</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="col-xl-2 col-lg-2 col-md-12 col-12 d-flex">
+    <div class="card" style="flex-basis: 100%;">
+      <div class="card-body">
+        <h4 class="card-title text-center mb-4">Note recenti</h4>
+        <p *ngIf="lastFiveNotes.length==0">Nessuna nota nel cantiere</p>
+        <ul *ngIf="lastFiveNotes.length!=0">
+          <li class="mb-3" *ngFor="let n of lastFiveNotes">
+            <strong>{{n.nota.name}}</strong>:
+            <p>{{n.nota.dueDate | dataleggibile}}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div> -->
+  <!-- seconda riga -->
+  <!-- <div class="row" matchHeight="card">
+      <div class="col-md-4">
+
+        <div class="card card-inverse bg-danger">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body text-left">
+                  <h3 class="card-text">278€</h3>
+                  <span>Debiti vs Fornitori</span>
+                </div>
+                <div class="media-right align-self-center">
+                  <i class="ft-briefcase font-large-2 float-right"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-4">
+
+        <div class="card card-inverse bg-secondary" matchHeight="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body text-left">
+                  <h3 class="card-text">278€</h3>
+                  <span>Risultato operativo cantiere</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-4">
+
+        <div class="card card-inverse bg-info" matchHeight="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media">
+                <div class="media-body text-left">
+                  <h3 class="card-text">278€</h3>
+                  <span>Anticipi da cliente da restituire</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div> -->
+  <!-- terza riga che contiene solo il ticker-->
+  <!-- <div class="row">
+      <div class="col">
+        <app-weather></app-weather>
+      </div>
+    </div>
+    </div> -->
+  <!-- fine ticker -->
+  <!-- <div class="card overflow-hidden">
+      <div class="card-content">
+        <div class="card-img">
+          <img class="card-img-top img-fluid height-300 weather-pic" src="assets/img/photos/sunny-weather.jpg"
+            alt="Card image cap">
+          <div class="card-img-overlay overlay-dark">
+            <h4 class="card-title">Soleggiato</h4>
+          </div>
+          <button type="button" class="btn btn-floating halfway-fab bg-secondary">
+            <i class="ft-plus"></i>
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-2 text-center">
+              <span class="d-block">Lun</span>
+              <i class="wi wi-day-sunny d-block secondary lighten-1 font-large-1 my-3"></i>
+              <span class="d-block">13&deg;</span>
+            </div>
+            <div class="col-2 text-center">
+              <span class="d-block">Mar</span>
+              <i class="wi wi-day-cloudy d-block secondary lighten-1 font-large-1 my-3"></i>
+              <span class="d-block">12&deg;</span>
+            </div>
+            <div class="col-2 text-center">
+              <span class="d-block">Mer</span>
+              <i class="wi wi-day-cloudy-gusts d-block secondary lighten-1 font-large-1 my-3"></i>
+              <span class="d-block">10&deg;</span>
+            </div>
+            <div class="col-2 text-center">
+              <span class="d-block">Gio</span>
+              <i class="wi wi-day-cloudy-windy d-block secondary lighten-1 font-large-1 my-3"></i>
+              <span class="d-block">12&deg;</span>
+            </div>
+            <div class="col-2 text-center">
+              <span class="d-block">Ven</span>
+              <i class="wi wi-day-fog d-block secondary lighten-1 font-large-1 my-3"></i>
+              <span class="d-block">9&deg;</span>
+            </div>
+            <div class="col-2 text-center">
+              <span class="d-block">Sab</span>
+              <i class="wi wi-day-lightning d-block secondary lighten-1 font-large-1 my-3"></i>
+              <span class="d-block">6&deg;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+</div>
+<!-- fine prima riga -->
+<!-- aggiunto id "mobile3", guarda cantieri-dashboard.component.css -->
+<!-- <div class="col-md-3" >
+  <div class="row d-flex align-items-stretch h-50 " id="mobile">
+    <div class="card mr-2 w-100">
+      <div class="card-body d-flex" style="align-items: center;">
+        <div class="w-100">
+          <h5 class="card-title text-center">UTILE STIMATO</h5>
+          <p class="card-text text-center">TOT persone</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row d-flex align-items-stretch h-50" id="mobile">
+    <div class="card mr-2 w-100">
+      <div class="card-body d-flex" style="align-items: center;">
+        <div class="w-100">
+          <h5 class="card-title text-center">UTILE REALE</h5>
+          <p class="card-text text-center">yyyy</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!-- aggiunto id "mobile", guarda cantieri-dashboard.component.css -->
+<!-- <div class="col-md-3" >
+    <div class="row d-flex align-items-stretch h-50 " id="mobile3">
+      <div class="card w-100">
+        <div class="card-body d-flex" style="align-items: center;">
+          <div class="w-100">
+            <h5 class="card-title text-center">COSTO STIMATO</h5>
+            <p class="card-text text-center">XXX€</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row d-flex align-items-stretch h-50" id="mobile3">
+      <div class="card w-100">
+        <div class="card-body d-flex" style="align-items: center;">
+          <div class="w-100">
+            <h5 class="card-title text-center">COSTO REALE</h5>
+            <p class="card-text text-center">XXX€</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+<!-- aggiunto id "mobile2", guarda cantieri-dashboard.component.css -->
+<!-- <div class="col-md-3">
+    <div class="row d-flex align-items-stretch h-50" id="mobile2">
+      <div class="card ml-2 w-100" >
+        <div class="card-body d-flex" style="align-items: center;">
+          <div class="w-100">
+            <h5 class="card-title text-center">BUDGET STIMATO</h5>
+            <p class="card-text text-center">XXX€</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row d-flex align-items-stretch h-50" id="mobile2">
+      <div class="card ml-2 w-100">
+        <div class="card-body d-flex" style="align-items: center;">
+          <div class="w-100">
+            <h5 class="card-title text-center">BUDGET REALE</h5>
+            <p class="card-text text-center">XXX€</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!-- inizio seconda riga -->
+<!-- <div class="card card-inverse bg-info">
+  <div class="card-content">
+    <div class="card-body">
+      <div class="media">
+        <div class="media-body text-left">
+          <ng-marquee speed="drowsy">
+            <mark style="background-color: transparent; color: white; font-size: x-large;">Questa è una stringa di test,
+              il banner mostrerà le note più importanti, marcate come importanti nella
+              sezione note di cantiere, per qualsiasi altra cosa, scrivere a Danilo. </mark>
+          </ng-marquee>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!-- cronoprogramma -->
+<div class="row" style="display: none;" (resized)="onResized($event)">
+  <div class="col">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title mb-0">Cronoprogramma</h4>
+      </div>
+      <div class="card-content">
+        <div class="card-body">
+          <h6 style="padding-bottom: 5px;">Data di inizio: xxx - Data di fine: yyyy - Fine con proroghe: zzz -
+            Avanzamento temporale: 569d/89%</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- inizio prima tabs -->
+<!-- destroyOnHide serve a non far ricaricare la pagina quando cambio tab. Utile per il report -->
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs" [destroyOnHide]="false">
+  <li [ngbNavItem]="1">
+    <a ngbNavLink>Report giornaliero</a>
+    <ng-template ngbNavContent>
+      <app-report [targetCantiereId]="idCantiere" [openReport]="openReport"></app-report>
+      <!-- prima tabella -->
+      <!-- <section id="striped-light">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Report </h4>
+                <button type="button" class="btn btn-warning mb-3">xxxx</button>
+ -->
+      <!-- datepicker per selezionare la data -->
+      <!-- </div>
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-striped m-0">
+                      <thead>
+                        <tr> -->
+      <!-- titoli colonne -->
+      <!--
+                          <th>#</th>
+                          <th>Data</th>
+                          <th>Autore</th>
+                          <th>Visualizza</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td>12/04/2021</td>
+                          <td>Pasquale Romano</td>
+                          <td><i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row)"></i></td>
+                        </tr>
+                        <tr>
+                          <td>2</td>
+                          <td>13/04/2021</td>
+                          <td>Pasquale Romano</td>
+                          <td><i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row)"></i></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> -->
+    </ng-template>
+  </li>
+  <!-- tabella report hse -->
+  <li [ngbNavItem]="2">
+    <a ngbNavLink>Report HSE</a>
+    <ng-template ngbNavContent>
+      <!-- prima tabella -->
+      <app-report-hse [targetCantiereId]="idCantiere"></app-report-hse>
+    </ng-template>
+  </li>
+  <!-- fine tabella report hse-->
+  <li [ngbNavItem]="3">
+    <a ngbNavLink>File</a>
+    <ng-template ngbNavContent>
+      <app-file-upload [targetCantiereId]="idCantiere"></app-file-upload>
+      <!-- tabella files -->
+      <app-files-cantieri [targetCantiereId]="idCantiere" (fileSelected)="onFileSelected($event)">
+      </app-files-cantieri>
+      <!-- fine tabella files -->
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="4">
+    <a ngbNavLink (click)="scaricaImmagini()">Foto</a>
+    <ng-template ngbNavContent>
+      <!-- galleria di immagini; componente situato in ../app/shared/components/gallery -->
+      <app-image-gallery [images]="relatedImages"></app-image-gallery>
+      <!-- fine galleria immagini -->
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="5">
+    <a ngbNavLink>Personale</a>
+    <ng-template ngbNavContent>
+      <!-- tabella personale, componente disponibile nella cartella "CosiamClientApp\src\app\shared\components\employees-cantieri" -->
+      <app-employees-cantieri [targetCantiereId]="idCantiere"></app-employees-cantieri>
+      <!-- fine tabella personale -->
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="6">
+    <a ngbNavLink>Mezzi</a>
+    <ng-template ngbNavContent>
+      <!-- tabella mezzi relativi ad un determinato cantiere -->
+      <app-mezzi-cantieri [targetCantiereId]="idCantiere"></app-mezzi-cantieri>
+      <!-- fine tabella mezzi -->
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="7">
+    <a ngbNavLink>Fornitori</a>
+    <ng-template ngbNavContent>
+      <!-- tabella personale, componente disponibile nella cartella "CosiamClientApp\src\app\shared\components\employees-cantieri" -->
+      <app-suppliers-cantieri [targetCantiereId]="idCantiere"></app-suppliers-cantieri>
+      <!-- fine tabella personale -->
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="8">
+    <a ngbNavLink>Note</a>
+    <ng-template ngbNavContent>
+      <!-- tabella personale, componente disponibile nella cartella "CosiamClientApp\src\app\shared\components\employees-cantieri" -->
+      <app-note-di-cantiere [targetCantiereId]="idCantiere"></app-note-di-cantiere>
+      <!-- fine tabella personale -->
+    </ng-template>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+<!-- fine prima tabs-->
+<!-- inizio seconda tabs -->
+<ul ngbNav #nav2="ngbNav" [(activeId)]="active2" class="nav-tabs">
+  <li [ngbNavItem]="1">
+    <a ngbNavLink>Dettaglio SAL/Fatture</a>
+    <ng-template ngbNavContent>
+      <app-dettaglio-sal-fatture [targetCantiereId]="idCantiere"></app-dettaglio-sal-fatture>
+    </ng-template>
+  </li>
+  <!-- tabella budget -->
+  <li [ngbNavItem]="2" [disabled]="false">
+    <a ngbNavLink>Budget</a>
+    <ng-template ngbNavContent>
+      <!-- inizio tabella costi -->
+      <app-budget-cantiere></app-budget-cantiere>
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="4" [disabled]="true" ngbTooltip="Attualmente Vuota">
+    <a ngbNavLink>Dettagli Prod. per Attività (Non Attiva)</a>
+    <ng-template ngbNavContent>
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="5" [disabled]="true" ngbTooltip="Attualmente Vuota">
+    <a ngbNavLink>Composizione Costi (Non attiva)</a>
+    <ng-template ngbNavContent>
+      <app-composizione-costi></app-composizione-costi>
+    </ng-template>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav2" class="mt-2"></div>
+<!-- Fine seconda tabs -->
+<!-- inizio popup modifica cantiere -->
+<ng-template #modify let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica Cantiere</h4>
+  </div>
+  <div class="modal-body">
+    <form #cantiereForm="ngForm">
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Contratto</label>
+          <div class="form-group">
+            <ng-select [items]="contrattiget" name="contratto" #contratto="ngModel" title="" required
+              (ngModelChange)="validationModifyForm(cantiereForm)" bindLabel="shortDescription" bindValue="id"
+              [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona contratto"
+              [(ngModel)]="nuovocant.idContratto" (change)="riempiSoa($event)">
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="contratto.errors?.required">Campo obbligatorio</small>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Descrizione Breve</label>
+          <div class="form-group">
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Descrizione Breve"
+              [(ngModel)]="nuovocant.shortDescription" name="descrBreve" #descrBreve="ngModel"
+              (ngModelChange)="validationModifyForm(cantiereForm)">
+          </div>
+        </div>
+        <div class="form-groupcol-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="selectStato" class="form-label">Stato</label>
+          <select class="form-control" name="stato" #stato="ngModel" required title=""
+            (ngModelChange)="validationModifyForm(cantiereForm)" onfocus='this.size=3;' onblur='this.size=1;'
+            onchange='this.size=1; this.blur();' aria-label="Default select example" [(ngModel)]="nuovocant.state"
+            (change)="stato()">
+            <option value="Da avviare">Da avviare</option>
+            <option value="In corso">In corso</option>
+            <option value="Sospeso">Sospeso</option>
+            <option value="Ultimato">Ultimato</option>
+          </select>
+          <small class="form-text text-muted danger" *ngIf="stato.errors?.required">Campo obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-2 col-xl-2 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CAP</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 93012"
+            [(ngModel)]="nuovocant.cap" name="cap" #cap="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)"
+            pattern="[0-9]{5}">
+          <small class="form-text text-muted success">Il cap è necessario per la visualizzazione del meteo</small>
+          <small class="form-text text-muted danger" *ngIf="cap.errors?.pattern">Inserisci 5 cifre</small>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Codice commessa</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 21-01"
+            [(ngModel)]="nuovocant.orderCode" name="codicecommessa" #codicecommessa="ngModel"
+            (ngModelChange)="validationModifyForm(cantiereForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Località/Area</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Località/Area"
+            [(ngModel)]="nuovocant.address" name="indirizzo" #indirizzo="ngModel"
+            (ngModelChange)="validationModifyForm(cantiereForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1">Descrizione lavori</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" [(ngModel)]="nuovocant.description"
+              name="descrizionelavori" #descrizionelavori="ngModel"
+              (ngModelChange)="validationModifyForm(cantiereForm)"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">PM</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="personale_get" bindLabel="fullName" bindValue="id" [multiple]="true"
+              [closeOnSelect]="false" placeholder="Seleziona il project manager" [(ngModel)]="pm_selezionati"
+              name="pmCantiere" #pmCantiere="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)" required>
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="pmCantiere.errors?.required">Campo obbligatorio</small>
+            <!-- <p class="text-italic font-small-2 mt-1">
+            Selected cities: {{selectedCityIds}}
+          </p> -->
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Capocantiere</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="personale_get" bindLabel="fullName" bindValue="id" [multiple]="true"
+              [closeOnSelect]="false" placeholder="Seleziona il Capocantiere" [(ngModel)]="capocantieri_selezionati"
+              name="capoCantiere" #capoCantiere="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)" required>
+            </ng-select>
+            <small class="form-text text-muted danger" *ngIf="capoCantiere.errors?.required">Campo
+              obbligatorio</small>
+            <!-- <p class="text-italic font-small-2 mt-1">
+            Selected cities: {{selectedCityIds}}
+          </p> -->
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Categoria SOA</label>
+          <div class="form-group">
+            <ng-select [items]="this.soa" bindLabel="name" bindValue="name" [multiple]="true" [closeOnSelect]="false"
+              placeholder="Seleziona la categoria" [(ngModel)]="soaInModify" name="Soa" #Soa="ngModel"
+              (change)="categoriaSOA($event);validationModifyForm(cantiereForm)">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Lavori</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=1 placeholder="Digita l'ammontare"
+              [(ngModel)]="nuovocant.workBudget" name="importolavori" #importolavori="ngModel"
+              (ngModelChange)="validationModifyForm(cantiereForm)" title="" pattern="^[1-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="importolavori.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Oneri</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+              [(ngModel)]="nuovocant.chargesBudget" name="importooneri" #importooneri="ngModel"
+              (ngModelChange)="validationModifyForm(cantiereForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="importooneri.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Commessa</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [ngModel]="nuovocant.orderAmount | number:'1.0-2':'it-IT'"
+              name="importocommessa" #importocommessa="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)"
+              title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-1 justify-content-center align-items-center mt-4"
+          *ngIf="nuovocant.valoriAggiuntivi.length === 0">
+          <button (click)="addValoriAggiuntivi(nuovocant); validationModifyForm(cantiereForm)" type="button"
+            class="btn btn-success d-flex" style="height: 40.5px; ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus"
+              viewBox="0 0 16 16">
+              <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        @for (valoreaggiuntivo of nuovocant.valoriAggiuntivi; track valoreaggiuntivo; let i = $index) {
+        <div class="d-flex gap-4 flex-column flex-lg-row">
+          <div class="d-flex m-2 d-lg-none" style="height: 2px ; background-color: black"></div>
+          <div>
+            <label class="form-label">Lavori Agg. Lordo</label>
+            <div class="input-group">
+              <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+                [(ngModel)]="valoreaggiuntivo.additionalGrossWorkAmount" name="importolavoriaggiuntivolordo{{i}}"
+                #importolavoriaggiuntivolordo="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)" title=""
+                pattern="^[0-9]\d*(\.\d+)?$">
+              <div class="input-group-append">
+                <span class="input-group-text">€</span>
+              </div>
+            </div>
+            <small class="form-text text-muted danger" style="margin-top: -11px;"
+              *ngIf="importolavoriaggiuntivolordo.errors?.pattern">Inserisci
+              una cifra numerica</small>
+          </div>
+          <div>
+            <label class="form-label">Oneri Agg.</label>
+            <div class="input-group">
+              <input type="number" class="form-control" min=0 placeholder="Digita l'ammontare"
+                [(ngModel)]="valoreaggiuntivo.additionalChargesAmount" name="importooneriaggiuntivo{{i}}"
+                #importooneriaggiuntivo="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)" title=""
+                pattern="^[0-9]\d*(\.\d+)?$">
+              <div class="input-group-append">
+                <span class="input-group-text">€</span>
+              </div>
+            </div>
+            <small class="form-text text-muted danger" style="margin-top: -11px;"
+              *ngIf="importooneriaggiuntivo.errors?.pattern">Inserisci
+              una cifra numerica</small>
+          </div>
+          <div>
+            <label class="form-label">Aggiuntivo Netto</label>
+            <div class="input-group">
+              <input type="text" class="form-control"
+                [ngModel]="valoreaggiuntivo.additionalNetAmount | number:'1.0-2':'it-IT'"
+                name="importoaggiuntivonetto{{i}}" #importoaggiuntivonetto="ngModel"
+                (ngModelChange)="validationModifyForm(cantiereForm)" title="" disabled>
+              <div class="input-group-append">
+                <span class="input-group-text">€</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Giorni Solari Agg.</label>
+            <div class="input-group">
+              <input type="number" class="form-control" [(ngModel)]="valoreaggiuntivo.additionalSolarDays"
+                name="additionalSolarDays{{i}}" (ngModelChange)="validationModifyForm(cantiereForm)" title=""
+                pattern="^[0-9]\d*(\.\d+)?$">
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Data</label>
+            <app-datepicker-single
+              (cambiadata)="cambia($event, 'datacantiere', valoreaggiuntivo);validationModifyForm(cantiereForm)"
+              id="datacontratto" [initialValue]="dataToStringValue(valoreaggiuntivo.data)">
+            </app-datepicker-single>
+          </div>
+          <div class="d-flex justify-content-end align-items-center mt-2">
+            <button (click)="removeValoriAggiuntivi(valoreaggiuntivo, nuovocant); validationModifyForm(cantiereForm)"
+              type="button" class="btn btn-danger " style="height: 40.5px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-trash-fill" viewBox="0 0 16 16">
+                <path
+                  d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
+                </path>
+              </svg>
+            </button>
+          </div>
+          <div class="d-flex justify-content-center align-items-center mt-2" *ngIf="isLastIndex(i)">
+            <button (click)="addValoriAggiuntivi(nuovocant); validationModifyForm(cantiereForm)" type="button"
+              class="btn btn-success d-flex" style="height: 40.5px; ">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus"
+                viewBox="0 0 16 16">
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      <div class="row mt-3">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Lavori Totale Lordo</label>
+          <div class="input-group">
+            <input type="text" class="form-control" min=0
+              [ngModel]="nuovocant.totalGrossWorkAmount | number:'1.0-2':'it-IT'" name="importolavoritotalelordo"
+              #importolavoritotalelordo="ngModel" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Oneri Totale</label>
+          <div class="input-group">
+            <input type="text" class="form-control" min=0
+              [ngModel]="nuovocant.totalChargesAmount | number:'1.0-2':'it-IT'" name="importooneritotale"
+              #importooneritotale="ngModel" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Importo Totale Netto</label>
+          <div class="input-group">
+            <input type="text" class="form-control" [ngModel]="nuovocant.finalAmount | number:'1.0-2':'it-IT'"
+              name="importototalenetto" #importototalenetto="ngModel" title="" disabled>
+            <div class="input-group-append">
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">R.U.P.</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="RUP"
+            [(ngModel)]="nuovocant.rup" name="rup" #rup="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">D.L.</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="DL"
+            [(ngModel)]="nuovocant.dl" name="dl" #dl="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">C.S.E.</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CSE"
+            [(ngModel)]="nuovocant.cse" name="cse" #cse="ngModel" (ngModelChange)="validationModifyForm(cantiereForm)">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label">Data di inizio:</label>
+          <app-datepicker-single [ph]="'Inizio'" [pos]="'top'" (cambiadata)="cambia($event, 'datainizio')"
+            [initialValue]="dataToStringValue(nuovocant.start)" id="datainizio"
+            (change)="validationModifyForm(cantiereForm)">
+          </app-datepicker-single>
+          <!-- <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" placeholder="Inizio" name="dp1" [(ngModel)]="nuovocantiere.start"
+                ngbDatepicker #d1="ngbDatepicker" placement="right" (dateSelect)="getDataInizio($event)" readonly>
+              <div class="input-group-append">
+                <div class="input-group-text" (click)="d1.toggle()">
+                  <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form> -->
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label">Termine stimato:</label>
+          <app-datepicker-single [ph]="'Fine stimata'" [pos]="'top'" (cambiadata)="cambia($event, 'dataFineStimata')"
+            [initialValue]="dataToStringValue(nuovocant.estimatedEnding)" id="dataFineStimata"
+            (change)="validationModifyForm(cantiereForm)">
+          </app-datepicker-single>
+          <!-- <form class="form-inline">
+          <div class="form-group">
+            <div class="input-group">
+              <input class="form-control" placeholder="Fine stimata" name="dp2"
+                [(ngModel)]="nuovocantiere.estimatedEnding" ngbDatepicker #d2="ngbDatepicker" placement="right"
+                (dateSelect)="getDataTermine($event)" readonly>
+              <div class="input-group-append">
+                <div class="input-group-text" (click)="d2.toggle()">
+                  <i class="fa fa-calendar" style="cursor: pointer;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form> -->
+        </div>
+        <!-- <p class="mt-4">Model: {{ popupModel | json }}</p> -->
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Percentuale Spese Generali</label>
+          <div class="input-group">
+            <input type="number" class="form-control" min=0 placeholder="Digita la percentuale"
+              [(ngModel)]="nuovocant.percentualeSpeseGenerali" name="spesegen" #spesegen="ngModel"
+              (ngModelChange)="validationModifyForm(cantiereForm)" title="" pattern="^[0-9]\d*(\.\d+)?$">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">%</span>
+            </div>
+          </div>
+          <small class="form-text text-muted danger" style="margin-top: -11px;"
+            *ngIf="spesegen.errors?.pattern">Inserisci
+            una cifra numerica</small>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label">Costi iniziali:</label>
+          <input [(ngModel)]="nuovocant.costiIniziali" (ngModelChange)="validationModifyForm(cantiereForm)"
+            name="costiIniziali" type="number" class="form-control" min=0 placeholder="Digita l'ammontare" title="">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label">Ricavi iniziali:</label>
+          <input [(ngModel)]="nuovocant.ricaviIniziali" (ngModelChange)="validationModifyForm(cantiereForm)"
+            type="number" name="ricaviIniziali" class="form-control" min=0 placeholder="Digita l'ammontare" title="">
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- parte in basso -->
+  <div class="modal-footer">
+    @if (!cantiereFormIsValid) {
+    <button type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+    </button>
+    }
+
+    <!-- bottone crea nota -->
+    @if (cantiereFormIsValid == true) {
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="modal.close('Close click'); updateCantiereBozza()">Salva come Bozza
+    </button>
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="modal.close('Close click'); updateCantiere()">Conferma
+    </button>
+    }
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click');initialize()">Chiudi
+    </button>
+  </div>
+</ng-template>
+<!-- fine popup -->
+<!-- fine popup modifica cantiere -->

@@ -1,0 +1,171 @@
+<div class="row" (resized)="onResized($event)">
+
+    <!-- prima colonna della prima riga -->
+    <div class="col-md-3">
+        <div class="card" style="align-items: center;">
+            <img src="https://spectrageospatial.com/wp-content/uploads/nikonnpl-product.png" alt="immagine attrezzature" class="users-avatar-shadow avatar mt-3 rounded-circle" height="64" width="64">
+            <div class="card-body">
+                <h5 class="card-title text-center">Nikon NPL 332</h5>
+                <p class="card-text text-center">(1)</p>
+                <p class="card-text"><strong>Tipologia</strong>: Total Station</p>
+                <p class="card-text"><strong>Matricola</strong>: 040068</p>
+            </div>
+        </div>
+    </div>
+    <!-- fine prima colonna della prima riga -->
+
+    <!-- inizio seconda colonna della prima riga -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Posizione</h4>
+                                <p class="card-text"><strong>Piazzale</strong></p>
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-briefcase font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-lighten-3 w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Stato</h4>
+                                <p class="card-text"><strong>Ok</strong></p>
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fine seconda colonna della prima riga -->
+
+    <!-- inizio terza colonna della prima riga -->
+    <!-- <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Ore lavorate</h4>
+                                <app-datepicker style="padding-left: 25px;" [numeroMesi]="3"></app-datepicker>
+                                <h2 class="mt-4">24</h2>
+                            </div>
+                        </div> -->
+    <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+    <!-- </div>
+                </div>
+            </div>
+        </div> -->
+    <!-- <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Consegna DPI</h4>
+                                <h2 class="mt-4">SI</h2>
+                            </div>
+                        </div>
+                        <div class="media-right text-right">
+                            <i class="ft-shield font-large-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    <!-- </div> -->
+    <!-- fine terza colonna della prima riga -->
+
+    <!-- inizio quarta colonna della prima riga -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+        <div class="card w-100">
+            <div class="card-content">
+                <div class="card-body py-0">
+                    <div class="media">
+                        <div class="media-body text-left">
+                            <div class="w-100">
+                                <h4 class>Scadenze Imminenti </h4>
+                                <p class="mt-4 card-text"><strong>Taratura:</strong> 06/07/2021</p>
+                            </div>
+                        </div>
+                        <!-- <div class="media-right text-right">
+                            <i class="ft-credit-card font-large-2"></i>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fine quarta colonna della prima riga -->
+</div>
+<!-- inizio prima tabs -->
+<!-- <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <li [ngbNavItem]="1">
+        <a ngbNavLink>Scadenze</a>
+        <ng-template ngbNavContent> -->
+<!-- prima tabella -->
+<section id="striped-light">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Dettaglio</h4>
+                    <!-- datepicker per selezionare la data -->
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped m-0">
+                                <thead>
+                                    <tr>
+                                        <!-- titoli colonne -->
+                                        <th>Libretto</th>
+                                        <th>Fattura d'acquisto</th>
+                                        <th>Conformità</th>
+                                        <th>Scheda tecnica</th>
+                                        <th>Scadenza Taratura</th>
+                                        <th>Note</th>
+                                        <th>Modifica</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>12/08/2021</td>
+                                        <td>-</td>
+                                        <td><i class="ft-edit text-primary cursor-pointer"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- </ng-template>
+    </li>
+</ul>
+<div [ngbNavOutlet]="nav" class="mt-2"></div> -->
+<!-- fine prima tabs -->

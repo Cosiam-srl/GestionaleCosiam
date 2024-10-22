@@ -1,0 +1,189 @@
+<style>
+  *{
+    box-shadow: unset !important;
+  }
+</style>
+<!-- Filter Datatables -->
+<section id="ngx-datatable-filter">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Beni e servizi</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+
+                        <!-- ngx-datatable-filter -->
+                        <fieldset class="form-group">
+                            <label for="ngx-filter-ref">Cerca:
+                                <input [(ngModel)]="filter" id="ngx-filter-ref" class="form-control form-control-sm d-inline-block width-200"
+                                    type="text" placeholder="Filtra la colonna Nome..."
+                                    (ngModelChange)="filterUpdate($event)" />
+                            </label>
+                        </fieldset>
+
+                        <!-- tasto Aggiungi servizio al cantiere -->
+
+                        <button class="btn btn-success mb-2 me-2 mt-2" (click)="openLg(create)">Aggiungi un servizio</button>
+                        <button type="button" class="btn bg-light-warning confirm-text mb-2 me-2"
+                            (click)="ConfirmText()">Elimina
+                            i servizi selezionati</button>
+
+
+                        <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
+
+                        <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force"
+                            [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="4" [rows]="servizi"
+                            [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]" (select)="onSelect($event)"
+                            [selected]="selected" [selectionType]="SelectionType.checkbox"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+
+                            <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name=""
+                                [minWidth]="30" [maxWidth]="30" [width]="30" [sortable]="false" [resizeable]="false">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="Id"
+                                prop="id" [width]="50"></ngx-datatable-column>
+                            <ngx-datatable-column name="Descrizione Articolo" prop="description" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Categoria" prop="category" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Unità di misura" prop="um" [width]="150">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Prezzo per unità" prop="pricePerUM" [width]="150">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    € {{row.pricePerUM}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Modifica" [width]="70" [sortable]="false">
+                                <ng-template ngx-datatable-cell-template let-row="row">
+                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                                    <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row, modify)"></i>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+                        <!-- ngx-datatable-filter -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- inizio popup cerazione -->
+<ng-template #create let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Aggiungi Servizio</h4>
+
+    </div>
+    <div class="modal-body">
+        <div class="row pb-4">
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Descrizione Articolo</label>
+                <input type="text" class="form-control" placeholder="Descrizione"
+                    [(ngModel)]="nuovoservizio.description">
+            </div>
+            <div class="col-md-4 mb-3">
+                <label  class="form-label">Categoria</label>
+                <input type="text" class="form-control"  placeholder="Es. Piastrelle"
+                    [(ngModel)]="nuovoservizio.category">
+            </div>
+            <!-- <div class="col-md-4 mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. mq"
+                    [(ngModel)]="nuovoservizio.um">
+            </div> -->
+            <div class="col-md-4 mb-3">
+                <label  class="form-label">Unità di misura</label>
+                <div class="form-group">
+                    <ng-select [items]="ums" bindLabel="name" bindValue="name" [multiple]="false"
+                        [closeOnSelect]="false" placeholder="Seleziona unità di misura" [(ngModel)]="nuovoservizio.um">
+                    </ng-select>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Prezzo per unità di misura</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Es. 5"
+                        [(ngModel)]="nuovoservizio.pricePerUM">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">€</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- parte in basso -->
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone crea nota -->
+        <button type="button" class="btn bg-light-success me-1 type-success mb-1 mb-sm-0"
+            (click)="aggiungiServizioFornitore(); modal.close('Close click')" >Conferma</button>
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+    </div>
+</ng-template>
+
+<!-- fine popup -->
+
+<!-- inizio popup modifica -->
+<ng-template #modify let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modifica Servizio</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row pb-4">
+            <div class="col-md-4 mb-3">
+                <label  class="form-label">Descrizioni Articolo</label>
+                <input type="text" class="form-control" placeholder="Nome"
+                    [(ngModel)]="nuovoservizio.description">
+            </div>
+            <div class="col-md-4 mb-3">
+                <label  class="form-label">Categoria</label>
+                <input type="text" class="form-control"  placeholder="Es. Piastrelle"
+                    [(ngModel)]="nuovoservizio.category">
+            </div>
+            <div class="col-md-4 mb-3">
+                <label  class="form-label">Unità di misura</label>
+                <input type="text" class="form-control"  placeholder="Es. mq"
+                    [(ngModel)]="nuovoservizio.um">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label  class="form-label">Prezzo per unità di misura</label>
+                <div class="input-group">
+                    <input type="text" class="form-control"  placeholder="Es. 5"
+                        [(ngModel)]="nuovoservizio.pricePerUM">
+                    <div class="input-group-append">
+                        <span class="input-group-text" >€</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- parte in basso -->
+    </div>
+    <div class="modal-footer">
+
+        <!-- bottone modifica servizio -->
+        <button type="button" class="btn bg-light-success me-1 type-success mb-1 mb-sm-0"
+            (click)="updateServizioFornitore(); modal.close('Close click')" >Conferma</button>
+
+        <button type="button" class="btn btn-light"
+            (click)="clearData(); modal.close('Close click')">Close</button>
+    </div>
+</ng-template>
+
+<!-- fine popup modifica-->

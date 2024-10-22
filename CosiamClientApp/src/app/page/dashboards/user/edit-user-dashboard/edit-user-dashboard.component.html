@@ -1,0 +1,294 @@
+<section class="users-edit">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-body">
+                        <!-- Nav-tabs -->
+                        <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs justify-content-left">
+                            <li [ngbNavItem]="1">
+                                <a ngbNavLink class="nav-link d-flex align-items-center">
+                                    <i class="ft-user mr-1"></i>
+                                    <span class="d-none d-sm-block">Account</span>
+                                </a>
+                                <ng-template ngbNavContent>
+                                    <!-- Account content starts -->
+                                    <div class="mt-2" id="account">
+                                        <!-- Media object starts -->
+                                        <div class="media">
+                                            <img src="assets/img/portrait/small/placeholder-foto-profilo.jpg" alt="user edit avatar" class="users-avatar-shadow avatar mr-3 rounded-circle" height="64" width="64">
+                                            <div class="media-body">
+                                                <h4>Utente</h4>
+                                                <div class="d-flex flex-sm-row flex-column justify-content-start px-0 mb-sm-2">
+                                                    <!-- <button class="btn btn-sm btn-primary mb-1 mb-sm-0">Cambia</button> -->
+                                                    <!-- <button class="btn btn-sm bg-light-secondary ml-sm-2">Elimina</button> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Media object ends -->
+
+                                        <!-- Account form starts -->
+                                        <form novalidate>
+                                            <div class="row">
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="controls">
+                                                            <label for="users-edit-username">Username</label>
+                                                            <input type="text" id="users-edit-username" class="form-control" placeholder="Username" value="f.greco" required aria-invalid="false">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="controls">
+                                                            <label for="users-edit-name">Nome</label>
+                                                            <input type="text" id="users-edit-name" class="form-control" placeholder="Nome" value="Francesco Greco" required aria-invalid="false">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="controls">
+                                                            <label for="users-edit-email">E-mail</label>
+                                                            <input type="email" id="users-edit-email" class="form-control" placeholder="Email" value="f.greco@cosiam.it" required aria-invalid="false">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="controls">
+                                                            <label for="users-edit-role">Livello</label>
+                                                            <select id="users-edit-role" class="form-control" required>
+                                <option value="">Seleziona livello</option>
+                                <option value="1">Amministratore</option>
+                                <option value="2">Utente</option>
+                                <option value="3">Capocantiere</option>
+                              </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="controls">
+                                                            <label for="users-edit-status">Stato</label>
+                                                            <select id="users-edit-status" class="form-control" required>
+                                <option value="">Seleziona stato</option>
+                                <option value="1">Attivo</option>
+                                <option value="2">Disabilitato</option>
+                              </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 users-module">
+                                                    <div class="table-responsive">
+                                                        <table class="table mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Moduli permessi</th>
+                                                                    <th>Lettura</th>
+                                                                    <th>Scrittura</th>
+                                                                    <th>Creazione</th>
+                                                                    <th>Eliminazione</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Personale</td>
+                                                                    <td>Si</td>
+                                                                    <td>No</td>
+                                                                    <td>No</td>
+                                                                    <td>Si</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Mezzi</td>
+                                                                    <td>No</td>
+                                                                    <td>Si</td>
+                                                                    <td>No</td>
+                                                                    <td>Si</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Cantieri</td>
+                                                                    <td>Si</td>
+                                                                    <td>Si</td>
+                                                                    <td>No</td>
+                                                                    <td>No</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <!-- <table class="table mb-0 mt-3">
+                              <thead>
+                                <tr>
+                                  <th>Moduli permessi</th>
+                                  <th>Lettura</th>
+                                  <th>Scrittura</th>
+                                  <th>Creazione</th>
+                                  <th>Eliminazione</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Personale</td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox1" checked>
+                                      <label for="users-checkbox1"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox2">
+                                      <label for="users-checkbox2"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox3">
+                                      <label for="users-checkbox3"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox4" checked>
+                                      <label for="users-checkbox4"></label>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Mezzi</td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox5">
+                                      <label for="users-checkbox5"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox6" checked>
+                                      <label for="users-checkbox6"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox7">
+                                      <label for="users-checkbox7"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox8" checked>
+                                      <label for="users-checkbox8"></label>
+                                    </div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Cantieri</td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox9" checked>
+                                      <label for="users-checkbox9"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox10" checked>
+                                      <label for="users-checkbox10"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox11">
+                                      <label for="users-checkbox11"></label>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <div class="checkbox">
+                                      <input type="checkbox" id="users-checkbox12">
+                                      <label for="users-checkbox12"></label>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table> -->
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 d-flex flex-sm-row flex-column justify-content-end mt-3 mt-sm-2">
+                                                    <button type="submit" class="btn btn-primary mb-2 mb-sm-0 mr-sm-2">Salva modifiche</button>
+                                                    <button type="reset" class="btn btn-secondary">Cancella</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <!-- Account form ends -->
+                                    </div>
+                                    <!-- Account content ends -->
+                                </ng-template>
+                            </li>
+                            <!-- <li [ngbNavItem]="2">
+                <a ngbNavLink class="nav-link d-flex align-items-center">
+                  <i class="ft-info mr-1"></i>
+                  <span class="d-none d-sm-block">Informazioni</span>
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="mt-2" id="information">
+                    <form novalidate>
+                      <div class="row">
+
+                        <div class="col-12 col-md-6 mb-2 mb-md-0">
+                          <h4 class="mb-3"><i class="ft-user mr-2"></i>Info personali</h4>
+                          <div class="form-group">
+                            <div class="controls position-relative">
+                              <label for="users-edit-bday">Data di nascita</label>
+                              <input type="text" id="users-edit-bday" class="form-control birthdate-picker" required
+                                placeholder="Data di nascita">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <div class="controls">
+                              <label for="users-edit-country">Nazionalità</label>
+                              <select id="users-edit-country" class="form-control" required>
+                                <option value="">Seleziona nazione</option>
+                                <option value="USA">ITA</option>
+                                <option value="UK">UK</option>
+                                <option value="India">USA</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="users-edit-languages">Lingua</label>
+                            <ng-select [multiple]="true" [(ngModel)]="selectedLanguages"
+                              [ngModelOptions]="{standalone: true}">
+                              <ng-option *ngFor="let language of languages" [value]="language.value">{{language.name}}
+                              </ng-option>
+                            </ng-select>
+                          </div>
+                          <div class="form-group">
+                            <div class="controls">
+                              <label for="users-edit-phone">Telefono</label>
+                              <input type="text" id="users-edit-phone" class="form-control" placeholder="Phone Number"
+                                required value="+ 39 336 7899 872">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <div class="controls">
+                              <label for="users-edit-address">Indirizzo</label>
+                              <input type="text" id="users-edit-address" class="form-control" placeholder="Indirizzo"
+                                required>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-end flex-sm-row flex-column mt-3 mt-sm-0">
+                          <button type="submit" class="btn btn-primary mb-2 mb-sm-0 mr-sm-2">Salva modifiche</button>
+                          <button type="reset" class="btn btn-secondary">Cancella</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </ng-template>
+              </li> -->
+                        </ul>
+                        <div class="tab-content">
+                            <div [ngbNavOutlet]="nav"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
