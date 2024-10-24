@@ -1,293 +1,292 @@
 <!-- spinner per la creazione di un nuovo cliente -->
 <ngx-spinner>
-    <app-spinner></app-spinner>
+  <app-spinner></app-spinner>
 </ngx-spinner>
 <style>
-    * {
-        box-shadow: unset !important;
-    }
+  * {
+    box-shadow: unset !important;
+  }
 </style>
 <!-- Basic Datatables -->
 <button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
 <section id="ngx-datatable-customers">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Clienti</h4>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Clienti</h4>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+
+            <div class="row mb-2">
+
+              <!-- Campo di ricerca -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="ngx-filter-ref">Cerca:</label>
+                  <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                    placeholder="Filtra la colonna Ragione Sociale..."
+                    (keyup)="filterUpdate($event); pulisciFiltri();" />
                 </div>
-                <div class="card-content">
-                    <div class="card-body">
+              </div>
 
-                        <div class="row mb-2">
+              <!-- Selector for number of rows to show -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="row-selector">Mostra:</label>
+                  <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
+                    <option value="10">10 elementi</option>
+                    <option value="25">25 elementi</option>
+                    <option value="50">50 elementi</option>
+                    <option value="100">100 elementi</option>
+                  </select>
+                </div>
+              </div>
 
-                            <!-- Campo di ricerca -->
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="ngx-filter-ref">Cerca:</label>
-                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
-                                        placeholder="Filtra la colonna Ragione Sociale..."
-                                        (keyup)="filterUpdate($event); pulisciFiltri();" />
-                                </div>
-                            </div>
+              <!-- Tipologia -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="users-list-role">Tipologia:</label>
+                  <select id="users-list-role" class="form-control form-control-sm" (change)="filtro()"
+                    [(ngModel)]="filtroTipologia" name="filtroTipologia">
+                    <option value="">Tutti</option>
+                    <option value="Pubblico">Pubblico</option>
+                    <option value="Privato">Privato</option>
+                  </select>
+                </div>
+              </div>
 
-                            <!-- Selector for number of rows to show -->
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="row-selector">Mostra:</label>
-                                    <select id="row-selector" class="form-control form-control-sm" [(ngModel)]="limit">
-                                        <option value="10">10 elementi</option>
-                                        <option value="25">25 elementi</option>
-                                        <option value="50">50 elementi</option>
-                                        <option value="100">100 elementi</option>
-                                    </select>
-                                </div>
-                            </div>
+              <!-- Pagamento -->
+              <div class="col">
+                <div class="form-group">
+                  <label for="users-list-role">Pagamento:</label>
+                  <select id="users-list-role" class="form-control form-control-sm" (change)="filtro()"
+                    [(ngModel)]="filtroPagamento" name="filtroPagamento">
+                    <option value="">Tutti</option>
+                    <option value="30 gg d.f.f.m">30 gg d.f.f.m</option>
+                    <option value="60 gg d.f.f.m">60 gg d.f.f.m</option>
+                    <option value="90 gg d.f.f.m">90 gg d.f.f.m</option>
+                  </select>
+                </div>
+              </div>
 
-                            <!-- Tipologia -->
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="users-list-role">Tipologia:</label>
-                                    <select id="users-list-role" class="form-control form-control-sm"
-                                        (change)="filtro()" [(ngModel)]="filtroTipologia" name="filtroTipologia">
-                                        <option value="">Tutti</option>
-                                        <option value="Pubblico">Pubblico</option>
-                                        <option value="Privato">Privato</option>
-                                    </select>
-                                </div>
-                            </div>
+              <!-- Tasto crea personale -->
+              <div class="col mt-3">
+                <button type="button" class="btn btn-primary" (click)="openLg(content)">Aggiungi
+                  Cliente</button>
+              </div>
+            </div>
 
-                            <!-- Pagamento -->
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="users-list-role">Pagamento:</label>
-                                    <select id="users-list-role" class="form-control form-control-sm"
-                                        (change)="filtro()" [(ngModel)]="filtroPagamento" name="filtroPagamento">
-                                        <option value="">Tutti</option>
-                                        <option value="30 gg d.f.f.m">30 gg d.f.f.m</option>
-                                        <option value="60 gg d.f.f.m">60 gg d.f.f.m</option>
-                                        <option value="90 gg d.f.f.m">90 gg d.f.f.m</option>
-                                    </select>
-                                </div>
-                            </div>
+            <!-- ngx-datatable Basic -->
+            <ngx-datatable [rows]="clienti" [rowHeight]="50" class="bootstrap core-bootstrap" [limit]="limit"
+              [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true"
+              [sorts]="[{prop: 'name', dir: 'asc'}]"
+              [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
 
-                            <!-- Tasto crea personale -->
-                            <div class="col mt-3">
-                                <button type="button" class="btn btn-primary" (click)="openLg(content)">Aggiungi
-                                    Cliente</button>
-                            </div>
-                        </div>
-
-                        <!-- ngx-datatable Basic -->
-                        <ngx-datatable [rows]="clienti" [rowHeight]="50" class="bootstrap core-bootstrap"
-                            [limit]="limit" [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50"
-                            [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
-                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
-
-                            <!-- <ngx-datatable-column name="Id" prop="id" [width]="50" style="text-align: center;">
+              <!-- <ngx-datatable-column name="Id" prop="id" [width]="50" style="text-align: center;">
               </ngx-datatable-column> -->
 
-                            <ngx-datatable-column name="Ragione Sociale" prop="name" [width]="220"
-                                style="text-align: center;">
-                            </ngx-datatable-column>
+              <ngx-datatable-column name="Ragione Sociale" prop="name" [width]="220" style="text-align: center;">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <span>{{row.name | titlecase}}</span>
+                </ng-template>
 
-                            <ngx-datatable-column name="Tipologia" prop="type" [width]="200" minwidth="200"
-                                [draggable]="false">
-                            </ngx-datatable-column>
-                            <!-- <ngx-datatable-column name="PIVA" prop="piva" [width]="160" resizable="false"></ngx-datatable-column> -->
-                            <!-- <ngx-datatable-column name="CF" prop="cf" [width]="160" resizable="false"></ngx-datatable-column> -->
-                            <ngx-datatable-column name="Pagamento" prop="payments" [width]="160"></ngx-datatable-column>
-                            <ngx-datatable-column name="Totale Contratti" prop="contrattiTotalAmount" [width]="160">
-                                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-                                    {{value | number:'1.2-2':'it'}} €
-                                </ng-template>
-                            </ngx-datatable-column>
-                            <ngx-datatable-column name="Azioni" [width]="45" [sortable]="false">
-                                <ng-template ngx-datatable-cell-template let-row="row">
-                                    <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
-                                    <i class="ft-edit fs-6 text-primary cursor-pointer"
-                                        (click)="onModify(modify,row)"></i>
-                                    <!-- <i class="ft-corner-down-right text-primary cursor-pointer ml-2" (click)="onEdit(row)"></i> -->
-                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;"
-                                        (click)="deleteCliente(row)"></i>
-                                </ng-template>
-                            </ngx-datatable-column>
-                            <!-- <ng-template let-status="value" ngx-datatable-cell-template>
+              </ngx-datatable-column>
+
+
+              <ngx-datatable-column name="Tipologia" prop="type" [width]="200" minwidth="200" [draggable]="false">
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column name="PIVA" prop="piva" [width]="160" resizable="false"></ngx-datatable-column> -->
+              <!-- <ngx-datatable-column name="CF" prop="cf" [width]="160" resizable="false"></ngx-datatable-column> -->
+              <ngx-datatable-column name="Pagamento" prop="payments" [width]="160"></ngx-datatable-column>
+              <ngx-datatable-column name="Totale Contratti" prop="contrattiTotalAmount" [width]="160">
+                <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+                  {{value | number:'1.2-2':'it'}} €
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Azioni" [width]="45" [sortable]="false">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
+                  <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onModify(modify,row)"></i>
+                  <!-- <i class="ft-corner-down-right text-primary cursor-pointer ml-2" (click)="onEdit(row)"></i> -->
+                  <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;"
+                    (click)="deleteCliente(row)"></i>
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- <ng-template let-status="value" ngx-datatable-cell-template>
                   <div class="badge badge-pill"
                     [ngClass]="{'bg-light-success': status == 'capo', 'bg-light-primary':status == '1', 'bg-light-danger':status == '2' , 'bg-light-warning':status == '4' , 'bg-light-info':status == '5'}">
                     {{ status == 'capo' ? "Capo" : "Non Disponibile" }}
                   </div>
                 </ng-template> -->
 
-                        </ngx-datatable>
-                        <!--/ ngx-datatable Basic -->
+            </ngx-datatable>
+            <!--/ ngx-datatable Basic -->
 
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </section>
 <!--/ Basic Datatables -->
 
 <!-- inizio popup aggiungi personale -->
 <ng-template #content let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Aggiungi Cliente</h4>
-        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <form #clienteForm="ngForm">
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Ragione Sociale</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Ragione Sociale"
-                        [(ngModel)]="nuovocliente.name" name="ragioneSociale" #ragioneSociale="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)" required>
-                    <small class="form-text text-muted danger" *ngIf="ragioneSociale.errors?.required">Campo
-                        obbligatorio</small>
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Forma Giuridica</label>
-                    <!-- <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. S.R.L, S.P.A, S.N.C"
+  <div class="modal-header">
+    <h4 class="modal-title">Aggiungi Cliente</h4>
+    <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #clienteForm="ngForm">
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Ragione Sociale</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Ragione Sociale"
+            [(ngModel)]="nuovocliente.name" name="ragioneSociale" #ragioneSociale="ngModel"
+            (ngModelChange)="validationForm(clienteForm)" required>
+          <small class="form-text text-muted danger" *ngIf="ragioneSociale.errors?.required">Campo
+            obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Forma Giuridica</label>
+          <!-- <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. S.R.L, S.P.A, S.N.C"
             [(ngModel)]="nuovocliente.legalForm" name="formaGiuridica" #formaGiuridica="ngModel"
             (ngModelChange)="validationForm(clienteForm)"> -->
 
-                    <ng-select [items]="formeGiuridiche" bindLabel="name" bindValue="name" [multiple]="false"
-                        [closeOnSelect]="true" placeholder="Seleziona" [(ngModel)]="nuovocliente.legalForm"
-                        name="formaGiuridica" #formaGiuridica="ngModel" (ngModelChange)="validationForm(clienteForm)">
-                    </ng-select>
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">PIVA</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Partita IVA"
-                        [(ngModel)]="nuovocliente.piva" name="piva" #piva="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)" pattern="[0-9]{0,}">
-                    <small class="form-text text-muted danger" *ngIf="piva.errors?.pattern">la PIVA è composta di soli
-                        numeri.Ricontrolla</small>
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">CF</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
-                        [(ngModel)]="nuovocliente.cf" name="cf" #cf="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                    <!-- <small class="form-text text-muted danger" *ngIf="cf.errors?.pattern">Il CF è di 16
+          <ng-select [items]="formeGiuridiche" bindLabel="name" bindValue="name" [multiple]="false"
+            [closeOnSelect]="true" placeholder="Seleziona" [(ngModel)]="nuovocliente.legalForm" name="formaGiuridica"
+            #formaGiuridica="ngModel" (ngModelChange)="validationForm(clienteForm)">
+          </ng-select>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">PIVA</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Partita IVA"
+            [(ngModel)]="nuovocliente.piva" name="piva" #piva="ngModel" (ngModelChange)="validationForm(clienteForm)"
+            pattern="[0-9]{0,}">
+          <small class="form-text text-muted danger" *ngIf="piva.errors?.pattern">la PIVA è composta di soli
+            numeri.Ricontrolla</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CF</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
+            [(ngModel)]="nuovocliente.cf" name="cf" #cf="ngModel" (ngModelChange)="validationForm(clienteForm)">
+          <!-- <small class="form-text text-muted danger" *ngIf="cf.errors?.pattern">Il CF è di 16
             cifre/lettere.Ricontrolla</small> -->
-                </div>
+        </div>
 
 
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Indirizzo</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Indirizzo"
-                        [(ngModel)]="nuovocliente.address" name="address" #address="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">CAP</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CAP"
-                        [(ngModel)]="nuovocliente.cap" name="cap" #cap="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Città</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Città"
-                        [(ngModel)]="nuovocliente.city" (keyup)="addDatiPersonale($event)" name="city" #city="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Provincia</label>
-                    <ng-select [items]="prov" bindLabel="name" bindValue="name" [multiple]="false"
-                        [closeOnSelect]="true" placeholder="Seleziona provincia" [(ngModel)]="nuovocliente.province"
-                        name="province" #province="ngModel" (ngModelChange)="validationForm(clienteForm)">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Telefono</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Telefono"
-                        [(ngModel)]="nuovocliente.telephone" name="telephone" #telephone="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Indirizzo</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Indirizzo"
+            [(ngModel)]="nuovocliente.address" name="address" #address="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CAP</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CAP"
+            [(ngModel)]="nuovocliente.cap" name="cap" #cap="ngModel" (ngModelChange)="validationForm(clienteForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Città</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Città"
+            [(ngModel)]="nuovocliente.city" (keyup)="addDatiPersonale($event)" name="city" #city="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Provincia</label>
+          <ng-select [items]="prov" bindLabel="name" bindValue="name" [multiple]="false" [closeOnSelect]="true"
+            placeholder="Seleziona provincia" [(ngModel)]="nuovocliente.province" name="province" #province="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+          </ng-select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Telefono</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Telefono"
+            [(ngModel)]="nuovocliente.telephone" name="telephone" #telephone="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+        </div>
 
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Email</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email"
-                        [(ngModel)]="nuovocliente.email" name="email" #email="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
-
-
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
-                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
-                        onchange='this.size=1; this.blur();' aria-label="Default select example"
-                        [(ngModel)]="nuovocliente.type" [(ngModel)]="nuovocliente.type" name="tipologia"
-                        #tipologia="ngModel" (ngModelChange)="validationForm(clienteForm)">
-                        <option value='Pubblico'>Pubblico</option>
-                        <option value='Privato'>Privato</option>
-                    </select>
-
-                </div>
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Modalità di Pagamento</label>
-                    <ng-select [items]="tipologiepagamenti" bindLabel="name" bindValue="name" [multiple]="false"
-                        [closeOnSelect]="true" placeholder="Seleziona tipo di pagamento"
-                        [(ngModel)]="nuovocliente.payments" name="pagamento" #pagamento="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)" dropdownPosition="top" [addTag]="addCustom">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="row">
-                <fieldset class="form-group col-md-11 col-11 mt-2">
-                    <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne
-                        uno</label>
-
-                    <div class="custom-file ">
-                        <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
-                            (change)="addImageToCliente($event)">
-                        <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ?
-                            fileName.substring(0,110) + '...' : fileName || "Seleziona un file"}}</label>
-                    </div>
-                </fieldset>
-                <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
-                    (click)="deleteImageCliente()"></i>
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label class="form-label" *ngIf="nuovocliente.file!=null">Logo cliente attuale:</label>
-                    <label class="form-label" *ngIf="nuovocliente.file==null">Nessun logo per questo cliente</label>
-                    <br />
-                    <img *ngIf="nuovocliente.file!=null" [src]="imageSource"
-                        alt="appena caricato. Conferma le modifiche per aggiungerlo e vederlo" style="cursor: default;"
-                        height="100" width="100">
-                    <i *ngIf="nuovocliente.file!=null" style="padding-top: 14px;"
-                        class="ft-x-circle text-primary cursor-pointer ml-2 mt-4" (click)="removeLogoCliente()"
-                        title="Rimuovi il logo esistente o quello"></i>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- parte in basso -->
-    <div class="modal-footer">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Email</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email"
+            [(ngModel)]="nuovocliente.email" name="email" #email="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+        </div>
 
 
-        <!-- bottone crea nota -->
-        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
-            disabled>Conferma</button>
-        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)="creaCliente()" (click)="modal.close('Close click')">Conferma</button>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+          <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+            aria-label="Default select example" [(ngModel)]="nuovocliente.type" [(ngModel)]="nuovocliente.type"
+            name="tipologia" #tipologia="ngModel" (ngModelChange)="validationForm(clienteForm)">
+            <option value='Pubblico'>Pubblico</option>
+            <option value='Privato'>Privato</option>
+          </select>
 
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
-            (click)="clearData()">Chiudi</button>
-    </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Modalità di Pagamento</label>
+          <ng-select [items]="tipologiepagamenti" bindLabel="name" bindValue="name" [multiple]="false"
+            [closeOnSelect]="true" placeholder="Seleziona tipo di pagamento" [(ngModel)]="nuovocliente.payments"
+            name="pagamento" #pagamento="ngModel" (ngModelChange)="validationForm(clienteForm)" dropdownPosition="top"
+            [addTag]="addCustom">
+          </ng-select>
+        </div>
+      </div>
+      <div class="row">
+        <fieldset class="form-group col-md-11 col-11 mt-2">
+          <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne
+            uno</label>
+
+          <div class="custom-file ">
+            <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
+              (change)="addImageToCliente($event)">
+            <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ?
+              fileName.substring(0,110) + '...' : fileName || "Seleziona un file"}}</label>
+          </div>
+        </fieldset>
+        <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+          (click)="deleteImageCliente()"></i>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label" *ngIf="nuovocliente.file!=null">Logo cliente attuale:</label>
+          <label class="form-label" *ngIf="nuovocliente.file==null">Nessun logo per questo cliente</label>
+          <br />
+          <img *ngIf="nuovocliente.file!=null" [src]="imageSource"
+            alt="appena caricato. Conferma le modifiche per aggiungerlo e vederlo" style="cursor: default;" height="100"
+            width="100">
+          <i *ngIf="nuovocliente.file!=null" style="padding-top: 14px;"
+            class="ft-x-circle text-primary cursor-pointer ml-2 mt-4" (click)="removeLogoCliente()"
+            title="Rimuovi il logo esistente o quello"></i>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- parte in basso -->
+  <div class="modal-footer">
+
+
+    <!-- bottone crea nota -->
+    <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+      disabled>Conferma</button>
+    <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="creaCliente()" (click)="modal.close('Close click')">Conferma</button>
+
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+      (click)="clearData()">Chiudi</button>
+  </div>
 
 
 </ng-template>
@@ -295,162 +294,159 @@
 
 <!-- inizio popup modifica cliente -->
 <ng-template #modify let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Modifica Cliente</h4>
-        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <form #clienteForm="ngForm">
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Ragione Sociale</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Ragione Sociale"
-                        [(ngModel)]="nuovocliente.name" name="ragioneSociale" #ragioneSociale="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)" required>
-                    <small class="form-text text-muted danger" *ngIf="ragioneSociale.errors?.required">Campo
-                        obbligatorio</small>
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Forma Giuridica</label>
-                    <!-- <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. S.R.L, S.P.A, S.N.C"
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica Cliente</h4>
+    <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #clienteForm="ngForm">
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Ragione Sociale</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Ragione Sociale"
+            [(ngModel)]="nuovocliente.name" name="ragioneSociale" #ragioneSociale="ngModel"
+            (ngModelChange)="validationForm(clienteForm)" required>
+          <small class="form-text text-muted danger" *ngIf="ragioneSociale.errors?.required">Campo
+            obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Forma Giuridica</label>
+          <!-- <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. S.R.L, S.P.A, S.N.C"
             [(ngModel)]="nuovocliente.legalForm" name="formaGiuridica" #formaGiuridica="ngModel"
             (ngModelChange)="validationForm(clienteForm)"> -->
-                    <ng-select [items]="formeGiuridiche" bindLabel="name" bindValue="name" [multiple]="false"
-                        [closeOnSelect]="true" placeholder="Seleziona" [(ngModel)]="nuovocliente.legalForm"
-                        name="formaGiuridica" #formaGiuridica="ngModel" (ngModelChange)="validationForm(clienteForm)">
-                    </ng-select>
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">PIVA</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Partita IVA"
-                        [(ngModel)]="nuovocliente.piva" name="piva" #piva="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)" pattern="[0-9]{0,}">
-                    <small class="form-text text-muted danger" *ngIf="piva.errors?.pattern">la PIVA è composta di soli
-                        numeri.Ricontrolla</small>
+          <ng-select [items]="formeGiuridiche" bindLabel="name" bindValue="name" [multiple]="false"
+            [closeOnSelect]="true" placeholder="Seleziona" [(ngModel)]="nuovocliente.legalForm" name="formaGiuridica"
+            #formaGiuridica="ngModel" (ngModelChange)="validationForm(clienteForm)">
+          </ng-select>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">PIVA</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Partita IVA"
+            [(ngModel)]="nuovocliente.piva" name="piva" #piva="ngModel" (ngModelChange)="validationForm(clienteForm)"
+            pattern="[0-9]{0,}">
+          <small class="form-text text-muted danger" *ngIf="piva.errors?.pattern">la PIVA è composta di soli
+            numeri.Ricontrolla</small>
 
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">CF</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
-                        [(ngModel)]="nuovocliente.cf" name="cf" #cf="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                    <!-- <small class="form-text text-muted danger" *ngIf="cf.errors?.pattern">Il CF è di 16
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CF</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
+            [(ngModel)]="nuovocliente.cf" name="cf" #cf="ngModel" (ngModelChange)="validationForm(clienteForm)">
+          <!-- <small class="form-text text-muted danger" *ngIf="cf.errors?.pattern">Il CF è di 16
             cifre/lettere.Ricontrolla</small> -->
-                </div>
+        </div>
 
 
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Indirizzo</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Indirizzo"
-                        [(ngModel)]="nuovocliente.address" name="address" #address="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">CAP</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CAP"
-                        [(ngModel)]="nuovocliente.cap" name="cap" #cap="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Città</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Città"
-                        [(ngModel)]="nuovocliente.city" (keyup)="addDatiPersonale($event)" name="city" #city="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Provincia</label>
-                    <ng-select [items]="prov" bindLabel="name" bindValue="name" [multiple]="false"
-                        [closeOnSelect]="true" placeholder="Seleziona provincia" [(ngModel)]="nuovocliente.province"
-                        name="province" #province="ngModel" (ngModelChange)="validationForm(clienteForm)">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Telefono</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Telefono"
-                        [(ngModel)]="nuovocliente.telephone" name="telephone" #telephone="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Indirizzo</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Indirizzo"
+            [(ngModel)]="nuovocliente.address" name="address" #address="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CAP</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CAP"
+            [(ngModel)]="nuovocliente.cap" name="cap" #cap="ngModel" (ngModelChange)="validationForm(clienteForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Città</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Città"
+            [(ngModel)]="nuovocliente.city" (keyup)="addDatiPersonale($event)" name="city" #city="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Provincia</label>
+          <ng-select [items]="prov" bindLabel="name" bindValue="name" [multiple]="false" [closeOnSelect]="true"
+            placeholder="Seleziona provincia" [(ngModel)]="nuovocliente.province" name="province" #province="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+          </ng-select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Telefono</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Telefono"
+            [(ngModel)]="nuovocliente.telephone" name="telephone" #telephone="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+        </div>
 
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Email</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email"
-                        [(ngModel)]="nuovocliente.email" name="email" #email="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)">
-                </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Email</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email"
+            [(ngModel)]="nuovocliente.email" name="email" #email="ngModel"
+            (ngModelChange)="validationForm(clienteForm)">
+        </div>
 
 
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
-                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
-                        onchange='this.size=1; this.blur();' aria-label="Default select example"
-                        [(ngModel)]="nuovocliente.type" [(ngModel)]="nuovocliente.type" name="tipologia"
-                        #tipologia="ngModel" (ngModelChange)="validationForm(clienteForm)">
-                        <option value='Pubblico'>Pubblico</option>
-                        <option value='Privato'>Privato</option>
-                    </select>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+          <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+            aria-label="Default select example" [(ngModel)]="nuovocliente.type" [(ngModel)]="nuovocliente.type"
+            name="tipologia" #tipologia="ngModel" (ngModelChange)="validationForm(clienteForm)">
+            <option value='Pubblico'>Pubblico</option>
+            <option value='Privato'>Privato</option>
+          </select>
 
-                </div>
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Modalità di Pagamento</label>
-                    <ng-select [items]="tipologiepagamenti" bindLabel="name" bindValue="name" [multiple]="false"
-                        [closeOnSelect]="true" placeholder="Seleziona tipo di pagamento"
-                        [(ngModel)]="nuovocliente.payments" name="pagamento" #pagamento="ngModel"
-                        (ngModelChange)="validationForm(clienteForm)" dropdownPosition="top" [addTag]="addCustom">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="row">
-                <fieldset class="form-group col-md-11 col-11 mt-2">
-                    <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne
-                        uno</label>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Modalità di Pagamento</label>
+          <ng-select [items]="tipologiepagamenti" bindLabel="name" bindValue="name" [multiple]="false"
+            [closeOnSelect]="true" placeholder="Seleziona tipo di pagamento" [(ngModel)]="nuovocliente.payments"
+            name="pagamento" #pagamento="ngModel" (ngModelChange)="validationForm(clienteForm)" dropdownPosition="top"
+            [addTag]="addCustom">
+          </ng-select>
+        </div>
+      </div>
+      <div class="row">
+        <fieldset class="form-group col-md-11 col-11 mt-2">
+          <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne
+            uno</label>
 
-                    <div class="custom-file ">
-                        <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
-                            (change)="addImageToCliente($event)">
-                        <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ?
-                            fileName.substring(0,110) + '...' : fileName || "Seleziona un file"}}</label>
-                    </div>
-                </fieldset>
-                <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
-                    (click)="deleteImageCliente()"></i>
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label class="form-label" *ngIf="nuovocliente.file!=null">Logo cliente attuale:</label>
-                    <label class="form-label" *ngIf="nuovocliente.file==null">Nessun logo per questo cliente</label>
-                    <br />
-                    <img *ngIf="nuovocliente.file!=null" [src]="imageSource"
-                        alt="appena caricato. Conferma le modifiche per aggiungerlo e vederlo" style="cursor: default;"
-                        height="100" width="100">
-                    <i *ngIf="nuovocliente.file!=null" style="padding-top: 14px;"
-                        class="ft-x-circle text-primary cursor-pointer ml-2 mt-4" (click)="removeLogoCliente()"
-                        title="Rimuovi il logo esistente o quello"></i>
-                </div>
-            </div>
-        </form>
-    </div>
+          <div class="custom-file ">
+            <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
+              (change)="addImageToCliente($event)">
+            <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ?
+              fileName.substring(0,110) + '...' : fileName || "Seleziona un file"}}</label>
+          </div>
+        </fieldset>
+        <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+          (click)="deleteImageCliente()"></i>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label" *ngIf="nuovocliente.file!=null">Logo cliente attuale:</label>
+          <label class="form-label" *ngIf="nuovocliente.file==null">Nessun logo per questo cliente</label>
+          <br />
+          <img *ngIf="nuovocliente.file!=null" [src]="imageSource"
+            alt="appena caricato. Conferma le modifiche per aggiungerlo e vederlo" style="cursor: default;" height="100"
+            width="100">
+          <i *ngIf="nuovocliente.file!=null" style="padding-top: 14px;"
+            class="ft-x-circle text-primary cursor-pointer ml-2 mt-4" (click)="removeLogoCliente()"
+            title="Rimuovi il logo esistente o quello"></i>
+        </div>
+      </div>
+    </form>
+  </div>
 
-    <!-- parte in basso -->
-    <div class="modal-footer">
+  <!-- parte in basso -->
+  <div class="modal-footer">
 
-        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
-            modifica</button>
-        <!-- bottone crea nota -->
-        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)="updateCliente()" (click)="modal.close('Close click')">Conferma modifica</button>
+    <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma
+      modifica</button>
+    <!-- bottone crea nota -->
+    <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="updateCliente()" (click)="modal.close('Close click')">Conferma modifica</button>
 
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
-            (click)="clearData()">Chiudi</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+      (click)="clearData()">Chiudi</button>
 
-    </div>
+  </div>
 
 
 </ng-template>

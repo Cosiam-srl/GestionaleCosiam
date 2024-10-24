@@ -53,13 +53,16 @@
             <!-- ngx-datatable Basic -->
             <ngx-datatable [rows]="fornitori" [rowHeight]="50" class="bootstrap core-bootstrap" [limit]="limit"
               [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true"
-              [sorts]="[{prop: 'id', dir: 'desc'}]"
+              [sorts]="[{prop: 'name', dir: 'asc'}]"
               [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
 
               <!-- <ngx-datatable-column name="Id" prop="id" [width]="50" style="text-align: center;">
               </ngx-datatable-column> -->
 
               <ngx-datatable-column name="Ragione sociale" prop="name" [width]="220" style="text-align: center;">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <span>{{ row.name | titlecase }}</span>
+                </ng-template>
               </ngx-datatable-column>
               <ngx-datatable-column name="Email" prop="email" [width]="200" [draggable]="false">
               </ngx-datatable-column>

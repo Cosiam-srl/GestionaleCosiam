@@ -49,13 +49,17 @@
             <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
             <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force" [headerHeight]="60"
               [footerHeight]="50" rowHeight="50" [limit]="limit" [rows]="contratti" [scrollbarH]="true"
-              [sorts]="[{prop: 'id', dir: 'desc'}]" (select)="onSelect($event)" [selected]="selected"
+              [sorts]="[{prop: 'clienteName', dir: 'asc'}]" (select)="onSelect($event)" [selected]="selected"
               [selectionType]="SelectionType.checkbox"
               [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
               <!-- <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="id" prop="id"
                   [width]="50"></ngx-datatable-column> -->
               <ngx-datatable-column [headerCheckboxable]="false" [checkboxable]="false" name="Cliente"
                 prop="clienteName" [width]="150">
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <span>{{row.clienteName | titlecase}}</span>
+                </ng-template>
+
               </ngx-datatable-column>
               <ngx-datatable-column name="Descrizione Breve" prop="shortDescription" [width]="150">
               </ngx-datatable-column>
