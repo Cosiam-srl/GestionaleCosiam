@@ -1,1 +1,5 @@
 @import "~@ng-select/ng-select/themes/default.theme.css";
+
+.ng-dropdown-panel {
+  z-index: 1500 !important; /* Assicurati che questo valore sia maggiore del valore z-index del modale */
+}
