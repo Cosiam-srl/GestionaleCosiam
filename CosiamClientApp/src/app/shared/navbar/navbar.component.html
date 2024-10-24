@@ -9,13 +9,17 @@
       </div>
       <ul class="navbar-nav" (clickOutside)="toggleSearchOpenClass(false)">
         <li class="nav-item mr-2 d-none d-lg-block">
+          <a class="nav-link apptogglefullscreen" id="navbar-back" href="javascript:;" (click)="back()"><i
+              class=" ft-arrow-left font-medium-3"></i></a>
+        </li>
+        <li class="nav-item mr-2 d-none d-lg-block">
           <a class="nav-link apptogglefullscreen" id="navbar-fullscreen" href="javascript:;" appToggleFullscreen
             (click)="ToggleClass()"><i class=" {{toggleClass}} font-medium-3"></i></a>
         </li>
 
         <!-- tasto ricerca generale -->
 
-        
+
         <!-- <li class="nav-item nav-search">
           <a class="nav-link nav-link-search" id="navbar-search" href="javascript:"
             (click)="toggleSearchOpenClass(true)"><i class="ft-search font-medium-3"></i></a>
@@ -94,9 +98,9 @@
           <!--CREATA CLASSE CSS nascosto PER NASCONDERE LA SEZIONE RELATIVA ALLE NOTIFICHE-->
 
           <li class="dropdown nav-item nascosto" placement="bottom-left" display="static" ngbDropdown>
-            <a style="display: none;" class="nav-link dropdown-toggle dropdown-notification p-0 mt-2" id="drp-notification" href="javascript:;"
-              data-toggle="dropdown" ngbDropdownToggle><i class="ft-bell font-medium-3"></i><span
-                class="notification badge badge-pill badge-danger">1</span></a>
+            <a style="display: none;" class="nav-link dropdown-toggle dropdown-notification p-0 mt-2"
+              id="drp-notification" href="javascript:;" data-toggle="dropdown" ngbDropdownToggle><i
+                class="ft-bell font-medium-3"></i><span class="notification badge badge-pill badge-danger">1</span></a>
             <ul ngbDropdownMenu
               class="notification-dropdown dropdown-menu dropdown-menu-media dropdown-menu-right m-0 overflow-hidden">
 

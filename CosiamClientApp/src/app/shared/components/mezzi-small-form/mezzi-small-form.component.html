@@ -4,7 +4,7 @@
 <div #content>
   <div class="modal-header">
     <h4 class="modal-title">Aggiungi Mezzo</h4>
-    <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <!-- <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
         <span aria-hidden="true">&times;</span>
     </button> -->
   </div>
@@ -14,26 +14,25 @@
         <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label">Descrizione</label>
           <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Furgone"
-                 [(ngModel)]="nuovomezzo.description" name="descrizione" #descrizione="ngModel" title=""
-                 required>
+            [(ngModel)]="nuovomezzo.description" name="descrizione" #descrizione="ngModel" title="" required>
           <small class="form-text text-muted danger" *ngIf="descrizione.errors?.required">Campo
             obbligatorio</small>
         </div>
         <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label">Brand</label>
           <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Fiat"
-                 [(ngModel)]="nuovomezzo.brand" name="brand" #brand="ngModel" title="">
+            [(ngModel)]="nuovomezzo.brand" name="brand" #brand="ngModel" title="">
         </div>
         <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label">Modello</label>
           <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 500X"
-                 [(ngModel)]="nuovomezzo.model" name="modello" #modello="ngModel" title="">
+            [(ngModel)]="nuovomezzo.model" name="modello" #modello="ngModel" title="">
         </div>
         <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label">Targa/Matricola</label>
           <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="CV504KL"
-                 [(ngModel)]="nuovomezzo.licensePlate" name="targa" #targa="ngModel"
-                 (ngModelChange)="nuovomezzo.licensePlate=nuovomezzo.licensePlate.toUpperCase()" title="">
+            [(ngModel)]="nuovomezzo.licensePlate" name="targa" #targa="ngModel"
+            (ngModelChange)="nuovomezzo.licensePlate=nuovomezzo.licensePlate.toUpperCase()" title="">
         </div>
       </div>
       <div class="row">
@@ -42,8 +41,7 @@
           <label for="exampleFormControlInput1" class="form-label">Costo giornaliero</label>
           <div class="input-group">
             <input type="number" class="form-control" min=0 id="exampleFormControlInput1" placeholder=""
-                   [(ngModel)]="nuovomezzo.dailyCost" title="" name="costogiornaliero"
-                   #costogiornaliero="ngModel">
+              [(ngModel)]="nuovomezzo.dailyCost" title="" name="costogiornaliero" #costogiornaliero="ngModel">
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2">€/giorno</span>
             </div>
@@ -57,7 +55,7 @@
   <!-- parte in basso -->
   <div class="modal-footer">
     <button type="button" [disabled]="!mezzoForm.valid" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)="creaMezzo()">Conferma
+      (click)="creaMezzo()">Conferma
     </button>
     <button type="button" class="btn btn-light" (click)="this.mezzoAdded.emit(false)">Chiudi</button>
   </div>

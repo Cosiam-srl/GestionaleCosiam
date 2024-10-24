@@ -203,15 +203,15 @@ export class SuppliersComponent implements OnInit {
       this.nuovofornitore.file = reader.result;
     };
     this.fff = true;
-  }  // funzione chiamata quando nel form di creazione si eliminano gli allegati aggiunti
+  }
+
+  // funzione chiamata quando nel form di creazione si eliminano gli allegati aggiunti
   deleteImageFornitore() {
     // svuoto effetticamente l'input file per evitare che non mi carichi lo stesso file selezionato in precedenza
     (document.getElementById('inputGroupFile01') as HTMLInputElement).value = null;
-
     this.fileName = '';
     this.formData = new FormData();
   }
-
   // chiamata quando si vuol rimuovere il logo senza sovrascriverlo con un altro
   removeLogoFornitore() {
     this.nuovofornitore.file = null;

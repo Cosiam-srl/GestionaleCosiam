@@ -2,7 +2,7 @@
   <app-spinner></app-spinner>
 </ngx-spinner>
 <style>
-  *{
+  * {
     box-shadow: unset !important;
   }
 </style>
@@ -106,7 +106,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <h4 class="modal-title">Aggiungi Contratto</h4>
-      <!-- <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <!-- <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
         <span aria-hidden="true">&times;</span>
       </button> -->
     </div>
@@ -321,7 +321,8 @@
             <div>
               <label class="form-label">Aggiuntivo Netto</label>
               <div class="input-group">
-                <input type="text" class="form-control" [ngModel]="valoreaggiuntivo.additionalNetAmount | number:'1.0-2':'it-IT'"
+                <input type="text" class="form-control"
+                  [ngModel]="valoreaggiuntivo.additionalNetAmount | number:'1.0-2':'it-IT'"
                   name="importoaggiuntivonetto{{i}}" #importoaggiuntivonetto="ngModel"
                   (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
                 <div class="input-group-append">
@@ -378,9 +379,9 @@
           <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
             <label for="exampleFormControlInput1" class="form-label">Importo Lavori Totale Lordo</label>
             <div class="input-group">
-              <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.totalGrossWorkAmount | number:'1.0-2':'it-IT'"
-                name="importolavoritotalelordo" #importolavoritotalelordo="ngModel"
-                (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
+              <input type="text" class="form-control" min=0
+                [ngModel]="nuovocontratto.totalGrossWorkAmount | number:'1.0-2':'it-IT'" name="importolavoritotalelordo"
+                #importolavoritotalelordo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
               <div class="input-group-append">
                 <span class="input-group-text" id="basic-addon2">€</span>
               </div>
@@ -389,9 +390,9 @@
           <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
             <label for="exampleFormControlInput1" class="form-label">Importo Oneri Totale</label>
             <div class="input-group">
-              <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.totalChargesAmount | number:'1.0-2':'it-IT'"
-                name="importooneritotale" #importooneritotale="ngModel" (ngModelChange)="validationForm(contrattoForm)"
-                title="" disabled>
+              <input type="text" class="form-control" min=0
+                [ngModel]="nuovocontratto.totalChargesAmount | number:'1.0-2':'it-IT'" name="importooneritotale"
+                #importooneritotale="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
               <div class="input-group-append">
                 <span class="input-group-text" id="basic-addon2">€</span>
               </div>
@@ -664,7 +665,8 @@
         <div>
           <label class="form-label">Aggiuntivo Netto</label>
           <div class="input-group">
-            <input type="text" class="form-control" [ngModel]="valoreaggiuntivo.additionalNetAmount | number:'1.0-2':'it-IT'"
+            <input type="text" class="form-control"
+              [ngModel]="valoreaggiuntivo.additionalNetAmount | number:'1.0-2':'it-IT'"
               name="importoaggiuntivonetto{{i}}" #importoaggiuntivonetto="ngModel"
               (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
             <div class="input-group-append">
@@ -721,9 +723,9 @@
         <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label">Importo Lavori Totale Lordo</label>
           <div class="input-group">
-            <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.totalGrossWorkAmount | number:'1.0-2':'it-IT'"
-              name="importolavoritotalelordo" #importolavoritotalelordo="ngModel"
-              (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
+            <input type="text" class="form-control" min=0
+              [ngModel]="nuovocontratto.totalGrossWorkAmount | number:'1.0-2':'it-IT'" name="importolavoritotalelordo"
+              #importolavoritotalelordo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2">€</span>
             </div>
@@ -732,9 +734,9 @@
         <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label">Importo Oneri Totale</label>
           <div class="input-group">
-            <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.totalChargesAmount | number:'1.0-2':'it-IT'"
-              name="importooneritotale" #importooneritotale="ngModel" (ngModelChange)="validationForm(contrattoForm)"
-              title="" disabled>
+            <input type="text" class="form-control" min=0
+              [ngModel]="nuovocontratto.totalChargesAmount | number:'1.0-2':'it-IT'" name="importooneritotale"
+              #importooneritotale="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2">€</span>
             </div>
@@ -764,9 +766,9 @@
         <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label">Importo Ordinato</label>
           <div class="input-group">
-            <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.orderedImport | number:'1.0-2':'it-IT'"
-              name="importoordinato" #importoordinato="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
-              disabled>
+            <input type="text" class="form-control" min=0
+              [ngModel]="nuovocontratto.orderedImport | number:'1.0-2':'it-IT'" name="importoordinato"
+              #importoordinato="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2">€</span>
             </div>
@@ -775,9 +777,9 @@
         <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label">Importo Residuo</label>
           <div class="input-group">
-            <input type="text" class="form-control" min=0 [ngModel]="nuovocontratto.residualImport | number:'1.0-2':'it-IT'"
-              name="importoresiduo" #importoresiduo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title=""
-              disabled>
+            <input type="text" class="form-control" min=0
+              [ngModel]="nuovocontratto.residualImport | number:'1.0-2':'it-IT'" name="importoresiduo"
+              #importoresiduo="ngModel" (ngModelChange)="validationForm(contrattoForm)" title="" disabled>
             <div class="input-group-append">
               <span class="input-group-text" id="basic-addon2">€</span>
             </div>

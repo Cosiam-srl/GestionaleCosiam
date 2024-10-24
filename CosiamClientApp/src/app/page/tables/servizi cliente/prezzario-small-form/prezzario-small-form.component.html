@@ -1,7 +1,8 @@
 <div #content>
     <div class="modal-header">
         <h4 class="modal-title">Aggiungi Prezzo</h4>
-        <button type="button" class="close" aria-label="Close" (click)="this.articoloPrezzarioAdded.emit(false);">
+        <button type="button" class="btn btn-danger" aria-label="Close"
+            (click)="this.articoloPrezzarioAdded.emit(false);">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -80,9 +81,9 @@
                 </div>
                 <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="discountLabel"
-                    [(ngModel)]="this.pc.nuovoservizio.applyDiscount"
-                    (ngModelChange)="this.pc.validationForm(prezzarioForm)" placeholder="Es. 5758 27.02.02.00 1"
-                    name="applyDiscount" #applyDiscount="ngModel">
+                        [(ngModel)]="this.pc.nuovoservizio.applyDiscount"
+                        (ngModelChange)="this.pc.validationForm(prezzarioForm)" placeholder="Es. 5758 27.02.02.00 1"
+                        name="applyDiscount" #applyDiscount="ngModel">
                     <label for="discountLabel" class="form-label">Applica sconto</label>
                 </div>
                 <!-- <div class="col-md-2 mb-3">

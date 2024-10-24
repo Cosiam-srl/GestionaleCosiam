@@ -1,43 +1,57 @@
-import { Component, Output, EventEmitter, OnDestroy, OnInit, AfterViewInit, ChangeDetectorRef, Inject, Renderer2, ViewChild, ElementRef, ViewChildren, QueryList, HostListener } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { LayoutService } from '../services/layout.service';
-import { Subscription } from 'rxjs';
-import { ConfigService } from '../services/config.service';
-import { DOCUMENT } from '@angular/common';
-import { CustomizerService } from '../services/customizer.service';
-import { FormControl } from '@angular/forms';
-import { LISTITEMS } from '../data/template-search';
-import { Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
-import { LoggingService, LogLevel } from '../services/logging/logging.service';
-import { PersonaleService } from '../services/data/personale.service';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Inject,
+  Renderer2,
+  ViewChild,
+  ElementRef,
+  ViewChildren,
+  QueryList,
+  HostListener,
+} from "@angular/core";
+import { TranslateService } from "@ngx-translate/core";
+import { LayoutService } from "../services/layout.service";
+import { Subscription } from "rxjs";
+import { ConfigService } from "../services/config.service";
+import { DOCUMENT } from "@angular/common";
+import { CustomizerService } from "../services/customizer.service";
+import { FormControl } from "@angular/forms";
+import { LISTITEMS } from "../data/template-search";
+import { Router } from "@angular/router";
+import { AuthService } from "../auth/auth.service";
+import { LoggingService, LogLevel } from "../services/logging/logging.service";
+import { PersonaleService } from "../services/data/personale.service";
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  selector: "app-navbar",
+  templateUrl: "./navbar.component.html",
+  styleUrls: ["./navbar.component.scss"],
 })
 export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
-
   currentUser: string;
-  currentLang = 'en';
-  selectedLanguageText = 'English';
-  selectedLanguageFlag = './assets/img/flags/us.png';
-  toggleClass = 'ft-maximize';
-  placement = 'bottom-right';
-  logoUrl = 'assets/img/logo.png';
-  menuPosition = 'Side';
+  currentLang = "en";
+  selectedLanguageText = "English";
+  selectedLanguageFlag = "./assets/img/flags/us.png";
+  toggleClass = "ft-maximize";
+  placement = "bottom-right";
+  logoUrl = "assets/img/logo.png";
+  menuPosition = "Side";
   isSmallScreen = false;
   protected innerWidth: any;
-  searchOpenClass = '';
-  transparentBGClass = '';
+  searchOpenClass = "";
+  transparentBGClass = "";
   hideSidebar = true;
   public isCollapsed = true;
   layoutSub: Subscription;
   configSub: Subscription;
 
-  @ViewChild('search') searchElement: ElementRef;
-  @ViewChildren('searchResults') searchResults: QueryList<any>;
+  @ViewChild("search") searchElement: ElementRef;
+  @ViewChildren("searchResults") searchResults: QueryList<any>;
 
   @Output()
   toggleHideSidebar = new EventEmitter<Object>();
@@ -50,40 +64,44 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public config: any = {};
 
-  constructor(public translate: TranslateService,
+  constructor(
+    public translate: TranslateService,
     private layoutService: LayoutService,
     private router: Router,
-    private configService: ConfigService, private cdr: ChangeDetectorRef,
+    private configService: ConfigService,
+    private cdr: ChangeDetectorRef,
     private _login: AuthService,
-    private _servicePersonale:PersonaleService) {
+    private _servicePersonale: PersonaleService
+  ) {
     // prendo il nome dell'utente loggato, mettendo sempre la capolettera in maiuscolo
     this.currentUser = this._login.whoAmI().username;
     let a = this.currentUser.charAt(0).toUpperCase();
     let b = this.currentUser.substring(1, this.currentUser.length);
     this.currentUser = a + b;
 
-
     const browserLang: string = translate.getBrowserLang();
-    translate.use(browserLang.match(/en|es|pt|de/) ? browserLang : 'en');
+    translate.use(browserLang.match(/en|es|pt|de/) ? browserLang : "en");
     this.config = this.configService.templateConf;
     this.innerWidth = window.innerWidth;
 
-    this.layoutSub = layoutService.toggleSidebar$.subscribe(
-      isShow => {
-        this.hideSidebar = !isShow;
-      });
-
+    this.layoutSub = layoutService.toggleSidebar$.subscribe((isShow) => {
+      this.hideSidebar = !isShow;
+    });
   }
-/**
- * 
- */
+  /**
+   *
+   */
   getUser() {
-    this._servicePersonale.getPersonaleFromUserName(this._login.whoAmI().username).subscribe(
-      (res) => { this.currentUser = res.name + " " + res.surname },
-      (err) => {
-        console.error("ERRORE GET USER");
-      },
-    );
+    this._servicePersonale
+      .getPersonaleFromUserName(this._login.whoAmI().username)
+      .subscribe(
+        (res) => {
+          this.currentUser = res.name + " " + res.surname;
+        },
+        (err) => {
+          console.error("ERRORE GET USER");
+        }
+      );
   }
   ngOnInit() {
     this.listItems = LISTITEMS;
@@ -97,15 +115,15 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-
-    this.configSub = this.configService.templateConf$.subscribe((templateConf) => {
-      if (templateConf) {
-        this.config = templateConf;
+    this.configSub = this.configService.templateConf$.subscribe(
+      (templateConf) => {
+        if (templateConf) {
+          this.config = templateConf;
+        }
+        this.loadLayout();
+        this.cdr.markForCheck();
       }
-      this.loadLayout();
-      this.cdr.markForCheck();
-
-    })
+    );
   }
 
   ngOnDestroy() {
@@ -117,7 +135,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener("window:resize", ["$event"])
   onResize(event) {
     this.innerWidth = event.target.innerWidth;
     if (this.innerWidth < 1200) {
@@ -128,31 +146,34 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadLayout() {
-
-    if (this.config.layout.menuPosition && this.config.layout.menuPosition.toString().trim() != '') {
+    if (
+      this.config.layout.menuPosition &&
+      this.config.layout.menuPosition.toString().trim() != ""
+    ) {
       this.menuPosition = this.config.layout.menuPosition;
     }
 
-    if (this.config.layout.variant === 'Light') {
-      this.logoUrl = 'assets/img/logo-dark.png';
+    if (this.config.layout.variant === "Light") {
+      this.logoUrl = "assets/img/logo-dark.png";
     } else {
-      this.logoUrl = 'assets/img/logo.png';
+      this.logoUrl = "assets/img/logo.png";
     }
 
-    if (this.config.layout.variant === 'Transparent') {
+    if (this.config.layout.variant === "Transparent") {
       this.transparentBGClass = this.config.layout.sidebar.backgroundColor;
     } else {
-      this.transparentBGClass = '';
+      this.transparentBGClass = "";
     }
-
   }
 
   onSearchKey(event: any) {
     if (this.searchResults && this.searchResults.length > 0) {
-      this.searchResults.first.host.nativeElement.classList.add('first-active-item');
+      this.searchResults.first.host.nativeElement.classList.add(
+        "first-active-item"
+      );
     }
 
-    if (event.target.value === '') {
+    if (event.target.value === "") {
       this.seachTextEmpty.emit(true);
     } else {
       this.seachTextEmpty.emit(false);
@@ -161,22 +182,24 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   removeActiveClass() {
     if (this.searchResults && this.searchResults.length > 0) {
-      this.searchResults.first.host.nativeElement.classList.remove('first-active-item');
+      this.searchResults.first.host.nativeElement.classList.remove(
+        "first-active-item"
+      );
     }
   }
 
   onEscEvent() {
-    this.control.setValue('');
-    this.searchOpenClass = '';
+    this.control.setValue("");
+    this.searchOpenClass = "";
     this.seachTextEmpty.emit(true);
   }
 
   onEnter() {
     if (this.searchResults && this.searchResults.length > 0) {
       const url = this.searchResults.first.url;
-      if (url && url != '') {
-        this.control.setValue('');
-        this.searchOpenClass = '';
+      if (url && url != "") {
+        this.control.setValue("");
+        this.searchOpenClass = "";
         this.router.navigate([url]);
         this.seachTextEmpty.emit(true);
       }
@@ -188,50 +211,48 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     this.seachTextEmpty.emit(true);
   }
 
-
   ChangeLanguage(language: string) {
     this.translate.use(language);
 
-    if (language === 'en') {
-      this.selectedLanguageText = 'English';
-      this.selectedLanguageFlag = './assets/img/flags/us.png';
-    } else if (language === 'es') {
-      this.selectedLanguageText = 'Spanish';
-      this.selectedLanguageFlag = './assets/img/flags/es.png';
-    } else if (language === 'pt') {
-      this.selectedLanguageText = 'Portuguese';
-      this.selectedLanguageFlag = './assets/img/flags/pt.png';
-    } else if (language === 'de') {
-      this.selectedLanguageText = 'German';
-      this.selectedLanguageFlag = './assets/img/flags/de.png';
+    if (language === "en") {
+      this.selectedLanguageText = "English";
+      this.selectedLanguageFlag = "./assets/img/flags/us.png";
+    } else if (language === "es") {
+      this.selectedLanguageText = "Spanish";
+      this.selectedLanguageFlag = "./assets/img/flags/es.png";
+    } else if (language === "pt") {
+      this.selectedLanguageText = "Portuguese";
+      this.selectedLanguageFlag = "./assets/img/flags/pt.png";
+    } else if (language === "de") {
+      this.selectedLanguageText = "German";
+      this.selectedLanguageFlag = "./assets/img/flags/de.png";
     }
   }
 
   ToggleClass() {
-    if (this.toggleClass === 'ft-maximize') {
-      this.toggleClass = 'ft-minimize';
+    if (this.toggleClass === "ft-maximize") {
+      this.toggleClass = "ft-minimize";
     } else {
-      this.toggleClass = 'ft-maximize';
+      this.toggleClass = "ft-maximize";
     }
   }
 
   toggleSearchOpenClass(display) {
-    this.control.setValue('');
+    this.control.setValue("");
     if (display) {
-      this.searchOpenClass = 'open';
+      this.searchOpenClass = "open";
       setTimeout(() => {
         this.searchElement.nativeElement.focus();
       }, 0);
     } else {
-      this.searchOpenClass = '';
+      this.searchOpenClass = "";
     }
     this.seachTextEmpty.emit(true);
-
-
-
   }
 
-
+  back() {
+    window.history.back();
+  }
 
   toggleNotificationSidebar() {
     this.layoutService.toggleNotificationSidebar(true);

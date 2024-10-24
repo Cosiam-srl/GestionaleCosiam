@@ -1,153 +1,150 @@
 <div class="row" (resized)="onResized($event)">
 
-    <!-- prima colonna della prima riga -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12" id='cards'>
-        <div class="card" style="align-items: center;">
-            <button type="button" style="float: right;" class="btn btn-primary btn-sm mb-2"
-                (click)=" openLg(modify)">Modifica</button>
-            <!-- <img src="assets/img/portrait/small/avatar-s-5.png" alt="user edit avatar"
+  <!-- prima colonna della prima riga -->
+  <div class="col-xl-3 col-lg-6 col-md-6 col-12" id='cards'>
+    <div class="card" style="align-items: center;">
+      <button type="button" style="float: right;" class="btn btn-primary btn-sm mb-2"
+        (click)=" openLg(modify)">Modifica</button>
+      <!-- <img src="assets/img/portrait/small/avatar-s-5.png" alt="user edit avatar"
                 class="users-avatar-shadow avatar mt-3 rounded-circle" height="64" width="64"> -->
-            <img *ngIf="nuovopersonale.file!=null" [src]="imageSource" alt="Logo" style="cursor: default;" height="100"
-                width="100">
-            <!-- foto di default se non c'è un'immagine per il personale -->
-            <div *ngIf="nuovopersonale.file==null">
-                <img src="assets/img/portrait/small/placeholder-foto-profilo.jpg" alt="user edit avatar"
-                    class="users-avatar-shadow avatar mt-3 rounded-circle" height="64" width="64">
-            </div>
-            <div class="card-body">
-                <h5 class="card-title text-center">{{nuovopersonale.fullName != null ? nuovopersonale.fullName : "///"
-                    }}
-                </h5>
-                <!-- <p class="card-text text-center">(89261)</p> -->
+      <img *ngIf="nuovopersonale.file!=null" [src]="imageSource" alt="Logo" style="cursor: default;" height="100"
+        width="100">
+      <!-- foto di default se non c'è un'immagine per il personale -->
+      <div *ngIf="nuovopersonale.file==null">
+        <img src="assets/img/portrait/small/placeholder-foto-profilo.jpg" alt="user edit avatar"
+          class="users-avatar-shadow avatar mt-3 rounded-circle" height="64" width="64">
+      </div>
+      <div class="card-body">
+        <h5 class="card-title text-center">{{nuovopersonale.fullName != null ? nuovopersonale.fullName : "///"
+          }}
+        </h5>
+        <!-- <p class="card-text text-center">(89261)</p> -->
 
-                <!-- <p class="card-text"><strong>Data di nascita</strong>: {{nuovopersonale.birthday | dataleggibile}}</p> -->
-                <p class="card-text"><strong>Data di nascita</strong>: {{nuovopersonale.birthday | date:"dd/MM/yyyy"}}
-                </p>
-                <p class="card-text"><strong>Luogo di nascita</strong>: {{nuovopersonale.birthPlace != null ?
-                    nuovopersonale.birthPlace : "///" }}</p>
-                <p class="card-text"><strong>Domicilio</strong>: {{nuovopersonale.address != null ?
-                    nuovopersonale.address : "///" }}</p>
-                <p class="card-text"><strong>Email</strong>: {{nuovopersonale.email != null ? nuovopersonale.email :
-                    "///" }}</p>
-                <p class="card-text"><strong>Telefono</strong>: {{nuovopersonale.telephone != null ?
-                    nuovopersonale.telephone : "///" }}</p>
-            </div>
-        </div>
+        <!-- <p class="card-text"><strong>Data di nascita</strong>: {{nuovopersonale.birthday | dataleggibile}}</p> -->
+        <p class="card-text"><strong>Data di nascita</strong>: {{nuovopersonale.birthday | date:"dd/MM/yyyy"}}
+        </p>
+        <p class="card-text"><strong>Luogo di nascita</strong>: {{nuovopersonale.birthPlace != null ?
+          nuovopersonale.birthPlace : "///" }}</p>
+        <p class="card-text"><strong>Domicilio</strong>: {{nuovopersonale.address != null ?
+          nuovopersonale.address : "///" }}</p>
+        <p class="card-text"><strong>Email</strong>: {{nuovopersonale.email != null ? nuovopersonale.email :
+          "///" }}</p>
+        <p class="card-text"><strong>Telefono</strong>: {{nuovopersonale.telephone != null ?
+          nuovopersonale.telephone : "///" }}</p>
+      </div>
     </div>
-    <!-- fine prima colonna della prima riga -->
+  </div>
+  <!-- fine prima colonna della prima riga -->
 
-    <!-- inizio seconda colonna della prima riga -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="text-left">
-                    <h4 class="card-text">Cantieri attivi in cui lavora attualmente (località)</h4>
-                    <div class="card-text">
-                        <p *ngIf="cantieriPersonale.length==0">Nessuno</p>
-                        <p *ngFor="let i of cantieriPersonale" style="margin-bottom: 0px;">
-                            {{i.address}}
-                        </p>
-                    </div>
-                </div>
-            </div>
+  <!-- inizio seconda colonna della prima riga -->
+  <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="text-left">
+          <h4 class="card-text">Cantieri attivi in cui lavora attualmente (località)</h4>
+          <div class="card-text">
+            <p *ngIf="cantieriPersonale.length==0">Nessuno</p>
+            <p *ngFor="let i of cantieriPersonale" style="margin-bottom: 0px;">
+              {{i.address}}
+            </p>
+          </div>
         </div>
-        <div class="card bg-lighten-3 w-100">
-            <div class="card-content">
-                <div class="card-body" style="padding-top: 0px;padding-bottom: 0px;">
-
-                    <div class="media-body text-left">
-                        <div class="w-100">
-                            <h4 class>In forza</h4>
-                            <p style="font-size:20px"
-                                [ngStyle]="{'color': this.nuovopersonale.inStrenght=='Si' ? 'green' : 'red' }"
-                                class="card-text"><strong>{{this.nuovopersonale.inStrenght?
-                                    this.nuovopersonale.inStrenght : "Non definito"}}</strong></p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        <div class="card bg-lighten-3 w-100">
-            <div class="card-content">
-                <div class="card-body" style="padding-top: 0px;padding-bottom: 0px;">
-
-                    <div class=" text-left">
-                        <div class="w-100">
-                            <h4 class>Skills</h4>
-                            <p *ngIf="skills.length==0">Nessuna skill inserita</p>
-                            <ul *ngFor="let i of skills" style="padding-left: 16px; margin: 0;">
-                                <li>{{i}}</li>
-                            </ul>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    <!-- fine seconda colonna della prima riga -->
+    <div class="card bg-lighten-3 w-100">
+      <div class="card-content">
+        <div class="card-body" style="padding-top: 0px;padding-bottom: 0px;">
 
-    <!-- inizio terza colonna della prima riga -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12" id="orelavorate">
-        <div class="card w-100">
-            <div class="card-content">
-                <div class="card-body">
+          <div class="media-body text-left">
+            <div class="w-100">
+              <h4 class>In forza</h4>
+              <p style="font-size:20px" [ngStyle]="{'color': this.nuovopersonale.inStrenght=='Si' ? 'green' : 'red' }"
+                class="card-text"><strong>{{this.nuovopersonale.inStrenght?
+                  this.nuovopersonale.inStrenght : "Non definito"}}</strong></p>
+            </div>
+          </div>
 
-                    <div class="media-body text-left">
-                        <div class="w-100">
+        </div>
+      </div>
+    </div>
+    <div class="card bg-lighten-3 w-100">
+      <div class="card-content">
+        <div class="card-body" style="padding-top: 0px;padding-bottom: 0px;">
 
-                            <h4>Ore lavorate</h4>
-                            <div class="col-12 col-md-12 col-lg-12 col-xl-12 "
-                                style="transform: translate(-8%) ;position: absolute; display: flex; justify-content: space-around; gap: 0px; padding-left:0px; padding-right:0px">
-                                <a style="min-width: 0;" class="btn btn-sm round black font-small-3 mb-3"
-                                    (click)="getOreLavorate(null, null,'mese')">Mese</a>
-                                <a style="min-width: 0;" class="btn btn-sm round black font-small-3 mb-3"
-                                    (click)="getOreLavorate(null, null,'settimana')">Settimana</a>
-                                <a style="min-width: 0;" class="btn btn-sm round black font-small-3 mb-3"
-                                    (click)="getOreLavorate(null, null,'giorno')">Giorno</a>
-                            </div>
-                            <div class="my-2 mt-5"
-                                style="display: flex; justify-content: center;flex-direction: column;">
-                                <div>
-                                    <label for="">Data inizio</label>
-                                    <app-datepicker-single style="width: 30%;"
-                                        [value]="dataInizioOreLavorate? dataInizioOreLavorate : null"
-                                        (cambiadata)="cambia($event, 'orelavoratedatainizio')">
-                                    </app-datepicker-single>
-                                </div>
-                                <div>
-                                    <label for="">Data Fine</label>
-                                    <app-datepicker-single style="width: 30%;"
-                                        [value]="dataFineOreLavorate? dataFineOreLavorate.toString().substring(0,10):null"
-                                        (cambiadata)="cambia($event, 'orelavoratedatafine')">
-                                    </app-datepicker-single>
-                                </div>
-                            </div>
-                            <div class="mt-4"><strong>Ore Ordinarie: </strong><span
-                                    style="font-size: 20px;">{{oreOrdinarie}}</span>
-                            </div>
-                            <div class="mt-1"><strong>Ore Straordinarie: </strong><span
-                                    style="font-size: 20px;">{{oreStraordinarie}}</span></div>
-                            <div class="mt-1"><strong>Ore Spostamento: </strong><span
-                                    style="font-size: 20px;">{{oreSpostamento}}</span></div>
+          <div class=" text-left">
+            <div class="w-100">
+              <h4 class>Skills</h4>
+              <p *ngIf="skills.length==0">Nessuna skill inserita</p>
+              <ul *ngFor="let i of skills" style="padding-left: 16px; margin: 0;">
+                <li>{{i}}</li>
+              </ul>
+            </div>
+          </div>
 
-                            <div class="col mt-3">
-                                <button type="button" class="btn btn-primary" (click)="openLg(dettagliPersonale)">Estrai
-                                    Dettagli Ore</button>
-                            </div>
 
-                        </div>
-                    </div>
-                    <!-- <div class="media-right text-right">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- fine seconda colonna della prima riga -->
+
+  <!-- inizio terza colonna della prima riga -->
+  <div class="col-xl-3 col-lg-6 col-md-6 col-12" id="orelavorate">
+    <div class="card w-100">
+      <div class="card-content">
+        <div class="card-body">
+
+          <div class="media-body text-left">
+            <div class="w-100">
+
+              <h4>Ore lavorate</h4>
+              <div class="col-12 col-md-12 col-lg-12 col-xl-12 "
+                style="transform: translate(-8%) ;position: absolute; display: flex; justify-content: space-around; gap: 0px; padding-left:0px; padding-right:0px">
+                <a style="min-width: 0;" class="btn btn-sm round black font-small-3 mb-3"
+                  (click)="getOreLavorate(null, null,'mese')">Mese</a>
+                <a style="min-width: 0;" class="btn btn-sm round black font-small-3 mb-3"
+                  (click)="getOreLavorate(null, null,'settimana')">Settimana</a>
+                <a style="min-width: 0;" class="btn btn-sm round black font-small-3 mb-3"
+                  (click)="getOreLavorate(null, null,'giorno')">Giorno</a>
+              </div>
+              <div class="my-2 mt-5" style="display: flex; justify-content: center;flex-direction: column;">
+                <div>
+                  <label for="">Data inizio</label>
+                  <app-datepicker-single style="width: 30%;"
+                    [value]="dataInizioOreLavorate? dataInizioOreLavorate : null"
+                    (cambiadata)="cambia($event, 'orelavoratedatainizio')">
+                  </app-datepicker-single>
+                </div>
+                <div>
+                  <label for="">Data Fine</label>
+                  <app-datepicker-single style="width: 30%;"
+                    [value]="dataFineOreLavorate? dataFineOreLavorate.toString().substring(0,10):null"
+                    (cambiadata)="cambia($event, 'orelavoratedatafine')">
+                  </app-datepicker-single>
+                </div>
+              </div>
+              <div class="mt-4"><strong>Ore Ordinarie: </strong><span style="font-size: 20px;">{{oreOrdinarie}}</span>
+              </div>
+              <div class="mt-1"><strong>Ore Straordinarie: </strong><span
+                  style="font-size: 20px;">{{oreStraordinarie}}</span></div>
+              <div class="mt-1"><strong>Ore Spostamento: </strong><span
+                  style="font-size: 20px;">{{oreSpostamento}}</span></div>
+
+              <div class="col mt-3">
+                <button type="button" class="btn btn-primary" (click)="openLg(dettagliPersonale)">Estrai
+                  Dettagli Ore</button>
+              </div>
+
+            </div>
+          </div>
+          <!-- <div class="media-right text-right">
                             <i class="ft-credit-card font-large-2"></i>
                         </div> -->
 
-                </div>
-            </div>
         </div>
-        <!-- <div class="card w-100">
+      </div>
+    </div>
+    <!-- <div class="card w-100">
             <div class="card-content">
                 <div class="card-body py-0">
                     <div class="media">
@@ -164,66 +161,66 @@
                 </div>
             </div>
         </div> -->
-    </div>
-    <!-- fine terza colonna della prima riga -->
+  </div>
+  <!-- fine terza colonna della prima riga -->
 
-    <!-- inizio quarta colonna della prima riga -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12" id="cardScadenze">
-        <div class="card w-100">
-            <div class="card-content">
-                <div class="card-body py-0">
-                    <div class="media">
-                        <div class="media-body text-left">
-                            <div class="w-100">
-                                <h4>Scadenze imminenti</h4>
-                                <p
-                                    *ngIf="scadenzePersonale30 && scadenzePersonale30.length==0 && scadenzePersonale15 && scadenzePersonale15.length==0 && scadenzePersonale0 && scadenzePersonale0.length==0">
-                                    Nessuna scadenza imminente
-                                </p>
-                                <ul *ngFor="let s of scadenzePersonale0; index as i ">
-                                    <li>
-                                        <strong style="color:red">{{s.nota.nota.name}}</strong>
-                                        <p>Scaduta il {{s.nota.nota.dueDate | dataleggibile}}</p>
-                                    </li>
-                                </ul>
-                                <ul *ngFor="let s of scadenzePersonale15; index as i ">
-                                    <li>
-                                        <strong style="color:rgb(206, 206, 20)">{{s.nota.nota.name}}</strong>
-                                        <p>Scade il {{s.nota.nota.dueDate | dataleggibile}}</p>
-                                    </li>
-                                </ul>
-                                <ul *ngFor="let s of scadenzePersonale30; index as i ">
-                                    <li>
-                                        <strong style="color:cyan">{{s.nota.nota.name}}</strong>
-                                        <p>Scade il {{s.nota.nota.dueDate | dataleggibile}}</p>
-                                    </li>
-                                </ul>
+  <!-- inizio quarta colonna della prima riga -->
+  <div class="col-xl-3 col-lg-6 col-md-6 col-12" id="cardScadenze">
+    <div class="card w-100">
+      <div class="card-content">
+        <div class="card-body py-0">
+          <div class="media">
+            <div class="media-body text-left">
+              <div class="w-100">
+                <h4>Scadenze imminenti</h4>
+                <p
+                  *ngIf="scadenzePersonale30 && scadenzePersonale30.length==0 && scadenzePersonale15 && scadenzePersonale15.length==0 && scadenzePersonale0 && scadenzePersonale0.length==0">
+                  Nessuna scadenza imminente
+                </p>
+                <ul *ngFor="let s of scadenzePersonale0; index as i ">
+                  <li>
+                    <strong style="color:red">{{s.nota.nota.name}}</strong>
+                    <p>Scaduta il {{s.nota.nota.dueDate | dataleggibile}}</p>
+                  </li>
+                </ul>
+                <ul *ngFor="let s of scadenzePersonale15; index as i ">
+                  <li>
+                    <strong style="color:rgb(206, 206, 20)">{{s.nota.nota.name}}</strong>
+                    <p>Scade il {{s.nota.nota.dueDate | dataleggibile}}</p>
+                  </li>
+                </ul>
+                <ul *ngFor="let s of scadenzePersonale30; index as i ">
+                  <li>
+                    <strong style="color:cyan">{{s.nota.nota.name}}</strong>
+                    <p>Scade il {{s.nota.nota.dueDate | dataleggibile}}</p>
+                  </li>
+                </ul>
 
-                            </div>
-                        </div>
-                        <!-- <div class="media-right text-right">
+              </div>
+            </div>
+            <!-- <div class="media-right text-right">
                             <i class="ft-credit-card font-large-2"></i>
                         </div> -->
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <!-- fine quarta colonna della prima riga -->
+  </div>
+  <!-- fine quarta colonna della prima riga -->
 </div>
 <!-- inizio prima tabs -->
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-    <li [ngbNavItem]="1">
-        <a ngbNavLink>Amministrazione</a>
-        <ng-template ngbNavContent>
-            <!-- prima tabella -->
-            <!-- <section id="striped-light">
+  <li [ngbNavItem]="1">
+    <a ngbNavLink>Amministrazione</a>
+    <ng-template ngbNavContent>
+      <!-- prima tabella -->
+      <!-- <section id="striped-light">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title">Amministrazione</h4>
-                                
+
                             </div>
                             <div class="card-content">
                                 <div class="card-body">
@@ -231,7 +228,7 @@
                                         <table class="table table-striped m-0">
                                             <thead>
                                                 <tr>
-                                                 
+
                                                     <th>Tipologia Contratto</th>
                                                     <th>Data Assunzione</th>
                                                     <th>Scadenza Assunzione</th>
@@ -263,23 +260,23 @@
                     </div>
                 </div>
             </section> -->
-            <app-generic-table [titolo]="'Amministrazione'" [idPersonale]="idPersonale"></app-generic-table>
-        </ng-template>
-    </li>
-    <!-- fine prima tabs-->
+      <app-generic-table [titolo]="'Amministrazione'" [idPersonale]="idPersonale"></app-generic-table>
+    </ng-template>
+  </li>
+  <!-- fine prima tabs-->
 
-    <!-- inizio seconda tabs -->
-    <li [ngbNavItem]="2">
-        <a ngbNavLink>HSE</a>
-        <ng-template ngbNavContent>
-            <!-- prima tabella -->
-            <!-- <section id="striped-light">
+  <!-- inizio seconda tabs -->
+  <li [ngbNavItem]="2">
+    <a ngbNavLink>HSE</a>
+    <ng-template ngbNavContent>
+      <!-- prima tabella -->
+      <!-- <section id="striped-light">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title">HSE</h4>
-                              
+
                             </div>
                             <div class="card-content">
                                 <div class="card-body">
@@ -287,7 +284,7 @@
                                         <table class="table table-striped m-0">
                                             <thead>
                                                 <tr>
-                                                   
+
                                                     <th>Livello</th>
                                                     <th>Idoneità sanitaria</th>
                                                     <th>Consegna DPI</th>
@@ -318,23 +315,23 @@
                     </div>
                 </div>
             </section> -->
-            <app-generic-table [titolo]="'HSE'" [idPersonale]="idPersonale"></app-generic-table>
-        </ng-template>
-    </li>
-    <!-- fine seconda tabs -->
+      <app-generic-table [titolo]="'HSE'" [idPersonale]="idPersonale"></app-generic-table>
+    </ng-template>
+  </li>
+  <!-- fine seconda tabs -->
 
-    <!-- inizio terza tabs -->
-    <li [ngbNavItem]="3">
-        <a ngbNavLink>Patenti</a>
-        <ng-template ngbNavContent>
-            <!-- prima tabella -->
-            <!-- <section id="striped-light">
+  <!-- inizio terza tabs -->
+  <li [ngbNavItem]="3">
+    <a ngbNavLink>Patenti</a>
+    <ng-template ngbNavContent>
+      <!-- prima tabella -->
+      <!-- <section id="striped-light">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title">Patenti</h4>
-                             
+
                             </div>
                             <div class="card-content">
                                 <div class="card-body">
@@ -342,7 +339,7 @@
                                         <table class="table table-striped m-0">
                                             <thead>
                                                 <tr>
-                                                  
+
                                                     <th>B</th>
                                                     <th>C</th>
                                                     <th>CE</th>
@@ -368,17 +365,17 @@
                     </div>
                 </div>
             </section> -->
-            <app-generic-table [titolo]="'Patenti'" [idPersonale]="idPersonale"></app-generic-table>
-        </ng-template>
-    </li>
-    <!-- fine terza tabs -->
+      <app-generic-table [titolo]="'Patenti'" [idPersonale]="idPersonale"></app-generic-table>
+    </ng-template>
+  </li>
+  <!-- fine terza tabs -->
 
-    <!-- inizio quarta tabs -->
-    <li [ngbNavItem]="4">
-        <a ngbNavLink>Corsi di formazione</a>
-        <ng-template ngbNavContent>
-            <!-- prima tabella -->
-            <!-- <section id="striped-light">
+  <!-- inizio quarta tabs -->
+  <li [ngbNavItem]="4">
+    <a ngbNavLink>Corsi di formazione</a>
+    <ng-template ngbNavContent>
+      <!-- prima tabella -->
+      <!-- <section id="striped-light">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -391,7 +388,7 @@
                                         <table class="table table-striped m-0">
                                             <thead>
                                                 <tr>
-                                                   
+
                                                     <th>Accordo Stato Reg. 2011 art.37</th>
                                                     <th>Dirigente</th>
                                                     <th>RSPP</th>
@@ -417,7 +414,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    
+
                                                     <td><input type="date" [(ngModel)]="datax" (ngModelChange)="test()">
                                                     </td>
                                                     <td><i class="ft-edit text-primary cursor-pointer"
@@ -426,7 +423,7 @@
                                                 <tr>
                                                     <td><input type="date" [(ngModel)]="datax" (ngModelChange)="test()">
                                                     </td>
-                                                    
+
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -437,23 +434,23 @@
                     </div>
                 </div>
             </section> -->
-            <app-generic-table [titolo]="'Corsi di formazione'" [idPersonale]="idPersonale"></app-generic-table>
-        </ng-template>
-    </li>
-    <!-- fine quarta tabs -->
+      <app-generic-table [titolo]="'Corsi di formazione'" [idPersonale]="idPersonale"></app-generic-table>
+    </ng-template>
+  </li>
+  <!-- fine quarta tabs -->
 
-    <!-- inizio quinta tabs -->
-    <li [ngbNavItem]="5">
-        <a ngbNavLink>Sanitario</a>
-        <ng-template ngbNavContent>
-            <!-- prima tabella -->
-            <!-- <section id="striped-light">
+  <!-- inizio quinta tabs -->
+  <li [ngbNavItem]="5">
+    <a ngbNavLink>Sanitario</a>
+    <ng-template ngbNavContent>
+      <!-- prima tabella -->
+      <!-- <section id="striped-light">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title">Sanitario</h4>
-                            
+
                             </div>
                             <div class="card-content">
                                 <div class="card-body">
@@ -461,7 +458,7 @@
                                         <table class="table table-striped m-0">
                                             <thead>
                                                 <tr>
-                                                
+
                                                     <th>Tetano</th>
                                                     <th>Epatite A</th>
                                                     <th>Tifo</th>
@@ -492,9 +489,9 @@
                     </div>
                 </div>
             </section> -->
-            <app-generic-table [titolo]="'Sanitario'" [idPersonale]="idPersonale"></app-generic-table>
-        </ng-template>
-    </li>
+      <app-generic-table [titolo]="'Sanitario'" [idPersonale]="idPersonale"></app-generic-table>
+    </ng-template>
+  </li>
 </ul>
 <div [ngbNavOutlet]="nav" class="mt-2"></div>
 <!-- fine quinta tabs -->
@@ -502,77 +499,75 @@
 <!-- popup di modifica amministrazione personale -->
 <!-- inizio popup aggiungi personale -->
 <ng-template #modify let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Modifica Personale</h4>
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica Personale</h4>
 
-    </div>
-    <div class="modal-body">
-        <form #userForm="ngForm">
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Titolo</label>
-                    <div class="form-group">
-                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
-                        <!-- multiple abilita la scelta multipla -->
-                        <ng-select autofocus="false" [items]="titoli" bindLabel="name" bindValue="name"
-                            [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona titolo"
-                            [(ngModel)]="nuovopersonale.title" name="title">
-                        </ng-select>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Nome</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nome"
-                        [(ngModel)]="nuovopersonale.name" name="name">
-                </div>
-                <div class="mb-3 col-md-3">
-                    <label for="exampleFormControlInput1" class="form-label">Cognome</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Cognome"
-                        [(ngModel)]="nuovopersonale.surname" name="surname">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">CF</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
-                        [(ngModel)]="nuovopersonale.cf" name="cf">
-                </div>
+  </div>
+  <div class="modal-body">
+    <form #userForm="ngForm">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Titolo</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select autofocus="false" [items]="titoli" bindLabel="name" bindValue="name" [multiple]="false"
+              [closeOnSelect]="false" placeholder="Seleziona titolo" [(ngModel)]="nuovopersonale.title" name="title">
+            </ng-select>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Nome</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nome"
+            [(ngModel)]="nuovopersonale.name" name="name">
+        </div>
+        <div class="mb-3 col-md-3">
+          <label for="exampleFormControlInput1" class="form-label">Cognome</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Cognome"
+            [(ngModel)]="nuovopersonale.surname" name="surname">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CF</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
+            [(ngModel)]="nuovopersonale.cf" name="cf">
+        </div>
 
 
-            </div>
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Tipologia di contratto</label>
-                    <div class="form-group">
-                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
-                        <!-- multiple abilita la scelta multipla -->
-                        <ng-select [items]="contratti" bindLabel="name" bindValue="name" [multiple]="false"
-                            [closeOnSelect]="false" placeholder="Seleziona contratto"
-                            [(ngModel)]="nuovopersonale.contract" name="contract">
-                        </ng-select>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Ruolo Organigramma</label>
-                    <div class="form-group">
-                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
-                        <!-- multiple abilita la scelta multipla -->
-                        <ng-select [items]="ruoliOrganigramma" bindLabel="name" bindValue="name" [multiple]="false"
-                            [closeOnSelect]="false" placeholder="Seleziona ruolo"
-                            [(ngModel)]="nuovopersonale.organizationRole" name="organizationRole">
-                        </ng-select>
-                    </div>
-                </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Tipologia di contratto</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="contratti" bindLabel="name" bindValue="name" [multiple]="false" [closeOnSelect]="false"
+              placeholder="Seleziona contratto" [(ngModel)]="nuovopersonale.contract" name="contract">
+            </ng-select>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Ruolo Organigramma</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="ruoliOrganigramma" bindLabel="name" bindValue="name" [multiple]="false"
+              [closeOnSelect]="false" placeholder="Seleziona ruolo" [(ngModel)]="nuovopersonale.organizationRole"
+              name="organizationRole">
+            </ng-select>
+          </div>
+        </div>
 
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Telefono</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Telefono"
-                        [(ngModel)]="nuovopersonale.telephone" name="telephone">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">Data di nascita</label>
-                    <app-datepicker-single [ph]="nuovopersonale.birthday | date:'dd/MM/yyyy'" [pos]="''"
-                        (cambiadata)="cambia($event, 'datanascita')" id="datanascita">
-                    </app-datepicker-single>
-                    <!-- <form class="form-inline">
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Telefono</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Telefono"
+            [(ngModel)]="nuovopersonale.telephone" name="telephone">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Data di nascita</label>
+          <app-datepicker-single [ph]="nuovopersonale.birthday | date:'dd/MM/yyyy'" [pos]="''"
+            (cambiadata)="cambia($event, 'datanascita')" id="datanascita">
+          </app-datepicker-single>
+          <!-- <form class="form-inline">
             <div class="form-group">
               <div class="input-group">
                 <input class="form-control" [footerTemplate]="footerTemplate" placeholder="Data di nascita" name="dp1"
@@ -586,161 +581,155 @@
               </div>
             </div>
           </form> -->
-                </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 mb-4">
+          <label for="exampleFormControlInput1" class="form-label">Livello</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Livello"
+            [(ngModel)]="nuovopersonale.level" name="level">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Luogo di nascita</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Luogo di nascita"
+            [(ngModel)]="nuovopersonale.birthPlace" name="birthPlace">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Domicilio</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Indirizzo di Domicilio"
+            [(ngModel)]="nuovopersonale.address" name="address">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Email</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email"
+            [(ngModel)]="nuovopersonale.email" (blur)="checkEmail()" name="email" [required]="nuovopersonale.canLogin"
+            #email="ngModel" name="email">
+          <small>
+            <span class="text-danger" *ngIf="disableConfirmButton">Email già presente</span>
+          </small>
+
+          @if(email.errors?.required){
+          <small class="text-danger">
+            Email Obbligatoria
+          </small>
+          }
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Mansione</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Mansione"
+            [(ngModel)]="nuovopersonale.job" name="job">
+        </div>
+        <div class="col-md-3 mb-2">
+          <label for="exampleFormControlInput1" class="form-label">Costo Orario</label>
+          <div class="input-group">
+            <input type="number" min="0" class="form-control" placeholder="Es. 20" aria-describedby="basic-addon2"
+              [(ngModel)]="nuovopersonale.ordinaryPrice" name="ordinaryPrice">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€/h</span>
             </div>
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <label for="exampleFormControlInput1" class="form-label">Livello</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Livello"
-                        [(ngModel)]="nuovopersonale.level" name="level">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Luogo di nascita</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Luogo di nascita"
-                        [(ngModel)]="nuovopersonale.birthPlace" name="birthPlace">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Domicilio</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1"
-                        placeholder="Indirizzo di Domicilio" [(ngModel)]="nuovopersonale.address" name="address">
-                </div>
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Email</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Email"
-                        [(ngModel)]="nuovopersonale.email" (blur)="checkEmail()" name="email"
-                        [required]="nuovopersonale.canLogin" #email="ngModel" name="email">
-                    <small>
-                        <span class="text-danger" *ngIf="disableConfirmButton">Email già presente</span>
-                    </small>
-
-                    @if(email.errors?.required){
-                    <small class="text-danger">
-                        Email Obbligatoria
-                    </small>
-                    }
-                </div>
-
+          </div>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label for="exampleFormControlInput1" class="form-label">Costo Straordinario</label>
+          <div class="input-group">
+            <input type="number" min="0" class="form-control" placeholder="Es. 25" aria-describedby="basic-addon2"
+              [(ngModel)]="nuovopersonale.extraordinaryPrice" name="extraordinaryPrice">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€/h</span>
             </div>
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Mansione</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Mansione"
-                        [(ngModel)]="nuovopersonale.job" name="job">
-                </div>
-                <div class="col-md-3 mb-2">
-                    <label for="exampleFormControlInput1" class="form-label">Costo Orario</label>
-                    <div class="input-group">
-                        <input type="number" min="0" class="form-control" placeholder="Es. 20"
-                            aria-describedby="basic-addon2" [(ngModel)]="nuovopersonale.ordinaryPrice"
-                            name="ordinaryPrice">
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">€/h</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-2">
-                    <label for="exampleFormControlInput1" class="form-label">Costo Straordinario</label>
-                    <div class="input-group">
-                        <input type="number" min="0" class="form-control" placeholder="Es. 25"
-                            aria-describedby="basic-addon2" [(ngModel)]="nuovopersonale.extraordinaryPrice"
-                            name="extraordinaryPrice">
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">€/h</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-2">
-                    <label for="exampleFormControlInput1" class="form-label">Costo Spostamenti</label>
-                    <div class="input-group">
-                        <input type="number" min="0" class="form-control" placeholder="Es. 25"
-                            aria-describedby="basic-addon2" [(ngModel)]="nuovopersonale.travelPrice" name="travelPrice">
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">€/h</span>
-                        </div>
-                    </div>
-                </div>
-
+          </div>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label for="exampleFormControlInput1" class="form-label">Costo Spostamenti</label>
+          <div class="input-group">
+            <input type="number" min="0" class="form-control" placeholder="Es. 25" aria-describedby="basic-addon2"
+              [(ngModel)]="nuovopersonale.travelPrice" name="travelPrice">
+            <div class="input-group-append">
+              <span class="input-group-text" id="basic-addon2">€/h</span>
             </div>
+          </div>
+        </div>
 
-            <div class="row">
-                <!-- 
+      </div>
+
+      <div class="row">
+        <!--
                   <div class="col-md-6 mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Skills</label>
                     <textarea class="form-control" for="exampleFormControlInput1" id="exampleFormControlTextarea1" rows="2"
                       placeholder="" [(ngModel)]="nuovopersonale.skills"></textarea>
                   </div> -->
 
-                <div class="col-md-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Skills</label>
-                    <div class="form-group">
-                        <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
-                        <!-- multiple abilita la scelta multipla -->
-                        <ng-select [items]="skills" bindLabel="name" bindValue="name" [multiple]="true"
-                            [addTag]="addCustomUser" [closeOnSelect]="false"
-                            placeholder="Seleziona o aggiungi una skill" [(ngModel)]="skills" dropdownPosition="top"
-                            (ngModelChange)="printa()" name="skills">
-                        </ng-select>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">In forza</label>
-                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
-                        onchange='this.size=1; this.blur();' aria-label="Default select example"
-                        [(ngModel)]="nuovopersonale.inStrenght" name="inStrenght">
-                        <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
-                        <option value="Si">Si</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
+        <div class="col-md-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Skills</label>
+          <div class="form-group">
+            <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+            <!-- multiple abilita la scelta multipla -->
+            <ng-select [items]="skills" bindLabel="name" bindValue="name" [multiple]="true" [addTag]="addCustomUser"
+              [closeOnSelect]="false" placeholder="Seleziona o aggiungi una skill" [(ngModel)]="skills"
+              dropdownPosition="top" (ngModelChange)="printa()" name="skills">
+            </ng-select>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">In forza</label>
+          <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+            aria-label="Default select example" [(ngModel)]="nuovopersonale.inStrenght" name="inStrenght">
+            <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
+            <option value="Si">Si</option>
+            <option value="No">No</option>
+          </select>
+        </div>
 
-            </div>
-            <div class="row">
-                <fieldset class="form-group col-md-10 col-10 mt-2">
-                    <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne
-                        uno</label>
+      </div>
+      <div class="row">
+        <fieldset class="form-group col-md-10 col-10 mt-2">
+          <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne
+            uno</label>
 
-                    <div class="custom-file ">
-                        <input type="file" class="custom-file-input" id="inputGroupFile01"
-                            (change)="addImageToPersonale($event)" name="file">
-                        <label class="custom-file-label" for="inputGroupFile01">{{fileName || "Seleziona un
-                            file"}}</label>
-                    </div>
-                </fieldset>
-                <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
-                    (click)="deleteImagePersonale()"></i>
+          <div class="custom-file ">
+            <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
+              (change)="addImageToPersonale($event)" name="file">
+            <label class="custom-file-label" for="inputGroupFile01">{{fileName || "Seleziona un file"}}</label>
+          </div>
+        </fieldset>
+        <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+          (click)="deleteImagePersonale()"></i>
 
+      </div>
+      <div class="row">
+        <div class="col">
+          <button type="button" class="btn bg-light-warning mr-1 mb-1 mb-sm-0" (click)="removeLogoPersonale()">Rimuovi
+            il logo attuale</button>
+        </div>
+      </div>
+      <div *ngIf="authService.isAdmin()">
+        <hr>
+        <div class="row">
+          <div class="col-md-4 checkbox">
+            <div class="checkbox">
+              <input type="checkbox" id="checkboxUtente" [(ngModel)]="nuovopersonale.canLogin" name="canLogin"
+                (change)="nuovopersonale.canLogin ? nuovopersonale.role='Foreman': nuovopersonale.role=''">
+              <label for="checkboxUtente"><span>Abilitato come Utente</span></label>
             </div>
-            <div class="row">
-                <div class="col">
-                    <button type="button" class="btn bg-light-warning mr-1 mb-1 mb-sm-0"
-                        (click)="removeLogoPersonale()">Rimuovi il logo attuale</button>
-                </div>
+          </div>
+          <div class="col-12 col-md-4" *ngIf="nuovopersonale.canLogin">
+            <div class="form-group">
+              <div class="controls">
+                <label for="users-edit-role">Livello</label>
+                <select placeholder="Seleziona" id="users-edit-role" class="form-control"
+                  [(ngModel)]="nuovopersonale.role" name="role">
+                  <option disabled>Seleziona livello</option>
+                  <option value="Admin">Amministratore</option>
+                  <option value="HeadOfOrder">Capocommessa</option>
+                  <option value="Foreman">Capocantiere</option>
+                </select>
+              </div>
             </div>
-            <div *ngIf="authService.isAdmin()">
-                <hr>
-                <div class="row">
-                    <div class="col-md-4 checkbox">
-                        <div class="checkbox">
-                            <input type="checkbox" id="checkboxUtente" [(ngModel)]="nuovopersonale.canLogin"
-                                name="canLogin"
-                                (change)="nuovopersonale.canLogin ? nuovopersonale.role='Foreman': nuovopersonale.role=''">
-                            <label for="checkboxUtente"><span>Abilitato come Utente</span></label>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-4" *ngIf="nuovopersonale.canLogin">
-                        <div class="form-group">
-                            <div class="controls">
-                                <label for="users-edit-role">Livello</label>
-                                <select placeholder="Seleziona" id="users-edit-role" class="form-control"
-                                    [(ngModel)]="nuovopersonale.role" name="role">
-                                    <option disabled>Seleziona livello</option>
-                                    <option value="Admin">Amministratore</option>
-                                    <option value="HeadOfOrder">Capocommessa</option>
-                                    <option value="Foreman">Capocantiere</option>
-                                </select>
-                            </div>
-                        </div>
-                        <!-- <div class="form-group">
+            <!-- <div class="form-group">
                       <div class="controls">
                         <label for="users-edit-status">Stato</label>
                         <select id="users-edit-status" class="form-control" required>
@@ -750,121 +739,120 @@
                         </select>
                       </div>
                     </div> -->
-                    </div>
-                    <div class="col-12 col-md-4" *ngIf="nuovopersonale.canLogin">
-                        <label for="users-edit-role">Reinvia email di ripristino della password</label>
-                        <button type="button" role="button" class="btn btn-primary"
-                            (click)="resendResetEmail()">Reinvia</button>
-                    </div>
+          </div>
+          <div class="col-12 col-md-4" *ngIf="nuovopersonale.canLogin">
+            <label for="users-edit-role">Reinvia email di ripristino della password</label>
+            <button type="button" role="button" class="btn btn-primary" (click)="resendResetEmail()">Reinvia</button>
+          </div>
 
-                </div>
-            </div>
+        </div>
+      </div>
 
-        </form>
+    </form>
 
-    </div>
+  </div>
 
-    <!-- parte in basso -->
-    <div class="modal-footer">
+  <!-- parte in basso -->
+  <div class="modal-footer">
 
-        <!-- bottone crea nota -->
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            [disabled]="disableConfirmButton || !userForm.valid " (click)="updatePersonale()"
-            (click)="modal.close('Close click')">Conferma
-            modifica</button>
+    <!-- bottone crea nota -->
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      [disabled]="disableConfirmButton || !userForm.valid " (click)="updatePersonale()"
+      (click)="modal.close('Close click')">Conferma
+      modifica</button>
 
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
-            (click)="restoreData()">Chiudi</button>
-    </div>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')"
+      (click)="restoreData()">Chiudi</button>
+  </div>
 
 </ng-template>
 
 <!-- popup di modifica dell'amministrazione del personale -->
 <ng-template #modifyAmministrazione let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Modifica Ammistrazione Personale</h4>
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica Ammistrazione Personale</h4>
+
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+
+      <div class="col-md-3 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Tipologia di contratto</label>
+        <div class="form-group">
+          <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+          <!-- multiple abilita la scelta multipla -->
+          <ng-select [items]="contratti" bindLabel="name" bindValue="name" [multiple]="false" [closeOnSelect]="false"
+            placeholder="Seleziona contratto" [(ngModel)]="nuovopersonale.contract">
+          </ng-select>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Data assunzione</label>
+        <app-datepicker-single [ph]="'Data di nascita'" [pos]="''" (cambiadata)="cambia($event, 'dataAssunzione')"
+          id="dataAssunzione">
+        </app-datepicker-single>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Scadenza assunzione</label>
+        <app-datepicker-single [ph]="'Data di nascita'" [pos]="''" (cambiadata)="cambia($event, 'scadenzaAssunzione')"
+          id="scadenzaAssunzione">
+        </app-datepicker-single>
+      </div>
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">Limite di contingenza</label>
+        <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option selected value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
 
     </div>
-    <div class="modal-body">
+    <div class="row">
+      <div class="col-md-3 mb-2">
+        <label for="exampleFormControlInput1" class="form-label">Centro di Costo</label>
+        <input type="text" class="form-control" placeholder="">
+      </div>
 
-        <div class="row">
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">Ass. fine lavori</label>
+        <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option selected value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">TFR</label>
+        <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option selected value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
+    </div>
 
-            <div class="col-md-3 mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Tipologia di contratto</label>
-                <div class="form-group">
-                    <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
-                    <!-- multiple abilita la scelta multipla -->
-                    <ng-select [items]="contratti" bindLabel="name" bindValue="name" [multiple]="false"
-                        [closeOnSelect]="false" placeholder="Seleziona contratto" [(ngModel)]="nuovopersonale.contract">
-                    </ng-select>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Data assunzione</label>
-                <app-datepicker-single [ph]="'Data di nascita'" [pos]="''"
-                    (cambiadata)="cambia($event, 'dataAssunzione')" id="dataAssunzione">
-                </app-datepicker-single>
-            </div>
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Scadenza assunzione</label>
-                <app-datepicker-single [ph]="'Data di nascita'" [pos]="''"
-                    (cambiadata)="cambia($event, 'scadenzaAssunzione')" id="scadenzaAssunzione">
-                </app-datepicker-single>
-            </div>
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">Limite di contingenza</label>
-                <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option selected value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="col-md-3 mb-2">
-                <label for="exampleFormControlInput1" class="form-label">Centro di Costo</label>
-                <input type="text" class="form-control" placeholder="">
-            </div>
-
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">Ass. fine lavori</label>
-                <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option selected value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">TFR</label>
-                <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option selected value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row">
+    <div class="row">
 
 
-
-        </div>
 
     </div>
-    <!-- parte in basso -->
-    <div class="modal-footer">
+
+  </div>
+  <!-- parte in basso -->
+  <div class="modal-footer">
 
 
-        <!-- bottone crea nota -->
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)="modal.close('Close click')">Conferma</button>
+    <!-- bottone crea nota -->
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="modal.close('Close click')">Conferma</button>
 
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
-    </div>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+  </div>
 
 
 </ng-template>
@@ -872,179 +860,176 @@
 
 <!-- popup di modifica dell'HSE del personale -->
 <ng-template #modifyHSE let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Modifica HSE Personale</h4>
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica HSE Personale</h4>
+
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+
+      <div class="col-md-3 mb-4">
+        <label for="exampleFormControlInput1" class="form-label">Livello</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Livello"
+          [(ngModel)]="nuovopersonale.level">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Idoneità Sanitaria</label>
+        <app-datepicker-single [ph]="''" [pos]="''" (cambiadata)="cambia($event, 'idoneitaSanitaria')"
+          id="idoneitaSanitaria">
+        </app-datepicker-single>
+      </div>
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">Consegna DPI</label>
+        <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option selected value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">Consegna Tesserino</label>
+        <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option selected value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
 
     </div>
-    <div class="modal-body">
-
-        <div class="row">
-
-            <div class="col-md-3 mb-4">
-                <label for="exampleFormControlInput1" class="form-label">Livello</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Livello"
-                    [(ngModel)]="nuovopersonale.level">
-            </div>
-            <div class="col-md-3 mb-3">
-                <label class="form-label">Idoneità Sanitaria</label>
-                <app-datepicker-single [ph]="''" [pos]="''" (cambiadata)="cambia($event, 'idoneitaSanitaria')"
-                    id="idoneitaSanitaria">
-                </app-datepicker-single>
-            </div>
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">Consegna DPI</label>
-                <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option selected value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">Consegna Tesserino</label>
-                <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option selected value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Ruolo Organigramma</label>
+        <div class="form-group">
+          <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
+          <!-- multiple abilita la scelta multipla -->
+          <ng-select [items]="ruoliOrganigramma" bindLabel="name" bindValue="name" [multiple]="false"
+            [closeOnSelect]="false" placeholder="Seleziona ruolo" [(ngModel)]="nuovopersonale.organizationRole">
+          </ng-select>
         </div>
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Ruolo Organigramma</label>
-                <div class="form-group">
-                    <!-- bindlabel=elenco che compare(in questo caso i nomi) -->
-                    <!-- multiple abilita la scelta multipla -->
-                    <ng-select [items]="ruoliOrganigramma" bindLabel="name" bindValue="name" [multiple]="false"
-                        [closeOnSelect]="false" placeholder="Seleziona ruolo"
-                        [(ngModel)]="nuovopersonale.organizationRole">
-                    </ng-select>
-                </div>
-            </div>
+      </div>
 
-            <div class="col-md-3 mb-4">
-                <label for="exampleFormControlInput1" class="form-label">Ruolo SPP</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Pre - Ai">
-            </div>
-
-        </div>
+      <div class="col-md-3 mb-4">
+        <label for="exampleFormControlInput1" class="form-label">Ruolo SPP</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Pre - Ai">
+      </div>
 
     </div>
-    <!-- parte in basso -->
-    <div class="modal-footer">
+
+  </div>
+  <!-- parte in basso -->
+  <div class="modal-footer">
 
 
-        <!-- bottone crea nota -->
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)="modal.close('Close click')">Conferma</button>
+    <!-- bottone crea nota -->
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="modal.close('Close click')">Conferma</button>
 
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
-    </div>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+  </div>
 
 
 </ng-template>
 
 <!-- popup di modifica delle patenti del personale -->
 <ng-template #modifyPatenti let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Modifica Patenti Personale</h4>
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica Patenti Personale</h4>
+
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">B</label>
+        <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">C</label>
+        <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option selected value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">CE</label>
+        <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option selected value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
+      <div class="col-md-3 mb-3 ">
+        <label for="selectStato" class="form-label">ADR</label>
+        <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+          aria-label="Default select example" name="status" title="">
+          <option selected value='-'>-</option>
+          <option value='true'>Si</option>
+          <option value='false'>No</option>
+        </select>
+      </div>
 
     </div>
-    <div class="modal-body">
-
-        <div class="row">
-
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">B</label>
-                <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">C</label>
-                <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option selected value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">CE</label>
-                <select class="form-control" onfocus='this.size=3;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option selected value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-            <div class="col-md-3 mb-3 ">
-                <label for="selectStato" class="form-label">ADR</label>
-                <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;'
-                    onchange='this.size=1; this.blur();' aria-label="Default select example" name="status" title="">
-                    <option selected value='-'>-</option>
-                    <option value='true'>Si</option>
-                    <option value='false'>No</option>
-                </select>
-            </div>
-
-        </div>
 
 
-    </div>
-    <!-- parte in basso -->
-    <div class="modal-footer">
+  </div>
+  <!-- parte in basso -->
+  <div class="modal-footer">
 
 
-        <!-- bottone crea nota -->
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)="modal.close('Close click')">Conferma</button>
+    <!-- bottone crea nota -->
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="modal.close('Close click')">Conferma</button>
 
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
-    </div>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+  </div>
 
 
 </ng-template>
 
 <ng-template #dettagliPersonale let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Estrai Dettaglio</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
+  <div class="modal-header">
+    <h4 class="modal-title">Estrai Dettaglio</h4>
+    <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" style="padding-bottom: 75px">
+    <div class="row">
+      <p>Estrai nel formato scelto i dettagli del personale per poter controllare in quali cantieri ha lavorato e
+        qual è stato il suo costo</p>
     </div>
-    <div class="modal-body" style="padding-bottom: 75px">
-        <div class="row">
-            <p>Estrai nel formato scelto i dettagli del personale per poter controllare in quali cantieri ha lavorato e
-                qual è stato il suo costo</p>
+    <div class="row mb-5">
+      <div class="row">
+        <div class="col-md-6 col-12 pb-4">
+          <input type="date" class="form-control" name="estraiDateFrom" id="" [(ngModel)]="estraiDatiModel.dateFrom">
         </div>
-        <div class="row mb-5">
-            <div class="row">
-                <div class="col-md-6 col-12 pb-4">
-                    <input type="date" class="form-control" name="estraiDateFrom" id=""
-                        [(ngModel)]="estraiDatiModel.dateFrom">
-                </div>
-                <div class="col-md-6 col-12">
-                    <input type="date" class="form-control" name="estraiDateTo" id=""
-                        [(ngModel)]="estraiDatiModel.dateTo">
-                </div>
-            </div>
+        <div class="col-md-6 col-12">
+          <input type="date" class="form-control" name="estraiDateTo" id="" [(ngModel)]="estraiDatiModel.dateTo">
         </div>
+      </div>
     </div>
-    <div class="modal-footer">
+  </div>
+  <div class="modal-footer">
 
-        <!-- bottone crea nota -->
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('pdf')"
-            (click)="modal.close('Close click')">Estrai in PDF</button>
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('xlsx')"
-            (click)="modal.close('Close click')">Estrai in Excel</button>
+    <!-- bottone crea nota -->
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('pdf')"
+      (click)="modal.close('Close click')">Estrai in PDF</button>
+    <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('xlsx')"
+      (click)="modal.close('Close click')">Estrai in Excel</button>
 
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
-    </div>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
+  </div>
 
 </ng-template>

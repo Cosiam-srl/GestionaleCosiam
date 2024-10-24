@@ -1,7 +1,7 @@
 <style>
-  *{
-    box-shadow: unset !important;
-  }
+    * {
+        box-shadow: unset !important;
+    }
 </style>
 <!-- Filter Datatables -->
 <section id="ngx-datatable-filter">
@@ -17,15 +17,16 @@
                         <!-- ngx-datatable-filter -->
                         <fieldset class="form-group">
                             <label for="ngx-filter-ref">Cerca:
-                                <input [(ngModel)]="filter" id="ngx-filter-ref" class="form-control form-control-sm d-inline-block width-200"
-                                    type="text" placeholder="Filtra la colonna Nome..."
-                                    (ngModelChange)="filterUpdate($event)" />
+                                <input [(ngModel)]="filter" id="ngx-filter-ref"
+                                    class="form-control form-control-sm d-inline-block width-200" type="text"
+                                    placeholder="Filtra la colonna Nome..." (ngModelChange)="filterUpdate($event)" />
                             </label>
                         </fieldset>
 
                         <!-- tasto Aggiungi servizio al cantiere -->
 
-                        <button class="btn btn-success mb-2 me-2 mt-2" (click)="openLg(create)">Aggiungi un servizio</button>
+                        <button class="btn btn-success mb-2 me-2 mt-2" (click)="openLg(create)">Aggiungi un
+                            servizio</button>
                         <button type="button" class="btn bg-light-warning confirm-text mb-2 me-2"
                             (click)="ConfirmText()">Elimina
                             i servizi selezionati</button>
@@ -87,8 +88,8 @@
                     [(ngModel)]="nuovoservizio.description">
             </div>
             <div class="col-md-4 mb-3">
-                <label  class="form-label">Categoria</label>
-                <input type="text" class="form-control"  placeholder="Es. Piastrelle"
+                <label class="form-label">Categoria</label>
+                <input type="text" class="form-control" placeholder="Es. Piastrelle"
                     [(ngModel)]="nuovoservizio.category">
             </div>
             <!-- <div class="col-md-4 mb-3">
@@ -97,7 +98,7 @@
                     [(ngModel)]="nuovoservizio.um">
             </div> -->
             <div class="col-md-4 mb-3">
-                <label  class="form-label">Unità di misura</label>
+                <label class="form-label">Unità di misura</label>
                 <div class="form-group">
                     <ng-select [items]="ums" bindLabel="name" bindValue="name" [multiple]="false"
                         [closeOnSelect]="false" placeholder="Seleziona unità di misura" [(ngModel)]="nuovoservizio.um">
@@ -111,8 +112,7 @@
             <div class="col-md-4 mb-3">
                 <label class="form-label">Prezzo per unità di misura</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Es. 5"
-                        [(ngModel)]="nuovoservizio.pricePerUM">
+                    <input type="text" class="form-control" placeholder="Es. 5" [(ngModel)]="nuovoservizio.pricePerUM">
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon2">€</span>
                     </div>
@@ -126,7 +126,7 @@
 
         <!-- bottone crea nota -->
         <button type="button" class="btn bg-light-success me-1 type-success mb-1 mb-sm-0"
-            (click)="aggiungiServizioFornitore(); modal.close('Close click')" >Conferma</button>
+            (click)="aggiungiServizioFornitore(); modal.close('Close click')">Conferma</button>
         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
     </div>
 </ng-template>
@@ -137,37 +137,34 @@
 <ng-template #modify let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Modifica Servizio</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
         <div class="row pb-4">
             <div class="col-md-4 mb-3">
-                <label  class="form-label">Descrizioni Articolo</label>
-                <input type="text" class="form-control" placeholder="Nome"
-                    [(ngModel)]="nuovoservizio.description">
+                <label class="form-label">Descrizioni Articolo</label>
+                <input type="text" class="form-control" placeholder="Nome" [(ngModel)]="nuovoservizio.description">
             </div>
             <div class="col-md-4 mb-3">
-                <label  class="form-label">Categoria</label>
-                <input type="text" class="form-control"  placeholder="Es. Piastrelle"
+                <label class="form-label">Categoria</label>
+                <input type="text" class="form-control" placeholder="Es. Piastrelle"
                     [(ngModel)]="nuovoservizio.category">
             </div>
             <div class="col-md-4 mb-3">
-                <label  class="form-label">Unità di misura</label>
-                <input type="text" class="form-control"  placeholder="Es. mq"
-                    [(ngModel)]="nuovoservizio.um">
+                <label class="form-label">Unità di misura</label>
+                <input type="text" class="form-control" placeholder="Es. mq" [(ngModel)]="nuovoservizio.um">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label  class="form-label">Prezzo per unità di misura</label>
+                <label class="form-label">Prezzo per unità di misura</label>
                 <div class="input-group">
-                    <input type="text" class="form-control"  placeholder="Es. 5"
-                        [(ngModel)]="nuovoservizio.pricePerUM">
+                    <input type="text" class="form-control" placeholder="Es. 5" [(ngModel)]="nuovoservizio.pricePerUM">
                     <div class="input-group-append">
-                        <span class="input-group-text" >€</span>
+                        <span class="input-group-text">€</span>
                     </div>
                 </div>
             </div>
@@ -179,10 +176,9 @@
 
         <!-- bottone modifica servizio -->
         <button type="button" class="btn bg-light-success me-1 type-success mb-1 mb-sm-0"
-            (click)="updateServizioFornitore(); modal.close('Close click')" >Conferma</button>
+            (click)="updateServizioFornitore(); modal.close('Close click')">Conferma</button>
 
-        <button type="button" class="btn btn-light"
-            (click)="clearData(); modal.close('Close click')">Close</button>
+        <button type="button" class="btn btn-light" (click)="clearData(); modal.close('Close click')">Close</button>
     </div>
 </ng-template>
 

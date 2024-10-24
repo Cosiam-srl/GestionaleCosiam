@@ -1,10 +1,10 @@
 <ngx-spinner>
-  <app-spinner></app-spinner>
+    <app-spinner></app-spinner>
 </ngx-spinner>
 <style>
-  *{
-    box-shadow: unset !important;
-  }
+    * {
+        box-shadow: unset !important;
+    }
 </style>
 <button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
 <!-- Filter Datatables -->
@@ -23,7 +23,8 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="ngx-filter-ref">Cerca:</label>
-                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text" placeholder="Filtra la colonna Descrizione..." (keyup)="filterUpdate($event)" />
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Descrizione..." (keyup)="filterUpdate($event)" />
                                 </div>
                             </div>
 
@@ -77,8 +78,10 @@
                                 <ng-template ngx-datatable-cell-template let-row="row">
                                     <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
                                     <!-- <i class="ft-edit text-primary cursor-pointer" (click)="onEdit(row)"></i> -->
-                                    <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="modifyDPI(row, modify)"></i>
-                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;" (click)="deleteDPI(row)"></i>
+                                    <i class="ft-edit fs-6 text-primary cursor-pointer"
+                                        (click)="modifyDPI(row, modify)"></i>
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;"
+                                        (click)="deleteDPI(row)"></i>
                                 </ng-template>
                             </ngx-datatable-column>
 
@@ -97,7 +100,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Aggiungi DPI</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -220,7 +223,7 @@
 <ng-template #view let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Visualizza DPI</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -338,7 +341,7 @@
 <ng-template #modify let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Modifica DPI</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

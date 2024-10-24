@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title"> {{ id != 0 ? 'Aggiorna Task' : 'Crea Task'}} </h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+  <button type="button" class="btn btn-danger" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
     x
   </button>
 </div>
@@ -32,7 +32,7 @@
         <div class="form-control-position">
           <i class="ft-grid"></i>
         </div>
-        <select [formControl]="myForm.controls['type']" formControlName="type" class="form-control" >
+        <select [formControl]="myForm.controls['type']" formControlName="type" class="form-control">
           <option>Generali</option>
           <option>Acquisti</option>
           <option>HSE</option>

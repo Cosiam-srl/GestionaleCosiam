@@ -10,47 +10,39 @@
         <div class="card-content">
           <div class="card-body m-3">
             <div class="table-responsive">
-              <ngx-datatable class="bootstrap core-bootstrap" [rows]="rows"
-                             [columnMode]="columnMode.force"
-                             [scrollbarH]="true"
-                             [treeFromRelation]="'linkTo'"
-                             [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}"
-                             [treeToRelation]="'id'"
-                             [rowHeight]="80"
-                             (treeAction)="onTreeAction($event)">
+              <ngx-datatable class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="columnMode.force"
+                [scrollbarH]="true" [treeFromRelation]="'linkTo'"
+                [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}"
+                [treeToRelation]="'id'" [rowHeight]="80" (treeAction)="onTreeAction($event)">
                 <ngx-datatable-column name="Add" [isTreeColumn]="true" [sortable]="false">
                   <ng-template let-column="column" ngx-datatable-header-template>
                     <button (click)=" openAddCapitoloModel(addCapitolo)" type="button" title="Aggiungi Capitolo"
-                            class="btn btn-primary">
-                                            <span class="d-flex justify-content-center align-items-center"
-                                                  style="column-gap: 5px">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                                                     fill="currentColor"
-                                                     class="bi bi-plus" viewBox="0 0 16 16">
-                                                    <path
-                                                      d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                                                </svg>
-                                                Add
-                                            </span>
+                      class="btn btn-primary">
+                      <span class="d-flex justify-content-center align-items-center" style="column-gap: 5px">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
+                          class="bi bi-plus" viewBox="0 0 16 16">
+                          <path
+                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                        </svg>
+                        Add
+                      </span>
                     </button>
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
                     @if (!row.linkTo) {
-                      <button (click)=" openAddAttvitaModel(addAttivitaModel, row)" title="Aggiungi Attività"
-                              type="button"
-                              class="btn btn-primary">
-                                            <span class=" d-flex justify-content-center align-items-center ">
+                    <button (click)=" openAddAttvitaModel(addAttivitaModel, row)" title="Aggiungi Attività"
+                      type="button" class="btn btn-primary">
+                      <span class=" d-flex justify-content-center align-items-center ">
 
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                                     fill="currentColor"
-                                                     class="bi bi-plus-circle" viewBox="0 0 16 16">
-                                                <path
-                                                  d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
-                                                <path
-                                                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
-                                            </svg>
-                                            </span>
-                      </button>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                          class="bi bi-plus-circle" viewBox="0 0 16 16">
+                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                          <path
+                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4">
+                          </path>
+                        </svg>
+                      </span>
+                    </button>
                     }
                   </ng-template>
                 </ngx-datatable-column>
@@ -60,7 +52,7 @@
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
                     @if (!row.attivita) {
-                      {{ row.capitolo }}
+                    {{ row.capitolo }}
                     }
                   </ng-template>
                 </ngx-datatable-column>
@@ -70,14 +62,12 @@
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
                     @if (!row.attivita) {
-                      <svg (click)="modificaCapitolo(editBudget, row)"
-                           xmlns="http://www.w3.org/2000/svg" width="22"
-                           height="22" fill="currentColor"
-                           class="three-dots bi bi-three-dots-vertical" style="margin-left: -20px"
-                           viewBox="0 0 16 16">
-                        <path
-                          d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-                      </svg>
+                    <svg (click)="modificaCapitolo(editBudget, row)" xmlns="http://www.w3.org/2000/svg" width="22"
+                      height="22" fill="currentColor" class="three-dots bi bi-three-dots-vertical"
+                      style="margin-left: -20px" viewBox="0 0 16 16">
+                      <path
+                        d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+                    </svg>
                     }
                     {{ row.attivita }}
                   </ng-template>
@@ -88,12 +78,12 @@
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
                     @if (!row.attivita) {
-                      <span>
-                         (totale)<br>
+                    <span>
+                      (totale)<br>
                       <strong>{{ value | number:undefined:'it' }}€</strong>
-                      </span>
+                    </span>
                     } @else {
-                      {{ value | number:undefined:'it' }}€
+                    {{ value | number:undefined:'it' }}€
                     }
                   </ng-template>
                 </ngx-datatable-column>
@@ -103,11 +93,11 @@
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
                     @if (!row.attivita) {
-                      <span>
+                    <span>
                       (totale)<br>
                       <strong>{{ value | number:undefined:'it' }}€</strong> </span>
                     } @else {
-                      {{ value | number:undefined:'it' }}€
+                    {{ value | number:undefined:'it' }}€
                     }
                   </ng-template>
                 </ngx-datatable-column>
@@ -117,10 +107,10 @@
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
                     @if (!row.attivita) {
-                      <span> (totale)<br>
+                    <span> (totale)<br>
                       <strong>{{ value | number:undefined:'it' }}€</strong></span>
                     } @else {
-                      {{ value | number:undefined:'it' }}€
+                    {{ value | number:undefined:'it' }}€
                     }
                   </ng-template>
                 </ngx-datatable-column>
@@ -130,14 +120,14 @@
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
                     @if (row.attivita) {
-                      {{ value }}%
+                    {{ value }}%
                     }
                   </ng-template>
                 </ngx-datatable-column>
                 <ngx-datatable-column name="Fornitore" prop="idFornitore">
                   <ng-template let-column="column" ngx-datatable-header-template>
                     @if (column && column.name) {
-                      <strong>{{ column.name }}</strong>
+                    <strong>{{ column.name }}</strong>
                     }
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
@@ -150,11 +140,11 @@
                   </ng-template>
                   <ng-template let-value="value" let-row="row" ngx-datatable-cell-template>
                     @if (row.attivita) {
-                      <ul>
-                        @for (files of value; track files.fileName) {
-                          <li>{{ files.fileName }}</li>
-                        }
-                      </ul>
+                    <ul>
+                      @for (files of value; track files.fileName) {
+                      <li>{{ files.fileName }}</li>
+                      }
+                    </ul>
                     }
                   </ng-template>
                 </ngx-datatable-column>
@@ -188,7 +178,7 @@
 <ng-template #editBudget let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Modifica Budget</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -198,15 +188,14 @@
       <div style="flex-basis: 300px;">
         <label class="form-label">Nome capitolo</label>
         <input type="text" (ngModelChange)="editedChange()" [(ngModel)]="editingCapitolo.capitolo"
-               class="form-control inputDim">
+          class="form-control inputDim">
       </div>
       <div>
         <br>
-        <button type="button" class="btn btn-secondary d-flex align-items-center"
-                style="height: 40px; column-gap: 10px" (click)=" deleteCapitoloConfirm(modal)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-               class="bi bi-trash-fill"
-               viewBox="0 0 16 16">
+        <button type="button" class="btn btn-secondary d-flex align-items-center" style="height: 40px; column-gap: 10px"
+          (click)=" deleteCapitoloConfirm(modal)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill"
+            viewBox="0 0 16 16">
             <path
               d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
             </path>
@@ -216,92 +205,90 @@
       </div>
     </div>
     @for (a of editingCapitolo.attivita; track a.id) {
-      <h5 class="mt-5">Modifica i dettagli dell'attività</h5>
-      <div class="d-flex mt-4 flex-column flex-md-row customGap">
+    <h5 class="mt-5">Modifica i dettagli dell'attività</h5>
+    <div class="d-flex mt-4 flex-column flex-md-row customGap">
+      <div class="base_space">
+        <label class="form-label">Nome attività</label>
+        <input type="text" (ngModelChange)="editedChange()" [(ngModel)]="a.attivita" class="form-control ">
+      </div>
+      <div class="base_spaceHalf">
+        <label class="form-label">Ricavi</label>
+        <input type="number" (ngModelChange)="editedChange()" [(ngModel)]="a.ricavi" class="form-control ">
+      </div>
+      <div class="base_spaceHalf">
+        <label class="form-label">Costi</label>
+        <input type="number" (ngModelChange)="editedChange()" [(ngModel)]="a.costi" class="form-control ">
+      </div>
+      <div class="base_space">
+        <label class="form-label">Fornitore</label>
+        <ng-select (ngModelChange)="editedChange()" [items]="fornitoriList" bindLabel="name" bindValue="id"
+          [multiple]="false" [closeOnSelect]="false" placeholder="Seleziona il fornitore" [(ngModel)]="a.idFornitore">
+        </ng-select>
+      </div>
+    </div>
+    @if (a.allegato && a.allegato.length > 0) {
+    <h5 class="mt-5">Gestisci gli allegati</h5>
+    <div class="d-flex mt-4 flex-column" style="row-gap: 30px">
+      @for (file of a.allegato; track file.fileName) {
+      <div class="d-flex flex-column flex-md-row customGap">
         <div class="base_space">
-          <label class="form-label">Nome attività</label>
-          <input type="text" (ngModelChange)="editedChange()" [(ngModel)]="a.attivita" class="form-control ">
+          <label class="form-label">Nome</label>
+          <input type="text" [value]="file.fileName" class="form-control" readonly>
         </div>
-        <div class="base_spaceHalf">
-          <label class="form-label">Ricavi</label>
-          <input type="number" (ngModelChange)="editedChange()" [(ngModel)]="a.ricavi" class="form-control ">
-        </div>
-        <div class="base_spaceHalf">
-          <label class="form-label">Costi</label>
-          <input type="number" (ngModelChange)="editedChange()" [(ngModel)]="a.costi" class="form-control ">
-        </div>
-        <div class="base_space">
-          <label class="form-label">Fornitore</label>
-          <ng-select (ngModelChange)="editedChange()" [items]="fornitoriList" bindLabel="name" bindValue="id"
-                     [multiple]="false"
-                     [closeOnSelect]="false"
-                     placeholder="Seleziona il fornitore" [(ngModel)]="a.idFornitore">
-          </ng-select>
+        <div class="d-flex flex-row customGap">
+          <div class="d-flex align-items-end">
+            <button type="button" class="btn btn-secondary d-flex align-items-center" [disabled]="!file.id"
+              style="height: 40px; column-gap: 10px" (click)=" downloadFile(file); editedChange()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download"
+                viewBox="0 0 16 16">
+                <path
+                  d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                <path
+                  d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
+              </svg>
+              Scarica
+            </button>
+          </div>
+          <div class="d-flex align-items-end">
+            <button type="button" class="btn btn-secondary d-flex align-items-center"
+              style="height: 40px; column-gap: 10px" (click)=" deleteAllegato(a, file); editedChange()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-trash-fill" viewBox="0 0 16 16">
+                <path
+                  d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
+                </path>
+              </svg>
+              Elimina
+            </button>
+          </div>
         </div>
       </div>
-      @if (a.allegato && a.allegato.length > 0) {
-        <h5 class="mt-5">Gestisci gli allegati</h5>
-        <div class="d-flex mt-4 flex-column" style="row-gap: 30px">
-          @for (file of a.allegato; track file.fileName) {
-            <div class="d-flex flex-column flex-md-row customGap">
-              <div class="base_space">
-                <label class="form-label">Nome</label>
-                <input type="text" [value]="file.fileName" class="form-control" readonly>
-              </div>
-              <div class="d-flex flex-row customGap">
-                <div class="d-flex align-items-end">
-                  <button type="button" class="btn btn-secondary d-flex align-items-center" [disabled]="!file.id"
-                          style="height: 40px; column-gap: 10px" (click)=" downloadFile(file); editedChange()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                         class="bi bi-download" viewBox="0 0 16 16">
-                      <path
-                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-                      <path
-                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
-                    </svg>
-                    Scarica
-                  </button>
-                </div>
-                <div class="d-flex align-items-end">
-                  <button type="button" class="btn btn-secondary d-flex align-items-center"
-                          style="height: 40px; column-gap: 10px" (click)=" deleteAllegato(a, file); editedChange()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                         class="bi bi-trash-fill" viewBox="0 0 16 16">
-                      <path
-                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
-                      </path>
-                    </svg>
-                    Elimina
-                  </button>
-                </div>
-              </div>
-            </div>
-          }
-        </div>
       }
-      <div class="d-flex flex-column flex-md-row mt-4 justify-content-between align-items-end" style="gap:20px">
-        <div>
-          <label class="form-label">Aggiungi allegati</label>
-          <input type="file" (change)="onFileChangeEdit($event, a); editedChange()" class="form-control"
-                 multiple="multiple">
-        </div>
-        <button type="button" class="btn btn-secondary d-flex align-items-center"
-                style="height: 40px; column-gap: 10px" (click)="deleteAttivita( a); editedChange()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-               class="bi bi-trash-fill" viewBox="0 0 16 16">
-            <path
-              d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
-            </path>
-          </svg>
-          Elimina Attività
-        </button>
+    </div>
+    }
+    <div class="d-flex flex-column flex-md-row mt-4 justify-content-between align-items-end" style="gap:20px">
+      <div>
+        <label class="form-label">Aggiungi allegati</label>
+        <input type="file" (change)="onFileChangeEdit($event, a); editedChange()" class="form-control"
+          multiple="multiple">
       </div>
-      <hr>
+      <button type="button" class="btn btn-secondary d-flex align-items-center" style="height: 40px; column-gap: 10px"
+        (click)="deleteAttivita( a); editedChange()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill"
+          viewBox="0 0 16 16">
+          <path
+            d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0">
+          </path>
+        </svg>
+        Elimina Attività
+      </button>
+    </div>
+    <hr>
     }
   </div>
   <div class="modal-footer">
     <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)=" openEditConfirm(modal)">Conferma
+      (click)=" openEditConfirm(modal)">Conferma
     </button>
     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annulla
     </button>
@@ -311,7 +298,7 @@
 <ng-template #addCapitolo let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Aggiungi Capitolo</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -327,7 +314,7 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)="modal.close('Close click'); addCapitoloConfirm()">Aggiungi
+      (click)="modal.close('Close click'); addCapitoloConfirm()">Aggiungi
     </button>
     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annulla
     </button>
@@ -337,7 +324,7 @@
 <ng-template #addAttivitaModel let-modal>
   <div class="modal-header">
     <h4 class="modal-title">Aggiungi Attività</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -361,22 +348,20 @@
       <div class="d-flex mt-4 flex-column flex-md-row customGap">
         <div class="base_space">
           <label class="form-label">Fornitore</label>
-          <ng-select [items]="fornitoriList" bindLabel="name" bindValue="id" [multiple]="false"
-                     [closeOnSelect]="false"
-                     placeholder="Seleziona il fornitore" [(ngModel)]="addingAttivita.idFornitore">
+          <ng-select [items]="fornitoriList" bindLabel="name" bindValue="id" [multiple]="false" [closeOnSelect]="false"
+            placeholder="Seleziona il fornitore" [(ngModel)]="addingAttivita.idFornitore">
           </ng-select>
         </div>
         <div class="base_space">
           <label class="form-label">Allegati</label>
-          <input type="file" (change)="onFileChange($event, addingAttivita)" class="form-control"
-                 multiple="multiple">
+          <input type="file" (change)="onFileChange($event, addingAttivita)" class="form-control" multiple="multiple">
         </div>
       </div>
     </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
-            (click)="modal.close('Close click'); addAttivitaConfirm()">Aggiungi
+      (click)="modal.close('Close click'); addAttivitaConfirm()">Aggiungi
     </button>
     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Annulla
     </button>

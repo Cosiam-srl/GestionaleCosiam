@@ -1,10 +1,10 @@
 <ngx-spinner>
-  <app-spinner></app-spinner>
+    <app-spinner></app-spinner>
 </ngx-spinner>
 <style>
-  *{
-    box-shadow: unset !important;
-  }
+    * {
+        box-shadow: unset !important;
+    }
 </style>
 <button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
 <!-- Filter Datatables -->
@@ -23,7 +23,8 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="ngx-filter-ref">Cerca:</label>
-                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text" placeholder="Filtra la colonna Categoria..." (keyup)="filterUpdate($event)" />
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Categoria..." (keyup)="filterUpdate($event)" />
                                 </div>
                             </div>
 
@@ -86,7 +87,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Aggiungi all'inventario generale</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -162,7 +163,7 @@
 <ng-template #view let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Inventario generale</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -202,8 +203,8 @@
                 <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Quantità</label>
                     <input type="number" min="0" class="form-control" id="exampleFormControlInput1" placeholder="/"
-                        [ngModel]="nuovoInventarioGenerale.quantity | number:'1.0-2':'it-IT'" name="quantita" #quantita="ngModel"
-                        (ngModelChange)="validationForm(IGForm)" title="" disabled>
+                        [ngModel]="nuovoInventarioGenerale.quantity | number:'1.0-2':'it-IT'" name="quantita"
+                        #quantita="ngModel" (ngModelChange)="validationForm(IGForm)" title="" disabled>
 
                 </div>
 
@@ -225,7 +226,7 @@
 <ng-template #modify let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Modifica Elemento Inventario generale</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>

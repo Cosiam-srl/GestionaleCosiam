@@ -1,11 +1,11 @@
 <!-- necessario per lo spinner quando si aggiunge una nuova scadenza(amministrazione, hse, ...) -->
 <ngx-spinner>
-  <app-spinner></app-spinner>
+    <app-spinner></app-spinner>
 </ngx-spinner>
 <style>
-  *{
-    box-shadow: unset !important;
-  }
+    * {
+        box-shadow: unset !important;
+    }
 </style>
 <button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
 <!-- Filter Datatables -->
@@ -74,8 +74,8 @@
                                     <!-- <i class="ft-edit text-primary cursor-pointer" (click)="goToDashboard(row)"></i> -->
                                     <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onEdit(row,modify)"
                                         title="Modifica"></i>
-                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;" (click)="deleteAttrezzo(row)"
-                                        title="Elimina"></i>
+                                    <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;"
+                                        (click)="deleteAttrezzo(row)" title="Elimina"></i>
                                 </ng-template>
                             </ngx-datatable-column>
 
@@ -93,7 +93,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Aggiungi Attrezzatura</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -228,7 +228,7 @@
                     <label class="form-label">Carica uno o più File</label>
 
                     <div class="custom-file ">
-                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                        <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
                             (change)="addFileToAttrezzatura($event);validationForm(attrezzaturaForm)" multiple>
                         <label class="custom-file-label" for="inputGroupFile01">{{fileName || "Seleziona un
                             file"}}</label>
@@ -275,7 +275,7 @@
 <ng-template #view let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Attrezzatura</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -455,7 +455,7 @@
 <ng-template #modify let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Modifica Attrezzatura</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -596,7 +596,7 @@
                     <label class="form-label">Carica uno o più File</label>
 
                     <div class="custom-file ">
-                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                        <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
                             (change)="addFileToAttrezzatura($event);validationForm(attrezzaturaForm)" multiple>
                         <label class="custom-file-label" for="inputGroupFile01">{{fileName || "Seleziona un
                             file"}}</label>
