@@ -171,7 +171,7 @@
 <ng-template #modify let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Modifica Mezzo</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -338,7 +338,7 @@
 <ng-template #dettagliMezzi let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Estrai Dettaglio</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -363,10 +363,10 @@
     <div class="modal-footer">
 
         <!-- bottone crea nota -->
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('xlsx')"
-            (click)="modal.close('Close click')">Estrai XLSX</button>
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('pdf')"
-            (click)="modal.close('Close click')">Estrai PDF</button>
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="estraiDettagli('xlsx')" (click)="modal.close('Close click')">Estrai XLSX</button>
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="estraiDettagli('pdf')" (click)="modal.close('Close click')">Estrai PDF</button>
 
         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
     </div>

@@ -48,7 +48,8 @@
 
             <!-- Tasti Crea ed Elimina Nota -->
             <div class="col-auto">
-              <button class="btn btn-primary mt-3" style="margin-right: 8px;" (click)="openLg(content)">Crea nota</button>
+              <button class="btn btn-primary mt-3" style="margin-right: 8px;" (click)="openLg(content)">Crea
+                nota</button>
               <button type="button" class="btn bg-light-warning confirm-text mt-3" (click)="ConfirmText()">Elimina note
                 selezionate</button>
             </div>
@@ -193,7 +194,8 @@
         <label class="form-label">Carica un File</label>
 
         <div class="custom-file ">
-          <input type="file" class="custom-file-input" id="inputGroupFile01" (change)="addFileToNota($event)" multiple>
+          <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
+            (change)="addFileToNota($event)" multiple>
           <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ? fileName.substring(0,110) +
             '...' : fileName || "Seleziona un file"}}</label>
         </div>
@@ -322,7 +324,8 @@
     <fieldset class="form-group">
       <label class="form-label">Carica un File(non sovrascriverà gli allegati esistenti)</label>
       <div class="custom-file">
-        <input type="file" class="custom-file-input" id="inputGroupFile01" (change)="addFileToNota($event)">
+        <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
+          (change)="addFileToNota($event)">
         <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ? fileName.substring(0,110) +
           '...' : fileName || "Seleziona un file"}}</label>
       </div>

@@ -1,10 +1,10 @@
 <ngx-spinner>
-  <app-spinner></app-spinner>
+    <app-spinner></app-spinner>
 </ngx-spinner>
 <style>
-  *{
-    box-shadow: unset !important;
-  }
+    * {
+        box-shadow: unset !important;
+    }
 </style>
 <button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
 <!-- Basic Datatables -->
@@ -23,7 +23,9 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="ngx-filter-ref">Cerca:</label>
-                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text" placeholder="Filtra la colonna Descrizione/Marca/Targa..." (keyup)="filterUpdate($event)" />
+                                    <input id="ngx-filter-ref" class="form-control form-control-sm" type="text"
+                                        placeholder="Filtra la colonna Descrizione/Marca/Targa..."
+                                        (keyup)="filterUpdate($event)" />
                                 </div>
                             </div>
 
@@ -42,14 +44,16 @@
 
                             <!-- Tasto "Aggiungi Mezzo" -->
                             <div class="col-2 mt-3">
-                                <button type="button" class="btn btn-primary mr-1" (click)="openLg(content)">Aggiungi Mezzo</button>
+                                <button type="button" class="btn btn-primary mr-1" (click)="openLg(content)">Aggiungi
+                                    Mezzo</button>
                             </div>
                             <div class="col-2 mt-3">
                                 <button type="button" class="btn btn-primary" (click)="openLg(dettagliMezzi)">Estrai
                                     Dettagli</button>
                             </div>
                             <div class="col-2 mt-3">
-                                <button type="button" class="btn btn-primary" (click)="setGasolinePrice()">Imposta Costo Gasolio</button>
+                                <button type="button" class="btn btn-primary" (click)="setGasolinePrice()">Imposta Costo
+                                    Gasolio</button>
                             </div>
                         </div>
                         <!-- ngx-datatable Basic -->
@@ -125,7 +129,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Aggiungi Mezzo</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -341,7 +345,7 @@
 <ng-template #dettagliMezzi let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Estrai Dettaglio</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -377,10 +381,12 @@
     <div class="modal-footer">
 
         <!-- bottone crea nota -->
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('xlsx')"
-            (click)="modal.close('Close click')" [disabled]="estraiDatiModel?.ids?.length==0">Estrai XLSX</button>
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="estraiDettagli('pdf')"
-            (click)="modal.close('Close click')" [disabled]="estraiDatiModel?.ids?.length==0">Estrai PDF</button>
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="estraiDettagli('xlsx')" (click)="modal.close('Close click')"
+            [disabled]="estraiDatiModel?.ids?.length==0">Estrai XLSX</button>
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+            (click)="estraiDettagli('pdf')" (click)="modal.close('Close click')"
+            [disabled]="estraiDatiModel?.ids?.length==0">Estrai PDF</button>
 
         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Chiudi</button>
     </div>

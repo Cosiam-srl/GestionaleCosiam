@@ -1,4 +1,3 @@
-
 <!-- Filter Datatables -->
 <section id="ngx-datatable-filter">
     <div class="row">
@@ -27,7 +26,8 @@
 
                         <button class="btn btn-success mb-2 mr-2" (click)="openLg(content)">Aggiungi un
                             servizio</button>
-                        <button type="button" class="btn bg-light-warning confirm-text mb-2 mr-2" (click)="ConfirmText()">Elimina
+                        <button type="button" class="btn bg-light-warning confirm-text mb-2 mr-2"
+                            (click)="ConfirmText()">Elimina
                             un servizio</button>
 
 
@@ -41,11 +41,15 @@
                         <!-- [sorts]="[{prop: 'nota.id', dir: 'asc'}]" -->
 
                         <!-- il campo limit serve per imopstare quante righe della tabella compaiono per ogni pagina -->
-                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force" [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="4" [rows]="servizifornitoreCantiere" [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]" (select)="onSelect($event)"
-                            [selected]="selected" [selectionType]="SelectionType.checkbox" [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
+                        <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="columnMode.force"
+                            [headerHeight]="60" [footerHeight]="50" rowHeight="50" [limit]="4"
+                            [rows]="servizifornitoreCantiere" [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
+                            (select)="onSelect($event)" [selected]="selected" [selectionType]="SelectionType.checkbox"
+                            [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
 
 
-                            <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="id" prop="idMezzi" [width]="50"></ngx-datatable-column>
+                            <ngx-datatable-column [headerCheckboxable]="true" [checkboxable]="true" name="id"
+                                prop="idMezzi" [width]="50"></ngx-datatable-column>
                             <ngx-datatable-column name="Nome" prop="mezzo.name" [width]="150"></ngx-datatable-column>
                             <ngx-datatable-column name="dataInizioAssegnamento" prop="fromDate" [width]="150">
                             </ngx-datatable-column>
@@ -74,7 +78,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Aggiungi Servizio</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -82,15 +86,18 @@
         <div class="row pb-4">
             <div class="col-md-4 mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Nome Servizio</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nome" [(ngModel)]="nuovoservizio.name">
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Nome"
+                    [(ngModel)]="nuovoservizio.name">
             </div>
             <div class="col-md-4 mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Piastrelle" [(ngModel)]="nuovoservizio.type">
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. Piastrelle"
+                    [(ngModel)]="nuovoservizio.type">
             </div>
             <div class="col-md-4 mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Unità di misura</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. mq" [(ngModel)]="nuovoservizio.type">
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. mq"
+                    [(ngModel)]="nuovoservizio.type">
             </div>
         </div>
 
@@ -99,7 +106,8 @@
                 <label for="exampleFormControlInput1" class="form-label">Prezzo per unità di
                     misura</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 5" [(ngModel)]="nuovoservizio.pricePerUm">
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Es. 5"
+                        [(ngModel)]="nuovoservizio.pricePerUm">
                     <div class="input-group-append">
                         <span class="input-group-text" id="basic-addon2">€</span>
                     </div>
@@ -113,7 +121,8 @@
     <div class="modal-footer">
 
         <!-- bottone crea nota -->
-        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="aggiungiMezzi()" (click)="TypeSuccess()" (click)="modal.close('Close click')">Conferma</button>
+        <button type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="aggiungiMezzi()"
+            (click)="TypeSuccess()" (click)="modal.close('Close click')">Conferma</button>
 
         <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
     </div>

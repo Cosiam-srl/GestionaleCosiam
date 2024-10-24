@@ -3,9 +3,9 @@
     <p style="color: white; font-size: 22px;"> Attendi il caricamento del prezzario... </p>
 </ngx-spinner>
 <style>
-  *{
-    box-shadow: unset !important;
-  }
+    * {
+        box-shadow: unset !important;
+    }
 </style>
 <!-- Filter Datatables -->
 <section id="ngx-datatable-prezziario">
@@ -115,7 +115,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Aggiungi Prezzo</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -177,8 +177,8 @@
                 </div>
                 <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="discountLabel"
-                    [(ngModel)]="nuovoservizio.applyDiscount" (ngModelChange)="validationForm(prezzarioForm)"
-                    placeholder="Es. 5758 27.02.02.00 1" name="applyDiscount" #applyDiscount="ngModel">
+                        [(ngModel)]="nuovoservizio.applyDiscount" (ngModelChange)="validationForm(prezzarioForm)"
+                        placeholder="Es. 5758 27.02.02.00 1" name="applyDiscount" #applyDiscount="ngModel">
                     <label for="discountLabel" class="form-label">Applica sconto</label>
                 </div>
                 <!-- <div class="col-md-2 mb-3">

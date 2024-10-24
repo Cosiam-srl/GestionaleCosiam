@@ -1,78 +1,83 @@
 <div class="row" (resized)="onResized($event)">
 
-    <!-- prima colonna della prima riga -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12" id='cards'>
-        <div class="card text-center" style="align-items: center;">
-            <button type="button" style="float: right;" class="btn btn-primary btn-sm mb-2" (click)=" openLg(modify)">Modifica</button>
-            <!-- <img src="https://cdnwp.dealerk.com/eed49ed7/uploads/sites/553/2019/04/iveco-daily-furgone-2019.png" alt="immagine fornitore"
+  <!-- prima colonna della prima riga -->
+  <div class="col-xl-3 col-lg-6 col-md-6 col-12" id='cards'>
+    <div class="card text-center" style="align-items: center;">
+      <button type="button" style="float: right;" class="btn btn-primary btn-sm mb-2"
+        (click)=" openLg(modify)">Modifica</button>
+      <!-- <img src="https://cdnwp.dealerk.com/eed49ed7/uploads/sites/553/2019/04/iveco-daily-furgone-2019.png" alt="immagine fornitore"
                 class="users-avatar-shadow avatar mt-3 rounded-circle" height="64" width="64"> -->
-            <img [src]="imageSource" alt="Nessun logo inserito" style="cursor: default;object-fit: contain;" height="200" width="200">
-            <div class="card-body">
-                <h5 class="card-title text-center mb-2">{{fornitore.name != null ? fornitore.name : "///" }}
-                </h5>
-                <p class="card-text"><strong>Email</strong>: {{fornitore.email != null ? fornitore.email : "///"}}</p>
-                <p class="card-text"><strong>P.IVA</strong>: {{fornitore.piva != null ? fornitore.piva: "///"}}
-                </p>
-                <!-- <p class="card-text"><strong>Matricola</strong>: 514800542</p> -->
-                <p class="card-text"><strong>CF</strong>: {{fornitore.cf != null ? fornitore.cf: "///"}}
-                </p>
-                <p class="card-text"><strong>Indirizzo</strong>: {{fornitore.address != null ? fornitore.address : "///"}}</p>
-                <!-- <p class="card-text"><strong>KM al 31/12/2020</strong>: 286.500 KM</p> -->
-                <p class="card-text"><strong>Tipologia</strong>: {{fornitore.type != null ? fornitore.type : "///"}}</p>
-                <p class="card-text"><strong>Telefono</strong>: {{fornitore.telephone != null ? fornitore.telephone : "///"}}</p>
-            </div>
-        </div>
+      <img [src]="imageSource" alt="Nessun logo inserito" style="cursor: default;object-fit: contain;" height="200"
+        width="200">
+      <div class="card-body">
+        <h5 class="card-title text-center mb-2">{{fornitore.name != null ? fornitore.name : "///" }}
+        </h5>
+        <p class="card-text"><strong>Email</strong>: {{fornitore.email != null ? fornitore.email : "///"}}</p>
+        <p class="card-text"><strong>P.IVA</strong>: {{fornitore.piva != null ? fornitore.piva: "///"}}
+        </p>
+        <!-- <p class="card-text"><strong>Matricola</strong>: 514800542</p> -->
+        <p class="card-text"><strong>CF</strong>: {{fornitore.cf != null ? fornitore.cf: "///"}}
+        </p>
+        <p class="card-text"><strong>Indirizzo</strong>: {{fornitore.address != null ? fornitore.address :
+          "///"}}</p>
+        <!-- <p class="card-text"><strong>KM al 31/12/2020</strong>: 286.500 KM</p> -->
+        <p class="card-text"><strong>Tipologia</strong>: {{fornitore.type != null ? fornitore.type : "///"}}</p>
+        <p class="card-text"><strong>Telefono</strong>: {{fornitore.telephone != null ? fornitore.telephone :
+          "///"}}</p>
+      </div>
     </div>
-    <!-- fine prima colonna della prima riga -->
+  </div>
+  <!-- fine prima colonna della prima riga -->
 
-    <!-- inizio seconda colonna della prima riga -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-        <div class="card w-100">
-            <div class="card-content">
-                <div class="card-body py-0">
-                    <div class="media">
-                        <div class="media-body text-left">
-                            <div class="w-100 col-md-12 col-xl-12 col-lg-12">
-                                <h4 style="max-width: 100%;">Cantieri attivi in cui lavora attualmente(località)</h4>
-                                <div class="card-text">
-                                    <p *ngIf="cantieriFornitore.length==0">Nessuno</p>
-                                    <p *ngFor="let i of cantieriFornitore">
-                                        {{i.address}}
-                                    </p>
+  <!-- inizio seconda colonna della prima riga -->
+  <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+    <div class="card w-100">
+      <div class="card-content">
+        <div class="card-body py-0">
+          <div class="media">
+            <div class="media-body text-left">
+              <div class="w-100 col-md-12 col-xl-12 col-lg-12">
+                <h4 style="max-width: 100%;">Cantieri attivi in cui lavora attualmente(località)</h4>
+                <div class="card-text">
+                  <p *ngIf="cantieriFornitore.length==0">Nessuno</p>
+                  <p *ngFor="let i of cantieriFornitore">
+                    {{i.address}}
+                  </p>
 
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div class="media-right text-right">
+                </div>
+              </div>
+            </div>
+            <!-- <div class="media-right text-right">
                             <i class="ft-briefcase font-large-2"></i>
                         </div> -->
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-        <div class="card bg-lighten-3 w-100">
-            <div class="card-content">
-                <div class="card-body py-0">
-                    <div class="media">
-                        <div class="media-body text-left">
-                            <div class="w-100">
-                                <h4 class>Disponibilità</h4>
-                                <p style="font-size:20px" [ngStyle]="{'color': this.fornitore.status=='Disponibile' ? 'green' : 'red' }" class="card-text"><strong>{{this.fornitore.status?
+      </div>
+    </div>
+    <div class="card bg-lighten-3 w-100">
+      <div class="card-content">
+        <div class="card-body py-0">
+          <div class="media">
+            <div class="media-body text-left">
+              <div class="w-100">
+                <h4 class>Disponibilità</h4>
+                <p style="font-size:20px" [ngStyle]="{'color': this.fornitore.status=='Disponibile' ? 'green' : 'red' }"
+                  class="card-text"><strong>{{this.fornitore.status?
                     this.fornitore.status : "Non definito"}}</strong></p>
-                            </div>
-                        </div>
-                        <!-- <div class="media-right text-right">
+              </div>
+            </div>
+            <!-- <div class="media-right text-right">
                             <i class="ft-credit-card font-large-2"></i>
                         </div> -->
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <!-- fine seconda colonna della prima riga -->
+  </div>
+  <!-- fine seconda colonna della prima riga -->
 
-    <!-- inizio terza colonna della prima riga -->
-    <!-- <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+  <!-- inizio terza colonna della prima riga -->
+  <!-- <div class="col-xl-3 col-lg-6 col-md-6 col-12">
         <div class="card w-100">
             <div class="card-content">
                 <div class="card-body py-0">
@@ -84,14 +89,14 @@
                                 <h2 class="mt-4">24</h2>
                             </div>
                         </div> -->
-    <!-- <div class="media-right text-right">
+  <!-- <div class="media-right text-right">
                             <i class="ft-credit-card font-large-2"></i>
                         </div> -->
-    <!-- </div>
+  <!-- </div>
                 </div>
             </div>
         </div> -->
-    <!-- <div class="card w-100">
+  <!-- <div class="card w-100">
             <div class="card-content">
                 <div class="card-body py-0">
                     <div class="media">
@@ -108,39 +113,39 @@
                 </div>
             </div>
         </div> -->
-    <!-- </div> -->
-    <!-- fine terza colonna della prima riga -->
+  <!-- </div> -->
+  <!-- fine terza colonna della prima riga -->
 
-    <!-- inizio quarta colonna della prima riga -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-        <div class="card w-100" [ngStyle]="{'background-color': scadenzeFornitore.length==0? 'white' : 'red' }">
-            <div class="card-content">
-                <div class="card-body py-0">
-                    <div class="media">
-                        <div class="media-body text-left">
-                            <div class="w-100">
-                                <h4>Scadenze imminenti(30gg) </h4>
-                                <p *ngIf="scadenzeFornitore.length==0">Nessuna scadenza imminente</p>
-                                <ul *ngFor="let s of scadenzeFornitore; index as i ">
+  <!-- inizio quarta colonna della prima riga -->
+  <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+    <div class="card w-100" [ngStyle]="{'background-color': scadenzeFornitore.length==0? 'white' : 'red' }">
+      <div class="card-content">
+        <div class="card-body py-0">
+          <div class="media">
+            <div class="media-body text-left">
+              <div class="w-100">
+                <h4>Scadenze imminenti(30gg) </h4>
+                <p *ngIf="scadenzeFornitore.length==0">Nessuna scadenza imminente</p>
+                <ul *ngFor="let s of scadenzeFornitore; index as i ">
 
-                                    <!-- solo le prime 5 -->
-                                    <li *ngIf="i<4">
-                                        <strong>{{s.nota.nota.name}}</strong>
-                                        <p>Scade il {{s.nota.nota.dueDate | dataleggibile}}</p>
-                                    </li>
-                                </ul>
+                  <!-- solo le prime 5 -->
+                  <li *ngIf="i<4">
+                    <strong>{{s.nota.nota.name}}</strong>
+                    <p>Scade il {{s.nota.nota.dueDate | dataleggibile}}</p>
+                  </li>
+                </ul>
 
-                            </div>
-                        </div>
-                        <!-- <div class="media-right text-right">
+              </div>
+            </div>
+            <!-- <div class="media-right text-right">
                             <i class="ft-credit-card font-large-2"></i>
                         </div> -->
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <!-- fine quarta colonna della prima riga -->
+  </div>
+  <!-- fine quarta colonna della prima riga -->
 </div>
 <!-- inizio prima tabs -->
 <!-- <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
@@ -155,19 +160,19 @@
 <!-- fine prima tabs -->
 
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-    <li [ngbNavItem]="1">
-        <a ngbNavLink>Beni e Servizi</a>
-        <ng-template ngbNavContent>
-            <app-beni-e-servizi [targetFornitoreId]="idFornitore"></app-beni-e-servizi>
-        </ng-template>
-    </li>
-    <li [ngbNavItem]="2">
-        <a ngbNavLink>Scadenze</a>
-        <ng-template ngbNavContent>
-            <app-fornitori-generic-table-scadenze [titolo]="'Scadenze Fornitori'" [idFornitore]="idFornitore">
-            </app-fornitori-generic-table-scadenze>
-        </ng-template>
-    </li>
+  <li [ngbNavItem]="1">
+    <a ngbNavLink>Beni e Servizi</a>
+    <ng-template ngbNavContent>
+      <app-beni-e-servizi [targetFornitoreId]="idFornitore"></app-beni-e-servizi>
+    </ng-template>
+  </li>
+  <li [ngbNavItem]="2">
+    <a ngbNavLink>Scadenze</a>
+    <ng-template ngbNavContent>
+      <app-fornitori-generic-table-scadenze [titolo]="'Scadenze Fornitori'" [idFornitore]="idFornitore">
+      </app-fornitori-generic-table-scadenze>
+    </ng-template>
+  </li>
 </ul>
 <div [ngbNavOutlet]="nav" class="mt-2"></div>
 
@@ -175,112 +180,141 @@
 
 <!-- inizio popup modifica fornitore -->
 <ng-template #modify let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title">Modifica Fornitore</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+  <div class="modal-header">
+    <h4 class="modal-title">Modifica Fornitore</h4>
+    <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
-    </div>
-    <div class="modal-body">
+  </div>
+  <div class="modal-body">
 
-        <form #userForm="ngForm">
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Nome</label>
-                    <input type="text" name="fname" class="form-control" #fname="ngModel" id="exampleFormControlInput1" placeholder="Nome" required [(ngModel)]="nuovofornitore.name" title="" (ngModelChange)="validationForm(userForm)">
-                    <small class="form-text text-muted danger" *ngIf="fname.errors?.required">Campo obbligatorio</small>
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">PIVA</label>
-                    <input type="text" name="piva" class="form-control" #piva="ngModel" id="exampleFormControlInput1" placeholder="Partita IVA" [(ngModel)]="nuovofornitore.piva" title="" (ngModelChange)="validationForm(userForm)" pattern="[0-9]{0,}">
-                    <small class="form-text text-muted danger" *ngIf="piva.errors?.pattern">la PIVA è composta di soli
+    <form #userForm="ngForm">
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Nome</label>
+          <input type="text" name="fname" class="form-control" #fname="ngModel" id="exampleFormControlInput1"
+            placeholder="Nome" required [(ngModel)]="nuovofornitore.name" title=""
+            (ngModelChange)="validationForm(userForm)">
+          <small class="form-text text-muted danger" *ngIf="fname.errors?.required">Campo obbligatorio</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">PIVA</label>
+          <input type="text" name="piva" class="form-control" #piva="ngModel" id="exampleFormControlInput1"
+            placeholder="Partita IVA" [(ngModel)]="nuovofornitore.piva" title=""
+            (ngModelChange)="validationForm(userForm)" pattern="[0-9]{0,}">
+          <small class="form-text text-muted danger" *ngIf="piva.errors?.pattern">la PIVA è composta di soli
             numeri.Ricontrolla</small>
-                </div>
-                <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">CF</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale" [(ngModel)]="nuovofornitore.cf" name="cf" #cf="ngModel" (ngModelChange)="validationForm(userForm)">
-                    <!-- <small class="form-text text-muted danger" *ngIf="cf.errors?.pattern">Il CF è di 16 cifre/lettere.
+        </div>
+        <div class="col-12 col-md-12 col-lg-3 col-xl-3 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CF</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Codice Fiscale"
+            [(ngModel)]="nuovofornitore.cf" name="cf" #cf="ngModel" (ngModelChange)="validationForm(userForm)">
+          <!-- <small class="form-text text-muted danger" *ngIf="cf.errors?.pattern">Il CF è di 16 cifre/lettere.
             Ricontrolla</small> -->
 
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Telefono</label>
-                    <input type="text" class="form-control" name="telefono" #telefono="ngModel" id="exampleFormControlInput1" placeholder="Telefono" [(ngModel)]="nuovofornitore.telephone" (ngModelChange)="validationForm(userForm)">
-                </div>
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">CAP</label>
-                    <input type="text" class="form-control" name="cap" #cap="ngModel" id="exampleFormControlInput1" placeholder="CAP" [(ngModel)]="nuovofornitore.cap" (ngModelChange)="validationForm(userForm)" pattern="[0-9]{5}">
-                    <small class="form-text text-muted danger" *ngIf="cap.errors?.pattern">Il CAP è di 5 cifre.Ricontrolla</small>
-                </div>
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Disponibilità</label>
-                    <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();' aria-label="Default select example" [(ngModel)]="nuovofornitore.status" name="status" #status="ngModel" (ngModelChange)="validationForm(userForm)">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Telefono</label>
+          <input type="text" class="form-control" name="telefono" #telefono="ngModel" id="exampleFormControlInput1"
+            placeholder="Telefono" [(ngModel)]="nuovofornitore.telephone" (ngModelChange)="validationForm(userForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">CAP</label>
+          <input type="text" class="form-control" name="cap" #cap="ngModel" id="exampleFormControlInput1"
+            placeholder="CAP" [(ngModel)]="nuovofornitore.cap" (ngModelChange)="validationForm(userForm)"
+            pattern="[0-9]{5}">
+          <small class="form-text text-muted danger" *ngIf="cap.errors?.pattern">Il CAP è di 5
+            cifre.Ricontrolla</small>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Disponibilità</label>
+          <select class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();'
+            aria-label="Default select example" [(ngModel)]="nuovofornitore.status" name="status" #status="ngModel"
+            (ngModelChange)="validationForm(userForm)">
             <!-- il campo value è fondamentale perchè verrà usato per il campo stato della nuova nota -->
             <option value="Disponibile">Disponibile</option>
             <option value="Non Disponibile">Non Disponibile</option>
           </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Indirizzo</label>
-                    <input type="text" class="form-control" name="indirizzo" #indirizzo="ngModel" id="exampleFormControlInput1" placeholder="Indirizzo" title="" [(ngModel)]="nuovofornitore.address" (ngModelChange)="validationForm(userForm)">
-                </div>
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Email</label>
-                    <input type="text" class="form-control" name="email" #email="ngModel" id="exampleFormControlInput1" placeholder="Email" [(ngModel)]="nuovofornitore.email" (ngModelChange)="validationForm(userForm)" title="" email>
-                    <small class="form-text text-muted danger" *ngIf="email.errors?.email">Ricontrolla la mail inserita</small>
-                </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Indirizzo</label>
+          <input type="text" class="form-control" name="indirizzo" #indirizzo="ngModel" id="exampleFormControlInput1"
+            placeholder="Indirizzo" title="" [(ngModel)]="nuovofornitore.address"
+            (ngModelChange)="validationForm(userForm)">
+        </div>
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Email</label>
+          <input type="text" class="form-control" name="email" #email="ngModel" id="exampleFormControlInput1"
+            placeholder="Email" [(ngModel)]="nuovofornitore.email" (ngModelChange)="validationForm(userForm)" title=""
+            email>
+          <small class="form-text text-muted danger" *ngIf="email.errors?.email">Ricontrolla la mail
+            inserita</small>
+        </div>
 
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-6 col-xl-6 mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
-                    <input type="text" class="form-control" name="tipologia" #tipologia="ngModel" id="exampleFormControlInput1" placeholder="Mansione" [(ngModel)]="nuovofornitore.type" (ngModelChange)="validationForm(userForm)" required>
-                    <small class="form-text text-muted danger" *ngIf="tipologia.errors?.required">Campo obbligatorio</small>
-                </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-6 col-xl-6 mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Tipologia</label>
+          <input type="text" class="form-control" name="tipologia" #tipologia="ngModel" id="exampleFormControlInput1"
+            placeholder="Mansione" [(ngModel)]="nuovofornitore.type" (ngModelChange)="validationForm(userForm)"
+            required>
+          <small class="form-text text-muted danger" *ngIf="tipologia.errors?.required">Campo
+            obbligatorio</small>
+        </div>
 
-            </div>
-            <div class="row">
-                <fieldset class="form-group col-md-11 col-11 mt-2">
-                    <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne uno (dimensioni
+      </div>
+      <div class="row">
+        <fieldset class="form-group col-md-11 col-11 mt-2">
+          <label class="form-label">Carica un'immagine per modificare il logo attuale o aggiungerne uno
+            (dimensioni
             consigliate: 200 x 200)</label>
 
-                    <div class="custom-file ">
-                        <input type="file" class="custom-file-input" id="inputGroupFile01" (change)="addImageToFornitore($event)">
-                        <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 115 ? fileName.substring(0,115) + '...' : fileName || "Seleziona un file"}}</label>
-                    </div>
-                </fieldset>
-                <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4" (click)="deleteImageFornitore()"></i>
-            </div>
-            <div class="row">
-                <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
-                    <label class="form-label" *ngIf="nuovofornitore.file!=null">Logo cliente attuale:</label>
-                    <label class="form-label" *ngIf="nuovofornitore.file==null">Nessun logo per questo fornitore</label>
-                    <br />
-                    <img *ngIf="nuovofornitore.file!=null" [src]="imageSource" alt="appena caricato. Conferma le modifiche per aggiungerlo e vederlo" style="cursor: default;" height="100" width="100">
-                    <i *ngIf="nuovofornitore.file!=null" style="padding-top: 14px;" class="ft-x-circle text-primary cursor-pointer ml-2 mt-4" (click)="removeLogoFornitore()" title="Rimuovi il logo esistente o quello"></i>
-                </div>
-            </div>
+          <div class="custom-file ">
+            <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
+              (change)="addImageToFornitore($event)">
+            <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 115 ?
+              fileName.substring(0,115) + '...' : fileName || "Seleziona un file"}}</label>
+          </div>
+        </fieldset>
+        <i style="padding-top: 14px;" class="ft-trash text-primary cursor-pointer ml-2 mt-4"
+          (click)="deleteImageFornitore()"></i>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-12 col-lg-4 col-xl-4 mb-3">
+          <label class="form-label" *ngIf="nuovofornitore.file!=null">Logo cliente attuale:</label>
+          <label class="form-label" *ngIf="nuovofornitore.file==null">Nessun logo per questo fornitore</label>
+          <br />
+          <img *ngIf="nuovofornitore.file!=null" [src]="imageSource"
+            alt="appena caricato. Conferma le modifiche per aggiungerlo e vederlo" style="cursor: default;" height="100"
+            width="100">
+          <i *ngIf="nuovofornitore.file!=null" style="padding-top: 14px;"
+            class="ft-x-circle text-primary cursor-pointer ml-2 mt-4" (click)="removeLogoFornitore()"
+            title="Rimuovi il logo esistente o quello"></i>
+        </div>
+      </div>
 
-        </form>
+    </form>
 
-    </div>
+  </div>
 
-    <!-- parte in basso -->
-    <div class="modal-footer">
-
-
+  <!-- parte in basso -->
+  <div class="modal-footer">
 
 
-        <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0" disabled>Conferma</button>
-        <!-- bottone crea nota -->
-        <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0" (click)="updateFornitore()" (click)="modal.close('Close click')">Conferma</button>
 
-        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
-    </div>
+
+    <button *ngIf="!fff" type="button" class="btn bg-light-info mr-1 type-success mb-1 mb-sm-0"
+      disabled>Conferma</button>
+    <!-- bottone crea nota -->
+    <button *ngIf="fff==true" type="button" class="btn bg-light-success mr-1 type-success mb-1 mb-sm-0"
+      (click)="updateFornitore()" (click)="modal.close('Close click')">Conferma</button>
+
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+  </div>
 
 
 </ng-template>

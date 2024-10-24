@@ -1,11 +1,11 @@
 <!-- spinner per la creazione di un nuovo cliente -->
 <ngx-spinner>
-  <app-spinner></app-spinner>
+    <app-spinner></app-spinner>
 </ngx-spinner>
 <style>
-  *{
-    box-shadow: unset !important;
-  }
+    * {
+        box-shadow: unset !important;
+    }
 </style>
 <!-- Basic Datatables -->
 <button class="btn btn-primary" (click)="downloadPdf()">Scarica Tabella in PDF</button>
@@ -79,9 +79,9 @@
                         </div>
 
                         <!-- ngx-datatable Basic -->
-                        <ngx-datatable [rows]="clienti" [rowHeight]="50" class="bootstrap core-bootstrap" [limit]="limit"
-                            [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true"
-                            [sorts]="[{prop: 'id', dir: 'desc'}]"
+                        <ngx-datatable [rows]="clienti" [rowHeight]="50" class="bootstrap core-bootstrap"
+                            [limit]="limit" [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50"
+                            [scrollbarH]="true" [sorts]="[{prop: 'id', dir: 'desc'}]"
                             [messages]="{emptyMessage: 'Nessun dato ad mostrare', selectedMessage: 'selezionat*', totalMessage: 'totali'}">
 
                             <!-- <ngx-datatable-column name="Id" prop="id" [width]="50" style="text-align: center;">
@@ -105,7 +105,8 @@
                             <ngx-datatable-column name="Azioni" [width]="45" [sortable]="false">
                                 <ng-template ngx-datatable-cell-template let-row="row">
                                     <!-- <i class="ft-more-vertical text-primary cursor-pointer mr-2"></i> -->
-                                    <i class="ft-edit fs-6 text-primary cursor-pointer" (click)="onModify(modify,row)"></i>
+                                    <i class="ft-edit fs-6 text-primary cursor-pointer"
+                                        (click)="onModify(modify,row)"></i>
                                     <!-- <i class="ft-corner-down-right text-primary cursor-pointer ml-2" (click)="onEdit(row)"></i> -->
                                     <i class="ft-trash fs-6 text-primary cursor-pointer" style="padding-left: 0.5rem;"
                                         (click)="deleteCliente(row)"></i>
@@ -133,7 +134,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Aggiungi Cliente</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -249,7 +250,7 @@
                         uno</label>
 
                     <div class="custom-file ">
-                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                        <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
                             (change)="addImageToCliente($event)">
                         <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ?
                             fileName.substring(0,110) + '...' : fileName || "Seleziona un file"}}</label>
@@ -296,7 +297,7 @@
 <ng-template #modify let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Modifica Cliente</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="btn btn-danger" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -412,7 +413,7 @@
                         uno</label>
 
                     <div class="custom-file ">
-                        <input type="file" class="custom-file-input" id="inputGroupFile01"
+                        <input type="file" class="custom-file-input form-control" id="inputGroupFile01"
                             (change)="addImageToCliente($event)">
                         <label class="custom-file-label" for="inputGroupFile01">{{fileName.length > 130 ?
                             fileName.substring(0,110) + '...' : fileName || "Seleziona un file"}}</label>
